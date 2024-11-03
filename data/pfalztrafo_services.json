@@ -1,0 +1,42 @@
+[
+    {
+        "service": "Ölauffangwanne",
+        "description": "Eine Ölauffangwanne dient zum Auffangen von Transformatoröl, um Umweltschäden zu verhindern."
+    },
+    {
+        "service": "Ölprobe",
+        "description": "Eine Ölprobe dient der Analyse des Isolieröls, um die Qualität und Lebensdauer des Transformators zu überwachen."
+    },
+    {
+        "service": "Wartungsdienst",
+        "description": "Unser Wartungsdienst umfasst die Inspektion, Reinigung und den Austausch von Verschleißteilen."
+    },
+    {
+        "service": "Ölprobenentnahme und Analyse",
+        "description": "Entnahme und Analyse des Isolieröls zur Überwachung der Transformatorleistung und Früherkennung von Problemen."
+    },
+    {
+        "service": "Isolierölwechsel und Trocknung",
+        "description": "Regelmäßiger Austausch und Trocknung des Isolieröls zur Verlängerung der Lebensdauer und Sicherstellung optimaler Isolierung."
+    },
+    {
+        "service": "Abdichtung von Transformatorenteilen",
+        "description": "Abdichtung von Hoch- und Niederspannungsdurchführungen, Schaugläsern und weiteren Bauteilen zur Vermeidung von Leckagen."
+    },
+    {
+        "service": "Nachrüstung von Schutz- und Überwachungssystemen",
+        "description": "Installation von Buchholzschutzrelais, Temperaturüberwachungen und Luftentfeuchtern zur Erhöhung der Betriebssicherheit."
+    },
+    {
+        "service": "Transformator Neulackierung",
+        "description": "Neulackierung von Öltransformatoren, um Schutz gegen Korrosion zu bieten und die Lebensdauer des Geräts zu verlängern."
+    },
+    {
+        "service": "Isolierölkontrollen",
+        "description": "Standardprüfungen gemäß DIN EN 60422 für Transformatoren und Schaltgeräte, durchgeführt im hauseigenen Isolieröl-Labor."
+    },
+    {
+        "service": "Prüfung und Diagnose",
+        "description": "Durchführung von Prüfungen wie Durchschlagsspannung, Wassergehalt und Säuregehalt des Isolieröls zur Qualitätsüberwachung."
+    }
+]

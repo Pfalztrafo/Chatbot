@@ -1,0 +1,66 @@
+[
+    {
+        "topic": "Funktionsweise eines Transformators",
+        "info": "Transformatoren arbeiten durch elektromagnetische Induktion, um elektrische Spannung zu erhöhen oder zu verringern."
+    },
+    {
+        "topic": "Arten von Transformatoren",
+        "info": "Es gibt verschiedene Typen wie Leistungstransformatoren, Verteiltransformatoren und Spezialtransformatoren."
+    },
+    {
+        "topic": "Transformator-Wartung",
+        "info": "Regelmäßige Wartung umfasst die Prüfung von Isolieröl, Überprüfung auf Leckagen und allgemeine Inspektionen."
+    },
+    {
+        "topic": "Gießharztransformator",
+        "info": "Gießharztransformatoren verwenden ein Epoxidharz zur Isolierung und sind für Innenräume gut geeignet. Sie sind umweltfreundlicher, da sie kein Öl benötigen und bieten eine hohe elektrische Festigkeit."
+    },
+    {
+        "topic": "Öltransformator",
+        "info": "Öltransformatoren verwenden Isolieröl zur Kühlung und Isolierung. Sie sind besonders geeignet für Hochleistungsanwendungen und bieten eine gute Wärmeabfuhr."
+    },
+    {
+        "topic": "Unterschied zwischen Gießharz- und Öltransformatoren",
+        "info": "Gießharztransformatoren sind für Innenräume ideal und benötigen kein Öl, während Öltransformatoren eine bessere Kühlung bieten und für Hochleistungseinsätze verwendet werden."
+    },
+    {
+        "topic": "Lebensdauer eines Transformators",
+        "info": "Ein Transformator kann bei regelmäßiger Wartung und korrektem Betrieb eine Lebensdauer von 20 bis 30 Jahren erreichen."
+    },
+    {
+        "topic": "Leistungstransformator",
+        "info": "Leistungstransformatoren sind für hohe Spannungen und Ströme ausgelegt und werden hauptsächlich in Übertragungsnetzen eingesetzt."
+    },
+    {
+        "topic": "Verteiltransformator",
+        "info": "Verteiltransformatoren sind für niedrigere Spannungen geeignet und werden oft in Verteilnetzen genutzt, um elektrische Energie in Haushalte und Betriebe zu bringen."
+    },
+    {
+        "topic": "Isolieröl im Transformator",
+        "info": "Isolieröl dient zur elektrischen Isolierung und zur Kühlung. Es wird regelmäßig geprüft, um die Sicherheit und Effizienz des Transformators sicherzustellen."
+    },
+    {
+        "topic": "Transformatorleistung",
+        "info": "Die Leistung eines Transformators wird in kVA (Kilovolt-Ampere) angegeben und gibt an, wie viel elektrische Energie er verarbeiten kann."
+    },
+    {
+        "topic": "Transformatorverluste",
+        "info": "Verluste in Transformatoren entstehen durch Wärmeentwicklung im Kupfer (Wicklungsverluste) und durch Ummagnetisierungsverluste im Eisenkern."
+    },
+    {
+        "topic": "Transformatorinstallation",
+        "info": "Transformatoren werden je nach Typ und Anwendung innen oder außen installiert und benötigen eine sichere Basis sowie die richtige Belüftung."
+    },
+    {
+        "topic": "Transformatorenkühlung",
+        "info": "Transformatoren nutzen entweder Öl- oder Luftkühlung. Ölkühlung bietet eine effektivere Wärmeableitung, während luftgekühlte Transformatoren weniger wartungsintensiv sind."
+    },
+    {
+        "topic": "Transformatorprüfung",
+        "info": "Regelmäßige Prüfungen umfassen Spannungsprüfung, Isolationswiderstandsmessung und thermografische Untersuchungen, um Defekte frühzeitig zu erkennen."
+    },
+    {
+        "topic": "Transformator Effizienz",
+        "info": "Transformatoren sind sehr effizient und können Wirkungsgrade von über 99 % erreichen. Effizienz hängt von Bauart, Materialien und Einsatzbedingungen ab."
+    }
+]

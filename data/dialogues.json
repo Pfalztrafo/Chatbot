@@ -1,0 +1,119 @@
+[
+    {
+        "question": "Welche Dienstleistungen bietet Pfalztrafo an?",
+        "answer": "Pfalztrafo bietet unter anderem Ölauffangwannen und Ölproben für Transformatoren an.",
+        "synonyms": [
+            "Welche Services hat Pfalztrafo?", 
+            "Was bietet Pfalztrafo an?", 
+            "Welche Pfalztrafo-Dienstleistungen gibt es?",
+            "Dienstleistungen von Pfalztrafo",
+            "Welche Leistungen bietet Pfalztrafo an?",
+            "Welche Trafo-Dienstleistungen bietet Pfalztrafo an?",
+            "Welche Services hat Pfalztrafo für Trafos?"
+        ]
+    },
+    {
+        "question": "Welche Transformator-Typen gibt es?",
+        "answer": "Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.",
+        "synonyms": [
+            "Welche Arten von Transformatoren gibt es?", 
+            "Transformator-Typen", 
+            "Welche Transformatoren-Typen existieren?",
+            "Unterschiedliche Transformatorarten",
+            "Welche verschiedenen Transformatoren gibt es?",
+            "Welche Trafo-Typen gibt es?",
+            "Arten von Trafos"
+        ]
+    },
+    {
+        "question": "Wie lange hält ein Transformator?",
+        "answer": "Die Lebensdauer eines Transformators kann bei guter Wartung zwischen 20 und 30 Jahren liegen.",
+        "synonyms": [
+            "Lebensdauer eines Transformators", 
+            "Wie lange lebt ein Transformator?", 
+            "Haltbarkeit von Transformatoren",
+            "Wie lange ist ein Transformator nutzbar?",
+            "Lebensspanne eines Transformators",
+            "Lebensdauer eines Trafos",
+            "Wie lange hält ein Trafo?",
+            "Lebensdauer Trafo"
+        ]
+    },
+    {
+        "question": "Was kostet ein Transformator?",
+        "answer": "Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bitte füllen Sie das Kontaktformular auf unserer Webseite aus oder rufen Sie uns direkt an.",
+        "synonyms": [
+            "Preis für Transformator", 
+            "Wie viel kostet ein Trafo?", 
+            "Transformator Kosten", 
+            "Preis eines Trafos", 
+            "Kosten für Trafo"
+        ]
+    },
+    {
+        "question": "Wie lange dauert die Lieferung eines Transformators?",
+        "answer": "Die Lieferzeit hängt vom Typ und der Verfügbarkeit ab. Für genaue Informationen füllen Sie bitte unser Kontaktformular aus oder kontaktieren Sie uns telefonisch.",
+        "synonyms": [
+            "Lieferzeit für Transformator", 
+            "Wann wird ein Trafo geliefert?", 
+            "Wie lange dauert es, einen Transformator zu bekommen?", 
+            "Lieferdauer Trafo",
+            "Wie schnell bekomme ich einen Trafo?"
+        ]
+    },
+    {
+        "question": "Bieten Sie auch gebrauchte Transformatoren an?",
+        "answer": "Für Informationen zu gebrauchten Transformatoren können Sie unser Kontaktformular auf der Webseite ausfüllen oder uns direkt anrufen.",
+        "synonyms": [
+            "Gebrauchte Transformatoren", 
+            "Verkaufen Sie gebrauchte Trafos?", 
+            "Haben Sie gebrauchte Transformatoren?", 
+            "Second-Hand Transformatoren", 
+            "Transformator gebraucht kaufen"
+        ]
+    },
+    {
+        "question": "Können Transformatoren repariert werden?",
+        "answer": "Ja, wir bieten auch Reparaturdienste an. Für Details füllen Sie bitte unser Kontaktformular aus oder kontaktieren Sie uns telefonisch.",
+        "synonyms": [
+            "Transformator reparieren", 
+            "Reparaturservice für Trafo", 
+            "Kann man einen Trafo reparieren?", 
+            "Transformator Wartung und Reparatur", 
+            "Reparieren Sie Trafos?"
+        ]
+    },
+    {
+        "question": "Haben Sie ein Zertifikat für die Transformatoren?",
+        "answer": "Unsere Transformatoren sind zertifiziert nach den aktuellen Normen. Für weitere Details nehmen Sie bitte über unser Kontaktformular oder telefonisch Kontakt auf.",
+        "synonyms": [
+            "Transformator Zertifizierung", 
+            "Zertifikat für Trafos", 
+            "Sind Ihre Transformatoren zertifiziert?", 
+            "Normen für Transformatoren", 
+            "Zertifikate für Trafos"
+        ]
+    },
+    {
+        "question": "Hi",
+        "answer": "Hallo! Wie kann ich Ihnen helfen?",
+        "synonyms": [
+            "Hallo", 
+            "Guten Tag", 
+            "Hey", 
+            "Grüß dich", 
+            "Servus"
+        ]
+    },
+    {
+        "question": "Hallo",
+        "answer": "Willkommen! Wie kann ich behilflich sein?",
+        "synonyms": [
+            "Guten Morgen", 
+            "Guten Abend", 
+            "Guten Tag", 
+            "Hi", 
+            "Hallo, wie geht's?"
+        ]
+    }
+]
