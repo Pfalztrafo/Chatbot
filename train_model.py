@@ -1,11 +1,13 @@
 import json
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, Trainer, TrainingArguments
 from datasets import Dataset
+from utils import MODEL_NAME
+
 
 # Modellname und Tokenizer
-model_name = "google/flan-t5-base"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+
 
 # Daten laden und vorbereiten
 def load_data():

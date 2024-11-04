@@ -56,7 +56,7 @@ Die Projektstruktur ist in mehrere Module und Datenquellen unterteilt:
 
 ## Installation
 
-**Abhängigkeiten installieren**:
+**Bibliotheken installieren**:
 ```plaintext
 pip install torch
 pip install langchain
@@ -167,17 +167,16 @@ Bot: Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bi
 
 
 ## Quellen
-
+- **LLM (Large Language Model)**: Das Projekt verwendet das vortrainierte Modell `google/flan-t5-base`, [Link](https://huggingface.co/google/flan-t5-base/)
 - **LangChain**: Eine Framework zur Entwicklung von Anwendungen mit großen Sprachmodellen. [Link](https://pypi.org/project/langchain/)
 - **Hugging Face Transformers**: Eine Bibliothek für die Arbeit mit vortrainierten Transformer-Modellen. [Link](https://pypi.org/project/transformers/)
 - **FAISS**: Eine Bibliothek für effiziente Ähnlichkeitssuche und Clustering von dichten Vektoren. [Link](https://python.langchain.com/docs/integrations/vectorstores/faiss/)
 - **FuzzyWuzzy**: Ein Python-Paket für Fuzzy-String-Matching. [Link](https://pypi.org/project/fuzzywuzzy/)
 - **LangChain Tutorial**: Ein Crash-Kurs zur Verwendung von LangChain in Python. [Link](https://www.python-engineer.com/posts/langchain-crash-course/)
 - **FAISS und Sentence-Transformers in 5 Minuten**: Ein Leitfaden zur schnellen Implementierung von FAISS mit Sentence-Transformers. [Link](https://www.stephendiehl.com/posts/faiss/)
-- **LangChain FAISS Cosine Similarity**: Ein Artikel über die Verwendung von FAISS für Cosine Similarity in LangChain. [Link](https://www.restack.io/docs/langchain-knowledge-faiss-cosine-similarity-cat-ai)
 - **LangChain FAISS Dokumentation**: Die offizielle Dokumentation zur Integration von FAISS in LangChain. [Link](https://python.langchain.com/docs/integrations/vectorstores/faiss/)
 - **LangChain C Transformers**: Informationen zur Verwendung der C Transformers-Bibliothek innerhalb von LangChain. [Link](https://python.langchain.com/docs/integrations/providers/ctransformers/)
-- **LangChain Chatbot mit AMD GPU**: Ein Leitfaden zur Implementierung eines Frage-Antwort-Chatbots mit LangChain auf einer AMD GPU. [Link](https://rocm.blogs.amd.com/artificial-intelligence/langchain-chatbot/README.html)
+
 
 
 
