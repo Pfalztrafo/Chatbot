@@ -11,9 +11,8 @@ Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen 
 - [Verwendung](#verwendung)
 - [Training](#training)
 - [Versionshistorie](#versionshistorie)
-- [Lizenz](#lizenz)
 - [Quellen](#quellen)
-- [Haftungsausschluss](#haftungsausschluss)
+- [Lizenz und Haftungsausschluss](#lizenz-und-haftungsausschluss)
 
 
 ## Übersicht
@@ -166,14 +165,28 @@ Bot: Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bi
   - **Retrieval-Augmented Generation (RAG)** für dynamische Antworten
 
 
-## Lizenz
-Dieses Projekt unterliegt der MIT-Lizenz. Siehe die LICENSE-Datei für weitere Details.
 
 ## Quellen
-Hugging Face Transformers: Dokumentation und Nutzung des transformers-Frameworks.
-LangChain: Framework für dialogbasierte Systeme und Retrieval-Augmented Generation (RAG).
-FAISS by Facebook AI Research: Bibliothek für effiziente Ähnlichkeitssuche mit Vektor-Embedding.
-FuzzyWuzzy: Bibliothek für Fuzzy Matching in Python.
 
-## Haftungsausschluss
-Dieses Projekt ist ein Forschungs- und Entwicklungsprojekt. Es wird ohne jegliche Garantie bereitgestellt. Alle Informationen sind nach bestem Wissen erstellt, und es wird keine Haftung für den Einsatz oder die Ergebnisse übernommen.
+- **LangChain**: Eine Framework zur Entwicklung von Anwendungen mit großen Sprachmodellen. [Link](https://pypi.org/project/langchain/)
+- **Hugging Face Transformers**: Eine Bibliothek für die Arbeit mit vortrainierten Transformer-Modellen. [Link](https://pypi.org/project/transformers/)
+- **FAISS**: Eine Bibliothek für effiziente Ähnlichkeitssuche und Clustering von dichten Vektoren. [Link](https://python.langchain.com/docs/integrations/vectorstores/faiss/)
+- **FuzzyWuzzy**: Ein Python-Paket für Fuzzy-String-Matching. [Link](https://pypi.org/project/fuzzywuzzy/)
+- **LangChain Tutorial**: Ein Crash-Kurs zur Verwendung von LangChain in Python. [Link](https://www.python-engineer.com/posts/langchain-crash-course/)
+- **FAISS und Sentence-Transformers in 5 Minuten**: Ein Leitfaden zur schnellen Implementierung von FAISS mit Sentence-Transformers. [Link](https://www.stephendiehl.com/posts/faiss/)
+- **LangChain FAISS Cosine Similarity**: Ein Artikel über die Verwendung von FAISS für Cosine Similarity in LangChain. [Link](https://www.restack.io/docs/langchain-knowledge-faiss-cosine-similarity-cat-ai)
+- **LangChain FAISS Dokumentation**: Die offizielle Dokumentation zur Integration von FAISS in LangChain. [Link](https://python.langchain.com/docs/integrations/vectorstores/faiss/)
+- **LangChain C Transformers**: Informationen zur Verwendung der C Transformers-Bibliothek innerhalb von LangChain. [Link](https://python.langchain.com/docs/integrations/providers/ctransformers/)
+- **LangChain Chatbot mit AMD GPU**: Ein Leitfaden zur Implementierung eines Frage-Antwort-Chatbots mit LangChain auf einer AMD GPU. [Link](https://rocm.blogs.amd.com/artificial-intelligence/langchain-chatbot/README.html)
+
+
+
+## Lizenz und Haftungsausschluss
+
+Copyright (c) 2024 Anonym
+
+Dieses Projekt ist ausschließlich für die Überprüfung durch die Hochschule Kaiserslautern und zur Einsicht durch die zugewiesenen Prüfer gedacht. Die Nutzung, Kopie, Veränderung und Verbreitung ist nur mit ausdrücklicher Genehmigung des Autors gestattet. Jegliche kommerzielle Nutzung oder Verbreitung ohne Genehmigung ist untersagt.
+
+Die Software wird "wie besehen" bereitgestellt, ohne jegliche ausdrückliche oder stillschweigende Garantie, einschließlich und ohne Einschränkung der Garantien zur Gebrauchstauglichkeit, Eignung für einen bestimmten Zweck und Nichtverletzung. Der Autor übernimmt keine Haftung für direkte, indirekte, zufällige oder Folgeschäden, die aus der Nutzung oder Unfähigkeit zur Nutzung der Software entstehen.
+
+**Hinweis**: Dieses Projekt ist ein Forschungs- und Entwicklungsprojekt und nicht für die öffentliche Nutzung oder den produktiven Einsatz bestimmt. Alle Informationen wurden nach bestem Wissen erstellt, aber es wird keine Garantie für die Vollständigkeit, Richtigkeit oder Aktualität der bereitgestellten Informationen übernommen.
