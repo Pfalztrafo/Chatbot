@@ -132,22 +132,28 @@ Der Pfad `fine_tuned_model` wird erstellt und speichert das trainierte Modell.
 - **Speicherplatz**: 4 GB
 - **Betriebssystem**: Windows 11
 
-Chat:
 <details>
 <summary>Beispiel-Chat</summary>
+
 ```plaintext
-Du: hi
+Du: hi  
 Bot: Hallo! Wie kann ich Ihnen helfen?
-Du: hiii
+
+Du: hiii  
 Bot: Ich habe leider keine Antwort auf diese Frage.
-Du: hii
+
+Du: hii  
 Bot: Hallo! Wie kann ich Ihnen helfen?
-Du: Lieferzeit Trafo
+
+Du: Lieferzeit Trafo  
 Bot: Ich habe leider keine Antwort auf diese Frage.
-Du: Kosten für Trafo
+
+Du: Kosten für Trafo  
 Bot: Ich habe leider keine Antwort auf diese Frage.
-Du: Was kostet ein Transformator?
+
+Du: Was kostet ein Transformator?  
 Bot: Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bitte füllen Sie das Kontaktformular auf unserer Webseite aus oder rufen Sie uns direkt an.
+
 </details> ```
 
 
