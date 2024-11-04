@@ -135,6 +135,7 @@ Der Pfad `fine_tuned_model` wird erstellt und speichert das trainierte Modell.
 <details>
 <summary>Beispiel-Chat</summary>
 ```plaintext
+
 Du: hi  
 Bot: Hallo! Wie kann ich Ihnen helfen?
 
