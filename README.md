@@ -136,40 +136,40 @@ Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und k
 <details>
 <summary>Beispiel-Chat-05.11.2024</summary>
 
-Du: heeyy
+Du: heeyy   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 
-Du: hiii
+Du: hiii   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 
-Du: hii
+Du: hii   
 Bot: Hallo! Wie kann ich Ihnen helfen?
 
-Du: Was für Arten von Trafos habt ihr?
+Du: Was für Arten von Trafos habt ihr?   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 
-Du: Was bietet ihr an
+Du: Was bietet ihr an   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 
-Du: Arten von Trafos
+Du: Arten von Trafos   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 
-Du: Welche Transformator-Typen gibt es?
+Du: Welche Transformator-Typen gibt es?   
 Bot: Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.
 
-Du: Transformator-Typen
+Du: Transformator-Typen   
 Bot: Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.
 
-Du: Ülprobe
+Du: Ülprobe   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 
-Du: Lebensdauer eines Transformators
+Du: Lebensdauer eines Transformators   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 
-Du: Leistungstransformator
+Du: Leistungstransformator   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 
-Du: Zertifikate für Trafos
+Du: Zertifikate für Trafos   
 Bot: Ich habe leider keine Antwort auf diese Frage.
 </details> ```
 
