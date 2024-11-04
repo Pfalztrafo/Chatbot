@@ -119,12 +119,38 @@ Der Pfad `fine_tuned_model` wird erstellt und speichert das trainierte Modell.
 
 3. Trainingseinstellungen wie num_train_epochs und per_device_train_batch_size können in train_model.py angepasst werden.
 
+### Trainingskonfiguration
+Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und können je nach Hardware und gewünschtem Ergebnis angepasst werden:
+
+- **output_dir**: Der Speicherort für das trainierte Modell und die Checkpoints.  
+  Beispiel: `output_dir="./fine_tuned_model"` legt einen Ordner an, der während des Trainings automatisch mit Modellen und Checkpoints befüllt wird.
+
+- **eval_strategy**: Legt fest, ob und wie oft eine Evaluation während des Trainings erfolgt.  
+  Wenn `eval_strategy="no"` gesetzt ist, erfolgt keine Evaluation, was Speicher spart und das Training beschleunigt. Alternativ kann `eval_strategy="steps"` oder `"epoch"` gewählt werden, um nach jeder bestimmten Schrittanzahl bzw. Epoche eine Evaluation durchzuführen. Regelmäßige Evaluationen erhöhen jedoch die GPU-Auslastung und Trainingszeit.
+
+- **learning_rate**: Die Lernrate steuert die Größe der Schritte, die das Modell bei jedem Update macht.  
+  Typische Werte liegen zwischen `1e-5` und `5e-5`. Eine kleinere Lernrate (z. B. `2e-5`) ist für präzisere Anpassungen geeignet, kann jedoch das Training verlangsamen und erfordert möglicherweise mehr Epochen. Eine höhere Lernrate führt zu schnellerem Training, birgt jedoch das Risiko von Überanpassung (Overfitting), da größere Updates vorgenommen werden.
+
+- **per_device_train_batch_size**: Die Anzahl der Trainingsbeispiele pro Batch, die pro Gerät verarbeitet wird.  
+  Kleinere Werte (z. B. `4`) reduzieren den GPU-Speicherbedarf und sind für GPUs mit weniger VRAM geeignet, während größere Werte (z. B. `16` oder `32`) bei leistungsstarken GPUs das Training beschleunigen können. Als Faustregel gilt: Verdoppelt sich die Batch-Größe, verdoppelt sich der Speicherbedarf der GPU. Zu große Batches können jedoch zu Überanpassung führen.
+
+- **num_train_epochs**: Anzahl der Epochen, die das Modell durchläuft, um die Daten zu lernen.  
+  Für kleinere Datensätze reichen oft 1-3 Epochen, während umfangreichere Datensätze mehr Epochen erfordern können. Mehr Epochen verbessern die Genauigkeit, können jedoch die Trainingszeit und den GPU-Speicherbedarf erhöhen, da das Modell mehrfach auf die Daten zugreift.
+
+- **weight_decay**: Ein Parameter zur Kontrolle der Modellkomplexität und zur Reduzierung von Überanpassung.  
+  Typische Werte liegen zwischen `0.01` und `0.1`. Ein kleinerer Wert, wie `0.01`, bewirkt einen minimalen Gewichtszerfall, der die Modellparameter leicht reguliert, während höhere Werte die Regularisierung verstärken und Overfitting weiter eindämmen können.
+
+
+
 
 ### Ergebnisse
 1. Ergebnis: 04.11.2024
-- **Trainingszeit**: Etwa 15 Minuten pro Epoche mit den folgenden Parametern:
-    - num_train_epochs=3
-    - per_device_train_batch_size=4
+- **Trainingszeit**: 15 Minuten, Wiederholung: 2
+    eval_strategy="no",                # Evaluation deaktiviert, nur Training
+    learning_rate=2e-5,                # Feinabstimmungs-Lernrate
+    per_device_train_batch_size=4,     # Batch-Größe pro Gerät (RTX 3050 6GB -> 4)
+    num_train_epochs=3,                # Anzahl der Epochen für besseres Lernen
+    weight_decay=0.01                  # Gewichtszerfall zur Vermeidung von Overfitting
 - **Prozessor**: Intel Core i5-13500H
 - **RAM**: 16 GB
 - **Grafikkarte**: NVIDIA GeForce RTX 3050 (6 GB GDDR6)
@@ -160,7 +186,7 @@ Bot: Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bi
 ### v1.0.0 - 04.11.2024
 - **Erstveröffentlichung** mit Hauptfunktionen:
   - Erstellung des Projektstrukturs
-  - Erstellung der JSON Dateien (wenige FAQ, Dialoge und Regeln)
+  - Erstellung der JSON Dateien (FAQ, Dialoge und Regeln)
   - **Synonym- und Fuzzy-Matching** für ähnliche Anfragen
   - **Retrieval-Augmented Generation (RAG)** für dynamische Antworten
 
@@ -169,7 +195,7 @@ Bot: Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bi
 ## Quellen
 - **LLM (Large Language Model)**: Das Projekt verwendet das vortrainierte Modell `google/flan-t5-base`, [Link](https://huggingface.co/google/flan-t5-base/)
 - **LangChain**: Eine Framework zur Entwicklung von Anwendungen mit großen Sprachmodellen. [Link](https://pypi.org/project/langchain/)
-- **Hugging Face Transformers**: Eine Bibliothek für die Arbeit mit vortrainierten Transformer-Modellen. [Link](https://pypi.org/project/transformers/)
+- **Hugging Face Transformers**: Eine Bibliothek für die Arbeit mit vortrainierten Transformer-Modellen. [Link](https://pypi.org/project/transformers/) [Link](https://huggingface.co/docs/transformers/main_classes/trainer)
 - **FAISS**: Eine Bibliothek für effiziente Ähnlichkeitssuche und Clustering von dichten Vektoren. [Link](https://python.langchain.com/docs/integrations/vectorstores/faiss/)
 - **FuzzyWuzzy**: Ein Python-Paket für Fuzzy-String-Matching. [Link](https://pypi.org/project/fuzzywuzzy/)
 - **LangChain Tutorial**: Ein Crash-Kurs zur Verwendung von LangChain in Python. [Link](https://www.python-engineer.com/posts/langchain-crash-course/)
