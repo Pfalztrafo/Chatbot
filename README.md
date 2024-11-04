@@ -1,7 +1,6 @@
+# Support-Chatbot im Transformatorensegment
 
-# Transformer Support Chatbot
-
-Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen Fragen zu Transformatoren zu unterstützen. Er bietet Informationen zu Transformator-Typen, Wartungsdiensten, Pfalztrafo-spezifischen Services und stellt Empfehlungen basierend auf spezifischen Kundenanfragen zur Verfügung.
+Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen Fragen zu Transformatoren zu unterstützen. Er bietet Informationen zu Transformator-Typen, Services vom Unternehmen Pfalztrafo und stellt Empfehlungen basierend auf spezifischen Kundenanfragen zur Verfügung.
 
 ## Inhaltsverzeichnis
 - [Übersicht](#übersicht)
@@ -13,9 +12,10 @@ Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen 
 - [Training des Modells](#training-des-modells)
 - [Anpassungen und Training](#anpassungen-und-training)
 - [Lizenz](#lizenz)
+- [Haftungsausschluss](#haftungsausschluss)
 
 ## Übersicht
-Der Transformer Support Chatbot basiert auf einem feinabgestimmten Sprachmodell (fine-tuned LLM), das auf `google/flan-t5-base` basiert. Mithilfe von Retrieval-Augmented Generation (RAG) kann der Bot dynamisch auf Kundenfragen reagieren und gibt dabei gezielte Informationen zu Transformatoren und Dienstleistungen von Pfalztrafo. 
+Der Transformer Support Chatbot basiert auf einem feinabgestimmten Sprachmodell (fine-tuned LLM), das auf `google/flan-t5-base` basiert. Mithilfe von Retrieval-Augmented Generation (RAG) kann der Bot dynamisch auf Kundenfragen reagieren und gibt dabei gezielte Informationen zu Transformatoren und Dienstleistungen von Pfalztrafo.
 
 ## Features
 - **FAQ-Antworten**: Beantwortet häufig gestellte Fragen zu Transformatoren und Pfalztrafo-Dienstleistungen.
@@ -25,6 +25,7 @@ Der Transformer Support Chatbot basiert auf einem feinabgestimmten Sprachmodell 
 - **Mehrsprachige Unterstützung**: Basierend auf `google/flan-t5-base` unterstützt das Modell mehrere Sprachen.
 
 ## Verwendete Technologien
+- **Visual Studio Code**: Entwicklungsumgebung für die Implementierung.
 - **Python 3.12**: Programmiersprache für die Implementierung.
 - **Hugging Face Transformers**: Für die Modellarchitektur und das Sprachverständnis.
 - **LangChain**: Zum Aufbau und zur Verwaltung der Dialogstruktur und RAG-Ketten.
@@ -52,20 +53,21 @@ Die Projektstruktur ist in mehrere Module und Datenquellen unterteilt:
 ├── fine_tuned_model/         # Verzeichnis für das trainierte Modell
 └── README.md                 # Diese Dokumentation
 
----
+## Installation
 
-## Über den Autor
+1. **Abhängigkeiten installieren**:
+```plaintext
+pip install torch
+pip install langchain
+pip install langchain langchain-community
+pip install langchain-huggingface
+pip install -U langchain
+pip install datasets
+pip install transformers[torch]
+pip install faiss-gpu
+pip install faiss-cpu
+pip install fuzzywuzzy[speedup] 
 
-Dieses Projekt wurde von [Dein Name / Dein Team] im Rahmen eines Digitalisierungsprojekts bei Pfalztrafo entwickelt. Ziel des Projekts ist es, den Kundenservice durch einen intelligenten Chatbot zu erweitern und spezifische Informationen zu Transformatoren und verwandten Dienstleistungen bereitzustellen.
 
-Für Fragen und Anmerkungen zum Projekt:
-- **Kontakt**: [Deine E-Mail-Adresse]
-- **Website**: [Pfalztrafo-Website](https://www.pfalztrafo.de/)
-- **LinkedIn / GitHub**: [Dein LinkedIn/GitHub-Profil-URL]
 
----
-
-### Haftungsausschluss
-Dieses Projekt ist ein Forschungs- und Entwicklungsprojekt. Es wird ohne jegliche Garantie bereitgestellt. Alle Informationen sind nach bestem Wissen erstellt, und es wird keine Haftung für den Einsatz oder die Ergebnisse übernommen.
-
----
+Mit diesen Anweisungen ab "Installation" enthält die `README.md` alle notwendigen Schritte, um das Projekt einzurichten, zu verwenden und zu erweitern.
