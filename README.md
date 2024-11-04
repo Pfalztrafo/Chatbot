@@ -134,7 +134,6 @@ Der Pfad `fine_tuned_model` wird erstellt und speichert das trainierte Modell.
 
 <details>
 <summary>Beispiel-Chat</summary>
-
 ```plaintext
 Du: hi  
 Bot: Hallo! Wie kann ich Ihnen helfen?
@@ -153,7 +152,6 @@ Bot: Ich habe leider keine Antwort auf diese Frage.
 
 Du: Was kostet ein Transformator?  
 Bot: Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bitte füllen Sie das Kontaktformular auf unserer Webseite aus oder rufen Sie uns direkt an.
-
 </details> ```
 
 
