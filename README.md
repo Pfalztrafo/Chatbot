@@ -1,4 +1,4 @@
-# Support-Chatbot im Transformatorensegment
+# Support-Chatbots zur Kaufberatung für Transformatoren
 
 Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen Fragen zu Transformatoren zu unterstützen. Er bietet Informationen zu Transformator-Typen, Services vom Unternehmen Pfalztrafo und stellt Empfehlungen basierend auf spezifischen Kundenanfragen zur Verfügung.
 
@@ -8,15 +8,15 @@ Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen 
 - [Verwendete Technologien](#verwendete-technologien)
 - [Projektstruktur](#projektstruktur)
 - [Installation](#installation)
-- [Verwendung](#verwendung)
 - [Training](#training)
+- [Verwendung](#verwendung)
 - [Versionshistorie](#versionshistorie)
 - [Quellen](#quellen)
 - [Lizenz und Haftungsausschluss](#lizenz-und-haftungsausschluss)
 
 
 ## Übersicht
-Der Support-Chatbot im Transformatorensegment basiert auf einem feinabgestimmten Sprachmodell (fine-tuned LLM), das auf `google/flan-t5-base` basiert. Mithilfe von Retrieval-Augmented Generation (RAG) kann der Bot dynamisch auf Kundenfragen reagieren und gibt dabei gezielte Informationen zu Transformatoren und Dienstleistungen von Pfalztrafo.
+Der Support-Chatbot zur Kaufberatung für Transformatoren basiert auf einem feinabgestimmten Sprachmodell (fine-tuned LLM), das auf `google/flan-t5-base` basiert. Mithilfe von Retrieval-Augmented Generation (RAG) kann der Bot dynamisch auf Kundenfragen reagieren und gibt dabei gezielte Informationen zu Transformatoren und Dienstleistungen von Pfalztrafo.
 
 ## Features
 - **FAQ-Antworten**: Beantwortet häufig gestellte Fragen zu Transformatoren und Pfalztrafo-Dienstleistungen.
@@ -70,31 +70,6 @@ pip install faiss-cpu
 pip install fuzzywuzzy[speedup]
 ```
 
-## Verwendung
-
-### Mindestanforderungen für die Nutzung
-Um den Chatbot ohne Training zu nutzen, sind die folgenden minimalen Systemanforderungen empfohlen:
-
-- **Prozessor**: Intel Core i3 oder AMD Ryzen 3 (mindestens Dual-Core)
-- **RAM**: 8 GB
-- **Speicherplatz**: Etwa 4 GB für das vortrainierte Modell und die Wissensdatenbanken
-- **Grafikkarte**: Keine dedizierte GPU erforderlich; eine integrierte GPU reicht aus
-- **Betriebssystem**: Windows 10 oder höher, macOS, oder eine Linux-Distribution mit Python 3.8+
-
-Diese Konfiguration ermöglicht eine reibungslose Nutzung des Chatbots für einfache Anfragen in Echtzeit.
-
-1. **Starten des Chatbots**:
-   ```bash
-   python chatbot_main.py
-    ```
-2. **Interaktive Eingabe**:
-Geben Sie Fragen ein, wie z. B.:
-"Welche Transformator-Typen gibt es?"
-"Was kostet ein Transformator?"
-
-3. **Beenden des Chats**:
-Geben Sie `exit` ein, um die Chat-Sitzung zu beenden.
-
 
 ## Training
 ### Mindestanforderungen für das Training
@@ -107,6 +82,12 @@ Das Training des Modells erfordert deutlich höhere Systemressourcen als die Nut
 
 **Hinweis**: Ohne GPU kann das Training auf der CPU durchgeführt werden, allerdings wird es deutlich langsamer sein und mehrere Stunden für einfache Datensätze und kleinere Trainingsläufe dauern.
 
+### Eigene Hardware-Spezifikationen:
+- **Prozessor**: Intel Core i5-13500H
+- **RAM**: 16 GB
+- **Grafikkarte**: NVIDIA GeForce RTX 3050 (6 GB GDDR6)
+- **Speicherplatz**: 4 GB
+- **Betriebssystem**: Windows 11
 
 ### Schritte zum Training
 Um das Modell anzupassen oder zu erweitern:
@@ -142,23 +123,67 @@ Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und k
 
 
 
-
 ### Ergebnisse
-1. Ergebnis: 04.11.2024
-- **Trainingszeit**: 15 Minuten, Wiederholung: 2
-    eval_strategy="no",                # Evaluation deaktiviert, nur Training
-    learning_rate=2e-5,                # Feinabstimmungs-Lernrate
-    per_device_train_batch_size=4,     # Batch-Größe pro Gerät (RTX 3050 6GB -> 4)
-    num_train_epochs=3,                # Anzahl der Epochen für besseres Lernen
-    weight_decay=0.01                  # Gewichtszerfall zur Vermeidung von Overfitting
-- **Prozessor**: Intel Core i5-13500H
-- **RAM**: 16 GB
-- **Grafikkarte**: NVIDIA GeForce RTX 3050 (6 GB GDDR6)
-- **Speicherplatz**: 4 GB
-- **Betriebssystem**: Windows 11
+#### Ergebnis v1.0.0 vom 04.11.2024 (Eigenes Laptop)
+- **Trainingseinheit**: 36 Epochen = 2 min
+- **Parameter-Konfiguration**:
+  - `eval_strategy="no"`: Evaluation deaktiviert, nur Training
+  - `learning_rate=2e-5`: Feinabstimmungs-Lernrate für präzise Updates
+  - `per_device_train_batch_size=4`: Batch-Größe pro Gerät (RTX 3050 mit 6 GB VRAM)
+  - `num_train_epochs=3`: Anzahl der Epochen für bessere Modellanpassung
+  - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
 
 <details>
-<summary>Beispiel-Chat</summary>
+<summary>Beispiel-Chat-05.11.2024</summary>
+
+Du: heeyy
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: hiii
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: hii
+Bot: Hallo! Wie kann ich Ihnen helfen?
+
+Du: Was für Arten von Trafos habt ihr?
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: Was bietet ihr an
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: Arten von Trafos
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: Welche Transformator-Typen gibt es?
+Bot: Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.
+
+Du: Transformator-Typen
+Bot: Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.
+
+Du: Ülprobe
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: Lebensdauer eines Transformators
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: Leistungstransformator
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: Zertifikate für Trafos
+Bot: Ich habe leider keine Antwort auf diese Frage.
+</details> ```
+
+#### Ergebnis v1.0.0 vom 04.11.2024 (Eigenes Laptop)
+- **Trainingseinheit**: 6 Epochen = 20 Sekunden
+- **Parameter-Konfiguration**:
+  - `eval_strategy="no"`: Evaluation deaktiviert, nur Training
+  - `learning_rate=2e-5`: Feinabstimmungs-Lernrate für präzise Updates
+  - `per_device_train_batch_size=4`: Batch-Größe pro Gerät (RTX 3050 mit 6 GB VRAM)
+  - `num_train_epochs=3`: Anzahl der Epochen für bessere Modellanpassung
+  - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
+
+<details>
+<summary>Beispiel-Chat-04.11.2024</summary>
 
 Du: hi  
 Bot: Hallo! Wie kann ich Ihnen helfen?
@@ -178,6 +203,32 @@ Bot: Ich habe leider keine Antwort auf diese Frage.
 Du: Was kostet ein Transformator?  
 Bot: Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bitte füllen Sie das Kontaktformular auf unserer Webseite aus oder rufen Sie uns direkt an.
 </details> ```
+
+
+## Verwendung
+
+### Mindestanforderungen für die Nutzung
+Um den Chatbot ohne Training zu nutzen, sind die folgenden minimalen Systemanforderungen empfohlen:
+
+- **Prozessor**: Intel Core i3 oder AMD Ryzen 3 (mindestens Dual-Core)
+- **RAM**: 8 GB
+- **Speicherplatz**: Etwa 4 GB für das vortrainierte Modell und die Wissensdatenbanken
+- **Grafikkarte**: Keine dedizierte GPU erforderlich; eine integrierte GPU reicht aus
+- **Betriebssystem**: Windows 10 oder höher, macOS, oder eine Linux-Distribution mit Python 3.8+
+
+Diese Konfiguration ermöglicht eine reibungslose Nutzung des Chatbots für einfache Anfragen in Echtzeit.
+
+1. **Starten des Chatbots**:
+   ```bash
+   python chatbot_main.py
+    ```
+2. **Interaktive Eingabe**:
+Geben Sie Fragen ein, wie z. B.:
+"Welche Transformator-Typen gibt es?"
+"Was kostet ein Transformator?"
+
+3. **Beenden des Chats**:
+Geben Sie `exit` ein, um die Chat-Sitzung zu beenden.
 
 
 
