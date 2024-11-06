@@ -4,10 +4,39 @@ from datasets import Dataset
 from utils import MODEL_NAME
 
 
+# Fortschritt-Datei laden oder erstellen
+progress_file = "training_progress.json"
+
+def load_progress():
+    try:
+        with open(progress_file, "r") as file:
+            progress = json.load(file)
+    except FileNotFoundError:
+        progress = {"total_epochs": 0}
+    return progress
+
+def save_progress(progress):
+    with open(progress_file, "w") as file:
+        json.dump(progress, file)
+
+# Bisherige Fortschritte laden
+progress = load_progress()
+
+# Anzahl der Epochen für diesen Lauf
+num_train_epochs = 1
+total_epochs = progress["total_epochs"] + num_train_epochs
+
+# Fortschritte speichern
+progress["total_epochs"] = total_epochs
+save_progress(progress)
+
+# Fortschrittsmeldung
+print(f"Gesamte trainierte Epochen über alle Läufe: {progress['total_epochs']}")
+
+
 # Modellname und Tokenizer
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-
 
 # Daten laden und vorbereiten
 def load_data():
@@ -31,7 +60,7 @@ def load_data():
         for item in dialogues:
             data.append({"input": item["question"], "output": item["answer"]})
 
-    # Empfehlungen (falls vorhanden)
+    # Empfehlungen
     with open("data/rules.json", "r", encoding="utf-8") as file:
         rules = json.load(file)
         for rule in rules:
@@ -65,7 +94,7 @@ training_args = TrainingArguments(
     output_dir="./fine_tuned_model",   # Speicherort des Modells
     eval_strategy="no",                # Evaluation deaktiviert, nur Training
     learning_rate=2e-5,                # Feinabstimmungs-Lernrate
-    per_device_train_batch_size=3,     # Batch-Größe pro Gerät (RTX 3050 6GB -> 4)
+    per_device_train_batch_size=1,     # Batch-Größe pro Gerät (RTX 3050 6GB -> 4)
     num_train_epochs=1,                # Anzahl der Epochen für besseres Lernen
     weight_decay=0.01                  # Gewichtszerfall zur Vermeidung von Overfitting
 )
