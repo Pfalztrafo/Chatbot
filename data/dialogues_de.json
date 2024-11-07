@@ -1,0 +1,413 @@
+[
+    {
+        "question": "Hi",
+        "answer": "Hallo! Wie kann ich Ihnen helfen?",
+        "category": "Allgemein",
+        "synonyms": ["Hallo", "Guten Tag", "Hey", "Grüß dich", "Servus"]
+    },
+    {
+        "question": "Hallo",
+        "answer": "Willkommen! Wie kann ich behilflich sein?",
+        "category": "Allgemein",
+        "synonyms": ["Guten Morgen", "Guten Abend", "Guten Tag", "Hi", "Hallo, wie geht's?"]
+    },
+    {
+        "question": "Wie geht es dir?",
+        "answer": "Danke der Nachfrage! Mir geht es gut. Wie kann ich Ihnen helfen?",
+        "category": "Allgemein",
+        "synonyms": ["Wie geht's?", "Alles klar?", "Wie läuft's?", "Wie geht es Ihnen?"]
+    },
+    {
+        "question": "Tschüss",
+        "answer": "Auf Wiedersehen! Ich freue mich, Ihnen bald wieder helfen zu dürfen.",
+        "category": "Allgemein",
+        "synonyms": ["Auf Wiedersehen", "Bis bald", "Ciao", "Mach's gut", "Servus"]
+    },
+    {
+        "question": "Danke",
+        "answer": "Gern geschehen! Falls Sie noch weitere Fragen haben, stehe ich zur Verfügung.",
+        "category": "Allgemein",
+        "synonyms": ["Vielen Dank", "Dankeschön", "Danke dir", "Ich danke Ihnen"]
+    },
+    {
+        "question": "Wer bist du?",
+        "answer": "Ich bin der digitale Assistent von Pfalztrafo und helfe Ihnen gerne mit Informationen rund um Transformatoren.",
+        "category": "Allgemein",
+        "synonyms": ["Was bist du?", "Bist du ein Mensch?", "Wer bist du?", "Was machst du?"]
+    },
+    {
+        "question": "Was kannst du?",
+        "answer": "Ich kann Ihnen Fragen zu Transformatoren, unseren Dienstleistungen und allgemeinen Informationen beantworten.",
+        "category": "Allgemein",
+        "synonyms": ["Wobei kannst du helfen?", "Was ist deine Aufgabe?", "Kannst du mir helfen?", "Was sind deine Fähigkeiten?"]
+    },
+    {
+        "question": "Wie funktioniert das?",
+        "answer": "Ich analysiere Ihre Fragen und antworte auf Basis der Informationen, die ich zur Verfügung habe.",
+        "category": "Allgemein",
+        "synonyms": ["Wie funktioniert das System?", "Wie arbeitest du?", "Wie machst du das?", "Wie funktioniert es?"]
+    },
+    {
+        "question": "Gibt es noch etwas, das ich wissen sollte?",
+        "answer": "Falls Sie spezifische Fragen zu unseren Produkten oder Dienstleistungen haben, stehe ich Ihnen zur Verfügung.",
+        "category": "Allgemein",
+        "synonyms": ["Noch etwas zu wissen?", "Sonst noch was?", "Was sollte ich noch wissen?"]
+    },
+    {
+        "question": "Kann ich mit einem Menschen sprechen?",
+        "answer": "Falls ich Ihre Frage nicht beantworten kann, empfehle ich, unser Team direkt zu kontaktieren. Wir helfen Ihnen gerne weiter.",
+        "category": "Allgemein",
+        "synonyms": ["Mit einem Mitarbeiter sprechen?", "Einen Menschen sprechen", "Kann ich jemanden anrufen?"]
+    },
+    {
+        "question": "Bis später",
+        "answer": "Bis später! Ich freue mich, Ihnen bald wieder helfen zu dürfen.",
+        "category": "Allgemein",
+        "synonyms": ["Bis bald", "Man sieht sich", "Bis dann", "Bis zum nächsten Mal"]
+    },
+    {
+        "question": "Ich brauche Hilfe",
+        "answer": "Natürlich! Lassen Sie mich wissen, wie ich Ihnen helfen kann.",
+        "category": "Allgemein",
+        "synonyms": ["Hilfe bitte", "Kannst du mir helfen?", "Ich brauche Unterstützung", "Hilfe"]
+    },
+
+
+
+    {
+        "question": "Welche Dienstleistungen bietet Pfalztrafo an?",
+        "answer": "Pfalztrafo bietet unter anderem Ölauffangwannen und Ölproben für Transformatoren an.",
+        "category": "Service",
+        "synonyms": [
+            "Welche Services hat Pfalztrafo?", 
+            "Was bietet Pfalztrafo an?", 
+            "Welche Pfalztrafo-Dienstleistungen gibt es?",
+            "Dienstleistungen von Pfalztrafo",
+            "Welche Leistungen bietet Pfalztrafo an?",
+            "Welche Trafo-Dienstleistungen bietet Pfalztrafo an?",
+            "Welche Services hat Pfalztrafo für Trafos?",
+            "Was bietet ihr an?"
+        ]
+    },
+    {
+        "question": "Welche Transformator-Typen gibt es?",
+        "answer": "Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.",
+        "category": "Technik",
+        "synonyms": [
+            "Welche Arten von Transformatoren gibt es?", 
+            "Transformator-Typen", 
+            "Welche Transformatoren-Typen existieren?",
+            "Unterschiedliche Transformatorarten",
+            "Welche verschiedenen Transformatoren gibt es?",
+            "Welche Trafo-Typen gibt es?",
+            "Arten von Trafos"
+        ]
+    },
+    {
+        "question": "Wie lange hält ein Transformator?",
+        "answer": "Die Lebensdauer eines Transformators kann bei guter Wartung zwischen 20 und 30 Jahren liegen.",
+        "category": "Technik",
+        "synonyms": [
+            "Lebensdauer eines Transformators", 
+            "Wie lange lebt ein Transformator?", 
+            "Haltbarkeit von Transformatoren",
+            "Wie lange ist ein Transformator nutzbar?",
+            "Lebensspanne eines Transformators",
+            "Lebensdauer eines Trafos",
+            "Wie lange hält ein Trafo?",
+            "Lebensdauer Trafo"
+        ]
+    },
+    {
+        "question": "Was kostet ein Transformator?",
+        "answer": "Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bitte füllen Sie das Kontaktformular auf unserer Webseite aus oder rufen Sie uns direkt an.",
+        "category": "Kaufberatung",
+        "synonyms": [
+            "Preis für Transformator", 
+            "Wie viel kostet ein Trafo?", 
+            "Transformator Kosten", 
+            "Preis eines Trafos", 
+            "Kosten für Trafo"
+        ]
+    },
+    {
+        "question": "Wie lange dauert die Lieferung eines Transformators?",
+        "answer": "Die Lieferzeit hängt vom Typ und der Verfügbarkeit ab. Für genaue Informationen füllen Sie bitte unser Kontaktformular aus oder kontaktieren Sie uns telefonisch.",
+        "category": "Kaufberatung",
+        "synonyms": [
+            "Lieferzeit für Transformator", 
+            "Wann wird ein Trafo geliefert?", 
+            "Wie lange dauert es, einen Transformator zu bekommen?", 
+            "Lieferdauer Trafo",
+            "Wie schnell bekomme ich einen Trafo?"
+        ]
+    },
+    {
+        "question": "Bieten Sie auch gebrauchte Transformatoren an?",
+        "answer": "Für Informationen zu gebrauchten Transformatoren können Sie unser Kontaktformular auf der Webseite ausfüllen oder uns direkt anrufen.",
+        "category": "Kaufberatung",
+        "synonyms": [
+            "Gebrauchte Transformatoren", 
+            "Verkaufen Sie gebrauchte Trafos?", 
+            "Haben Sie gebrauchte Transformatoren?", 
+            "Second-Hand Transformatoren", 
+            "Transformator gebraucht kaufen"
+        ]
+    },
+    {
+        "question": "Können Transformatoren repariert werden?",
+        "answer": "Ja, wir bieten auch Reparaturdienste an. Für Details füllen Sie bitte unser Kontaktformular aus oder kontaktieren Sie uns telefonisch.",
+        "category": "Service",
+        "synonyms": [
+            "Transformator reparieren", 
+            "Reparaturservice für Trafo", 
+            "Kann man einen Trafo reparieren?", 
+            "Transformator Wartung und Reparatur", 
+            "Reparieren Sie Trafos?"
+        ]
+    },
+    {
+        "question": "Haben Sie ein Zertifikat für die Transformatoren?",
+        "answer": "Unsere Transformatoren sind zertifiziert nach den aktuellen Normen. Für weitere Details nehmen Sie bitte über unser Kontaktformular oder telefonisch Kontakt auf.",
+        "category": "Technik",
+        "synonyms": [
+            "Transformator Zertifizierung", 
+            "Zertifikat für Trafos", 
+            "Sind Ihre Transformatoren zertifiziert?", 
+            "Normen für Transformatoren", 
+            "Zertifikate für Trafos"
+        ]
+    },
+
+
+    {
+        "question": "Was ist eine Ölauffangwanne?",
+        "answer": "Eine Ölauffangwanne dient zum Auffangen von Transformatoröl, um Umweltschäden zu verhindern.",
+        "category": "Service",
+        "synonyms": ["Ölauffangwanne", "Funktion einer Ölauffangwanne"]
+    },
+    {
+        "question": "Was ist eine Ölprobe?",
+        "answer": "Eine Ölprobe dient der Analyse des Isolieröls, um die Qualität und Lebensdauer des Transformators zu überwachen.",
+        "category": "Service",
+        "synonyms": ["Ölprobe", "Ölprobenanalyse"]
+    },
+    {
+        "question": "Was umfasst der Wartungsdienst?",
+        "answer": "Unser Wartungsdienst umfasst die Inspektion, Reinigung und den Austausch von Verschleißteilen.",
+        "category": "Service",
+        "synonyms": ["Wartungsdienst", "Wartung Trafo"]
+    },
+    {
+        "question": "Was ist eine Ölprobenentnahme und Analyse?",
+        "answer": "Die Ölprobenentnahme und Analyse dient der Überwachung der Transformatorleistung und der Früherkennung von Problemen.",
+        "category": "Service",
+        "synonyms": ["Ölprobenentnahme", "Ölanalyse"]
+    },
+    {
+        "question": "Was bedeutet Isolierölwechsel und Trocknung?",
+        "answer": "Regelmäßiger Austausch und Trocknung des Isolieröls zur Verlängerung der Lebensdauer und Sicherstellung optimaler Isolierung.",
+        "category": "Service",
+        "synonyms": ["Isolierölwechsel", "Trocknung Isolieröl"]
+    },
+    {
+        "question": "Was ist die Abdichtung von Transformatorenteilen?",
+        "answer": "Die Abdichtung von Hoch- und Niederspannungsdurchführungen, Schaugläsern und weiteren Bauteilen dient zur Vermeidung von Leckagen.",
+        "category": "Service",
+        "synonyms": ["Abdichtung Transformator", "Transformatorabdichtung"]
+    },
+    {
+        "question": "Was umfasst die Nachrüstung von Schutz- und Überwachungssystemen?",
+        "answer": "Installation von Buchholzschutzrelais, Temperaturüberwachungen und Luftentfeuchtern zur Erhöhung der Betriebssicherheit.",
+        "category": "Service",
+        "synonyms": ["Nachrüstung Schutzsystem", "Nachrüstung Überwachungssystem"]
+    },
+    {
+        "question": "Was bedeutet Transformator Neulackierung?",
+        "answer": "Neulackierung von Öltransformatoren, um Schutz gegen Korrosion zu bieten und die Lebensdauer des Geräts zu verlängern.",
+        "category": "Service",
+        "synonyms": ["Transformator Neulackierung", "Neulackierung Trafo"]
+    },
+    {
+        "question": "Was beinhaltet die Isolierölkontrollen?",
+        "answer": "Standardprüfungen gemäß DIN EN 60422 für Transformatoren und Schaltgeräte, durchgeführt im hauseigenen Isolieröl-Labor.",
+        "category": "Service",
+        "synonyms": ["Isolierölkontrollen", "Isolierölprüfung"]
+    },
+    {
+        "question": "Was ist die Prüfung und Diagnose?",
+        "answer": "Durchführung von Prüfungen wie Durchschlagsspannung, Wassergehalt und Säuregehalt des Isolieröls zur Qualitätsüberwachung.",
+        "category": "Service",
+        "synonyms": ["Prüfung und Diagnose", "Diagnose Isolieröl"]
+    },
+
+
+    {
+        "question": "Der Kunde möchte einen Transformator kaufen.",
+        "answer": "Bitte weisen Sie den Kunden darauf hin, dass er das Kontaktformular auf der Seite https://www.pfalztrafo.de/kontakt ausfüllen oder anrufen kann.",
+        "category": "Technik",
+        "recommendation": "Transformator kaufen",
+        "synonyms": ["Transformator Kauf", "Trafo kaufen", "Möchte einen Transformator kaufen"]
+    },
+    {
+        "question": "Wie lange hält ein Transformator?",
+        "answer": "Die Lebensdauer eines Transformators kann bei guter Wartung zwischen 20 und 30 Jahren liegen.",
+        "category": "Technik",
+        "recommendation": "Informieren Sie den Kunden über die Lebensdauer eines Transformators.",
+        "synonyms": ["Lebensdauer Transformator", "Wie lange lebt ein Transformator?", "Trafo Lebensdauer"]
+    },
+    {
+        "question": "Welche Wartungsdienste bietet Pfalztrafo an?",
+        "answer": "Unser Wartungsdienst umfasst Inspektion, Reinigung und den Austausch von Verschleißteilen.",
+        "category": "Technik",
+        "recommendation": "Empfehlen Sie den Wartungsdienst von Pfalztrafo.",
+        "synonyms": ["Wartung Transformator", "Trafo Wartungsservice"]
+    },
+    {
+        "question": "Wie funktioniert ein Transformator?",
+        "answer": "Transformatoren arbeiten durch elektromagnetische Induktion, um elektrische Spannung zu erhöhen oder zu verringern.",
+        "category": "Technik",
+        "recommendation": "Erklären Sie die Funktionsweise von Transformatoren.",
+        "synonyms": ["Funktionsweise Transformator", "Wie funktioniert ein Trafo?"]
+    },
+    {
+        "question": "Welche Transformator-Typen gibt es?",
+        "answer": "Es gibt verschiedene Typen wie Leistungstransformatoren, Verteiltransformatoren und Spezialtransformatoren.",
+        "category": "Technik",
+        "recommendation": "Informieren Sie über die verschiedenen Transformator-Typen.",
+        "synonyms": ["Arten von Transformatoren", "Transformatorentypen", "Transformator Typen"]
+    },
+    {
+        "question": "Gießharz- oder Öltransformator?",
+        "answer": "Gießharztransformatoren sind für Innenräume geeignet, während Öltransformatoren häufig im Freien eingesetzt werden.",
+        "category": "Technik",
+        "recommendation": "Erklären Sie den Unterschied zwischen Gießharz- und Öltransformatoren.",
+        "synonyms": ["Gießharz Transformator", "Öltransformator", "Unterschied Gießharz und Öltrafo"]
+    },
+    {
+        "question": "Warum sind Ölproben wichtig?",
+        "answer": "Regelmäßige Ölproben überwachen die Qualität und Lebensdauer des Transformators.",
+        "category": "Technik",
+        "recommendation": "Weisen Sie auf die Wichtigkeit von Ölproben hin.",
+        "synonyms": ["Ölprobe Wichtigkeit", "Ölanalyse", "Trafo Ölproben"]
+    },
+    {
+        "question": "Welche Abdichtungsdienste gibt es?",
+        "answer": "Wir bieten Abdichtungsdienste für Hochspannungs- und Niederspannungsdurchführungen, Schaugläser und andere Komponenten.",
+        "category": "Technik",
+        "recommendation": "Informieren Sie über die Abdichtungsdienste.",
+        "synonyms": ["Abdichtungen Transformator", "Trafo Dichtungen"]
+    },
+    {
+        "question": "Welche Schutzsysteme können nachgerüstet werden?",
+        "answer": "Wir empfehlen die Nachrüstung von Buchholzschutzrelais, Hermetikschutzblöcken und Temperaturüberwachungen.",
+        "category": "Technik",
+        "recommendation": "Empfehlen Sie die Nachrüstung von Schutzsystemen.",
+        "synonyms": ["Nachrüstung Schutzsysteme", "Trafo Schutzsystem"]
+    },
+    {
+        "question": "Welche Möglichkeiten gibt es zur Umrüstung auf berührungssichere Durchführungen?",
+        "answer": "Wir bieten die Umrüstung auf berührungssichere Mittelspannungs-Steckdurchführungen und Niederspannungs-Abdeckhauben an.",
+        "category": "Technik",
+        "recommendation": "Informieren Sie über die Umrüstung auf berührungssichere Durchführungen.",
+        "synonyms": ["Berührungssichere Durchführungen", "Sicherheitsumrüstung Trafo"]
+    },
+        
+
+    {
+        "question": "Wie funktioniert ein Transformator?",
+        "answer": "Transformatoren arbeiten durch elektromagnetische Induktion, um elektrische Spannung zu erhöhen oder zu verringern.",
+        "category": "Technik",
+        "synonyms": ["Funktionsweise Transformator", "Wie arbeitet ein Transformator?", "Trafo Funktion"]
+    },
+    {
+        "question": "Welche Arten von Transformatoren gibt es?",
+        "answer": "Es gibt verschiedene Typen wie Leistungstransformatoren, Verteiltransformatoren und Spezialtransformatoren.",
+        "category": "Technik",
+        "synonyms": ["Transformator Typen", "Transformatorarten", "Unterschiedliche Transformatoren"]
+    },
+    {
+        "question": "Was umfasst die Wartung eines Transformators?",
+        "answer": "Regelmäßige Wartung umfasst die Prüfung von Isolieröl, Überprüfung auf Leckagen und allgemeine Inspektionen.",
+        "category": "Technik",
+        "synonyms": ["Transformator Wartung", "Wartung Trafo", "Inspektion Transformator"]
+    },
+    {
+        "question": "Was ist ein Gießharztransformator?",
+        "answer": "Gießharztransformatoren verwenden ein Epoxidharz zur Isolierung und sind für Innenräume gut geeignet. Sie sind umweltfreundlicher, da sie kein Öl benötigen und bieten eine hohe elektrische Festigkeit.",
+        "category": "Technik",
+        "synonyms": ["Gießharztrafo", "Gießharz Transformator"]
+    },
+    {
+        "question": "Was ist ein Öltransformator?",
+        "answer": "Öltransformatoren verwenden Isolieröl zur Kühlung und Isolierung. Sie sind besonders geeignet für Hochleistungsanwendungen und bieten eine gute Wärmeabfuhr.",
+        "category": "Technik",
+        "synonyms": ["Öltrafo", "Öl Transformator", "Transformator mit Öl"]
+    },
+    {
+        "question": "Was ist der Unterschied zwischen Gießharz- und Öltransformatoren?",
+        "answer": "Gießharztransformatoren sind für Innenräume ideal und benötigen kein Öl, während Öltransformatoren eine bessere Kühlung bieten und für Hochleistungseinsätze verwendet werden.",
+        "category": "Technik",
+        "synonyms": ["Unterschied Gießharz und Öltransformator", "Gießharz vs. Öltrafo"]
+    },
+    {
+        "question": "Wie lange hält ein Transformator?",
+        "answer": "Ein Transformator kann bei regelmäßiger Wartung und korrektem Betrieb eine Lebensdauer von 20 bis 30 Jahren erreichen.",
+        "category": "Technik",
+        "synonyms": ["Lebensdauer Trafo", "Haltbarkeit Transformator"]
+    },
+    {
+        "question": "Was ist ein Leistungstransformator?",
+        "answer": "Leistungstransformatoren sind für hohe Spannungen und Ströme ausgelegt und werden hauptsächlich in Übertragungsnetzen eingesetzt.",
+        "category": "Technik",
+        "synonyms": ["Leistungstrafo", "Transformator für hohe Spannungen"]
+    },
+    {
+        "question": "Was ist ein Verteiltransformator?",
+        "answer": "Verteiltransformatoren sind für niedrigere Spannungen geeignet und werden oft in Verteilnetzen genutzt, um elektrische Energie in Haushalte und Betriebe zu bringen.",
+        "category": "Technik",
+        "synonyms": ["Verteiltrafo", "Niederspannungstrafo"]
+    },
+    {
+        "question": "Was ist Isolieröl im Transformator?",
+        "answer": "Isolieröl dient zur elektrischen Isolierung und zur Kühlung. Es wird regelmäßig geprüft, um die Sicherheit und Effizienz des Transformators sicherzustellen.",
+        "category": "Technik",
+        "synonyms": ["Transformator Isolieröl", "Öl im Transformator"]
+    },
+    {
+        "question": "Was bedeutet Transformatorleistung?",
+        "answer": "Die Leistung eines Transformators wird in kVA (Kilovolt-Ampere) angegeben und gibt an, wie viel elektrische Energie er verarbeiten kann.",
+        "category": "Technik",
+        "synonyms": ["Leistung Trafo", "Trafo kVA"]
+    },
+    {
+        "question": "Was sind Transformatorverluste?",
+        "answer": "Verluste in Transformatoren entstehen durch Wärmeentwicklung im Kupfer (Wicklungsverluste) und durch Ummagnetisierungsverluste im Eisenkern.",
+        "category": "Technik",
+        "synonyms": ["Verluste Trafo", "Energieverluste Transformator"]
+    },
+    {
+        "question": "Wie wird ein Transformator installiert?",
+        "answer": "Transformatoren werden je nach Typ und Anwendung innen oder außen installiert und benötigen eine sichere Basis sowie die richtige Belüftung.",
+        "category": "Technik",
+        "synonyms": ["Transformator Installation", "Einbau Transformator"]
+    },
+    {
+        "question": "Welche Kühlmethoden gibt es für Transformatoren?",
+        "answer": "Transformatoren nutzen entweder Öl- oder Luftkühlung. Ölkühlung bietet eine effektivere Wärmeableitung, während luftgekühlte Transformatoren weniger wartungsintensiv sind.",
+        "category": "Technik",
+        "synonyms": ["Trafo Kühlung", "Kühlmethoden Transformator"]
+    },
+    {
+        "question": "Wie werden Transformatoren geprüft?",
+        "answer": "Regelmäßige Prüfungen umfassen Spannungsprüfung, Isolationswiderstandsmessung und thermografische Untersuchungen, um Defekte frühzeitig zu erkennen.",
+        "category": "Technik",
+        "synonyms": ["Trafo Prüfung", "Transformator Tests"]
+    },
+    {
+        "question": "Wie effizient ist ein Transformator?",
+        "answer": "Transformatoren sind sehr effizient und können Wirkungsgrade von über 99 % erreichen. Die Effizienz hängt von Bauart, Materialien und Einsatzbedingungen ab.",
+        "category": "Technik",
+        "synonyms": ["Effizienz Trafo", "Wirkungsgrad Transformator"]
+    }
+]

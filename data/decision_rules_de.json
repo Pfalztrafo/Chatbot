@@ -1,0 +1,22 @@
+{
+    "industry": {
+        "conditions": [
+            {
+                "parameter": "voltage",
+                "threshold": 10000,
+                "recommendation_above": "Ein Leistungstransformator wäre ideal für Ihre Anwendung.",
+                "recommendation_below": "Ein Verteiltransformator ist für industrielle Anwendungen unter 10 kV geeignet."
+            },
+            {
+                "parameter": "kva",
+                "threshold": 500,
+                "recommendation_above": "Ein großer Transformator wäre erforderlich.",
+                "recommendation_below": "Ein kleiner Transformator reicht aus."
+            }
+        ],
+        "default_recommendation": "Für industrielle Anwendungen empfehlen wir spezifische Transformatorlösungen."
+    },
+    "private": {
+        "default_recommendation": "Für private Anwendungen empfehlen wir einen kompakten Verteiltransformator."
+    }
+}

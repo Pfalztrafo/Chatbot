@@ -1,20 +1,20 @@
 import json
 from utils import preprocess_text
 
-def load_faq():
-    with open("data/dialogues.json", "r", encoding="utf-8") as file:
+# Funktion zum Laden von Dialogen basierend auf der Sprache
+def load_dialogues(language="de"):
+    filename = f"data/dialogues_{language}.json"
+    with open(filename, "r", encoding="utf-8") as file:
         return json.load(file)
 
-def get_faq_answer(question):
-    faq_data = load_faq()
+# Antwort auf eine FAQ-Frage basierend auf der Sprache
+def get_faq_answer(question, language="de"):
+    dialogues = load_dialogues(language)
     question = preprocess_text(question)
 
-    for item in faq_data:
-        # Prüfen auf exakte Frage
+    for item in dialogues:
         if preprocess_text(item["question"]) in question:
             return item["answer"]
-
-        # Prüfen auf Synonyme, falls vorhanden
         if "synonyms" in item:
             for synonym in item["synonyms"]:
                 if preprocess_text(synonym) in question:
@@ -22,12 +22,12 @@ def get_faq_answer(question):
 
     return "Ich habe leider keine Antwort auf diese Frage."
 
-# Erweiterung: Suche nach verwandten Fragen für bessere Vorschläge
-def get_related_faq(question):
-    faq_data = load_faq()
+# Suche nach verwandten FAQ-Antworten basierend auf der Sprache
+def get_related_faq(question, language="de"):
+    dialogues = load_dialogues(language)
     question = preprocess_text(question)
-    
-    for item in faq_data:
+
+    for item in dialogues:
         if preprocess_text(item["question"]) in question:
             return item["answer"]
 

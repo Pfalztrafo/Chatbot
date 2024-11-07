@@ -1,10 +1,25 @@
 import json
+import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, Trainer, TrainingArguments
 from datasets import Dataset
 from utils import MODEL_NAME
+from datetime import datetime
+import os
+import platform
+import nltk
+from nltk.corpus import wordnet as wn
 
+# WordNet-Daten einmalig herunterladen
+# nltk.download('wordnet')
+# nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
 
-# Fortschritt-Datei laden oder erstellen
+# LLM google/flan-t5-base laden
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+
+# Pfad zur Log-Datei
+log_file_path = "./training_logs/training_logs.txt"
+
+# Fortschritt-Datei für Trainingsepochen
 progress_file = "training_progress.json"
 
 def load_progress():
@@ -19,96 +34,160 @@ def save_progress(progress):
     with open(progress_file, "w") as file:
         json.dump(progress, file)
 
-# Bisherige Fortschritte laden
-progress = load_progress()
+# Trainingsdetails loggen
+def log_training_details(epoch, loss, total_epochs, training_args, training_time, device_spec):
+    os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(log_file_path, "a") as log_file:
+        log_file.write(f"--- Training Run ---\n")
+        log_file.write(f"Start Time: {timestamp}\n")
+        log_file.write(f"Total Epochs: {total_epochs}\n")
+        log_file.write(f"Learning Rate: {training_args.learning_rate}\n")
+        log_file.write(f"Batch Size per Device: {training_args.per_device_train_batch_size}\n")
+        log_file.write(f"Weight Decay: {training_args.weight_decay}\n")
+        log_file.write(f"Device Specifications: {device_spec}\n")
+        log_file.write(f"Training Epoch: {epoch+1}/{total_epochs}\n")
+        log_file.write(f"Loss: {loss}\n")
+        log_file.write(f"Training Time for Epoch: {training_time:.2f} seconds\n")
+        log_file.write(f"--- End of Training ---\n\n")
 
-# Anzahl der Epochen für diesen Lauf
-num_train_epochs = 1
-total_epochs = progress["total_epochs"] + num_train_epochs
+# Systeminformationen und GPU-Verfügbarkeit
+def get_device_spec():
+    device_spec = {
+        "Device": "GPU" if torch.cuda.is_available() else "CPU",
+        "System": platform.system(),
+        "Version": platform.version(),
+        "Platform": platform.platform(),
+        "Processor": platform.processor(),
+        "RAM (GB)": round(torch.cuda.get_device_properties(0).total_memory / 1e9, 2) if torch.cuda.is_available() else "N/A"
+    }
+    return device_spec
 
-# Fortschritte speichern
-progress["total_epochs"] = total_epochs
-save_progress(progress)
+# Funktion zum Laden von OpenThesaurus-Synonymen
+def load_openthesaurus_text(filepath="data/openthesaurus.txt"):
+    synonyms_dict = {}
+    with open(filepath, "r", encoding="utf-8") as file:
+        for line in file:
+            synonyms = line.strip().split(";")
+            for word in synonyms:
+                synonyms_dict[word] = synonyms
+    return synonyms_dict
 
-# Fortschrittsmeldung
-print(f"Gesamte trainierte Epochen über alle Läufe: {progress['total_epochs']}")
+# Funktion, um englische Synonyme aus WordNet zu holen
+def get_english_synonyms(word):
+    synonyms = []
+    for syn in wn.synsets(word):
+        for lemma in syn.lemmas():
+            synonyms.append(lemma.name())
+    return list(set(synonyms))
 
-
-# Modellname und Tokenizer
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-
-# Daten laden und vorbereiten
-def load_data():
+# Trainingsdaten laden und erweitern
+def load_data(language="de"):
     data = []
+    dialogues_file = f"data/dialogues_{language}.json"
+    rules_file = f"data/decision_rules_{language}.json"
 
-    # Transformator-Informationen
-    with open("data/trafo_info.json", "r", encoding="utf-8") as file:
-        trafo_info = json.load(file)
-        for item in trafo_info:
-            data.append({"input": item["topic"], "output": item["info"]})
-
-    # Dienstleistungen
-    with open("data/pfalztrafo_services.json", "r", encoding="utf-8") as file:
-        services = json.load(file)
-        for item in services:
-            data.append({"input": item["service"], "output": item["description"]})
-
-    # FAQ
-    with open("data/dialogues.json", "r", encoding="utf-8") as file:
+    with open(dialogues_file, "r", encoding="utf-8") as file:
         dialogues = json.load(file)
         for item in dialogues:
             data.append({"input": item["question"], "output": item["answer"]})
 
-    # Empfehlungen
-    with open("data/rules.json", "r", encoding="utf-8") as file:
+    with open(rules_file, "r", encoding="utf-8") as file:
         rules = json.load(file)
-        for rule in rules:
-            data.append({"input": rule["condition"], "output": rule["recommendation"]})
-
+        for application, rule_data in rules.items():
+            default_recommendation = rule_data.get("default_recommendation", "")
+            if default_recommendation:
+                data.append({"input": f"{application} Empfehlung", "output": default_recommendation})
+            for condition in rule_data.get("conditions", []):
+                param = condition["parameter"]
+                threshold = condition["threshold"]
+                data.append({
+                    "input": f"{application} {param} > {threshold}",
+                    "output": condition["recommendation_above"]
+                })
+                data.append({
+                    "input": f"{application} {param} <= {threshold}",
+                    "output": condition["recommendation_below"]
+                })
     return data
 
-# Daten in Dataset umwandeln
-training_data = load_data()
-dataset = Dataset.from_dict({"input": [item["input"] for item in training_data], "output": [item["output"] for item in training_data]})
+# Daten um Synonyme erweitern
+def expand_with_synonyms(data, german_synonyms_dict):
+    expanded_data = []
+    for item in data:
+        input_text = item["input"]
+        expanded_data.append(item)
+        
+        # Deutsche Synonyme hinzufügen
+        german_synonyms = german_synonyms_dict.get(input_text, [])
+        for synonym in german_synonyms:
+            expanded_data.append({"input": synonym, "output": item["output"]})
+
+        # Englische Synonyme hinzufügen
+        english_synonyms = get_english_synonyms(input_text)
+        for synonym in english_synonyms:
+            expanded_data.append({"input": synonym, "output": item["output"]})
+    
+    return expanded_data
 
 # Daten für das Modell vorbereiten
 def preprocess_function(examples):
     inputs = examples["input"]
     targets = examples["output"]
-    
-    # Tokenisiere Eingaben und Ziele mit Padding auf eine maximale Länge
-    model_inputs = tokenizer(inputs, max_length=128, padding="max_length", truncation=True) # max 128 Token, truncation=True: Längere Sequenzen werden auf die maximale Länge abgeschnitten, um Speicherplatz zu sparen und das Modell zu entlasten.
-    
-    # Tokenisiere auch die Labels mit Padding
+    model_inputs = tokenizer(inputs, max_length=128, padding="max_length", truncation=True)
     labels = tokenizer(targets, max_length=128, padding="max_length", truncation=True).input_ids
     model_inputs["labels"] = labels
-    
     return model_inputs
 
+# Hauptfunktion für das Training in beiden Sprachen
+def main():
+    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+    german_synonyms_dict = load_openthesaurus_text()
+    languages = ["de", "en"]  # Unterstützte Sprachen
 
-tokenized_dataset = dataset.map(preprocess_function, batched=True)
+    all_training_data = []
+    for lang in languages:
+        training_data = load_data(language=lang)
+        training_data = expand_with_synonyms(training_data, german_synonyms_dict)
+        all_training_data.extend(training_data)
 
-# Trainingskonfiguration
-training_args = TrainingArguments(
-    output_dir="./fine_tuned_model",   # Speicherort des Modells
-    eval_strategy="no",                # Evaluation deaktiviert, nur Training
-    learning_rate=2e-5,                # Feinabstimmungs-Lernrate
-    per_device_train_batch_size=1,     # Batch-Größe pro Gerät (RTX 3050 6GB -> 4)
-    num_train_epochs=1,                # Anzahl der Epochen für besseres Lernen
-    weight_decay=0.01                  # Gewichtszerfall zur Vermeidung von Overfitting
-)
+    dataset = Dataset.from_dict({
+        "input": [item["input"] for item in all_training_data],
+        "output": [item["output"] for item in all_training_data]
+    })
+    tokenized_dataset = dataset.map(preprocess_function, batched=True)
 
-# Trainer initialisieren
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=tokenized_dataset
-)
+    training_args = TrainingArguments(
+        output_dir="./fine_tuned_model",
+        eval_strategy="no",
+        learning_rate=2e-5,
+        per_device_train_batch_size=1,
+        num_train_epochs=1,
+        weight_decay=0.01
+    )
+    
+    # Fortschritt des Trainings laden
+    progress = load_progress()
+    num_train_epochs = training_args.num_train_epochs
+    total_epochs = progress["total_epochs"] + num_train_epochs
+    progress["total_epochs"] = total_epochs
+    save_progress(progress)
 
-# Training starten
-trainer.train()
+    device_spec = get_device_spec()
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_dataset
+    )
 
-# Modell speichern
-model.save_pretrained("fine_tuned_model")
-tokenizer.save_pretrained("fine_tuned_model")
+    start_time = datetime.now()
+    for epoch in range(int(training_args.num_train_epochs)):
+        epoch_start_time = datetime.now()
+        loss = trainer.train().training_loss
+        epoch_training_time = (datetime.now() - epoch_start_time).total_seconds()
+        log_training_details(epoch, loss, total_epochs, training_args, epoch_training_time, device_spec)
+    total_training_time = (datetime.now() - start_time).total_seconds()
+    print(f"Total Training Time: {total_training_time:.2f} seconds")
+
+if __name__ == "__main__":
+    main()

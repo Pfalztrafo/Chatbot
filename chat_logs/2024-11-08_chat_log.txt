@@ -1,0 +1,6 @@
+[2024-11-08 00:37:55] User: hello
+[2024-11-08 00:37:55] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-08 00:38:02] User: how are you
+[2024-11-08 00:38:02] Bot: Thanks for asking! I'm good. How can I help you?
+[2024-11-08 00:38:10] User: buy trafo?
+[2024-11-08 00:38:10] Bot: For information on used transformers, you can fill out our contact form on the website or call us directly.

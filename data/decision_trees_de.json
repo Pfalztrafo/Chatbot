@@ -1,0 +1,32 @@
+{
+    "kaufberatung": {
+        "question": "Möchten Sie mehr über unsere Produkte erfahren?",
+        "options": {
+            "yes": {
+                "question": "Benötigen Sie einen Transformator für Innen- oder Außeneinsatz?",
+                "options": {
+                    "indoor": {
+                        "response": "Ein Gießharztransformator wäre ideal für Innenräume."
+                    },
+                    "outdoor": {
+                        "response": "Ein Öltransformator eignet sich am besten für den Außeneinsatz."
+                    }
+                }
+            },
+            "no": {
+                "response": "Bitte lassen Sie uns wissen, wie wir Ihnen sonst weiterhelfen können."
+            }
+        }
+    },
+    "service": {
+        "question": "Suchen Sie Wartungs- oder Reparaturdienste?",
+        "options": {
+            "maintenance": {
+                "response": "Wir bieten umfassende Wartungsdienste für Transformatoren an, inklusive Inspektion und Reinigung."
+            },
+            "repair": {
+                "response": "Unser Reparaturdienst umfasst die Diagnose und Reparatur von Transformatorenteilen."
+            }
+        }
+    }
+}

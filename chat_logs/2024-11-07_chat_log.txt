@@ -1,0 +1,44 @@
+[2024-11-07 11:10:26] User: hey
+[2024-11-07 11:10:26] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 11:10:43] User: hey
+[2024-11-07 11:10:43] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 11:14:42] User: hey
+[2024-11-07 11:14:42] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-07 14:33:18] User: hey
+[2024-11-07 14:33:18] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-07 14:33:24] User: ich brauche trafos
+[2024-11-07 14:33:24] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 14:33:27] User: trafo
+[2024-11-07 14:33:27] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 14:33:31] User: ahhh
+[2024-11-07 14:33:31] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 16:15:04] User: hey was geht ab
+[2024-11-07 16:15:04] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 17:59:44] User: hey
+[2024-11-07 17:59:44] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-07 17:59:56] User: trafo will ich kaufen
+[2024-11-07 17:59:56] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 18:01:36] User: heyyy
+[2024-11-07 18:01:36] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-07 18:01:45] User: trafo will ich haben
+[2024-11-07 18:01:45] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 18:09:00] User: du läufst ja noch
+[2024-11-07 18:09:00] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 21:33:43] User: hi
+[2024-11-07 21:33:43] Bot: Willkommen! Wie kann ich behilflich sein?
+[2024-11-07 21:33:45] User: was geht
+[2024-11-07 21:33:45] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 21:33:53] User: wie du wollen
+[2024-11-07 21:33:53] Bot: Ich habe leider keine Antwort auf diese Frage.
+[2024-11-07 22:31:34] User: heyo
+[2024-11-07 22:31:34] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-07 22:51:01] User: hi
+[2024-11-07 22:51:01] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-07 22:52:40] User: hi
+[2024-11-07 22:52:40] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-07 22:52:43] User: was geht
+[2024-11-07 22:52:43] Bot: Ich kann Ihnen Fragen zu Transformatoren, unseren Dienstleistungen und allgemeinen Informationen beantworten.
+[2024-11-07 22:52:52] User: mach mal
+[2024-11-07 22:52:52] Bot: Bis später! Ich freue mich, Ihnen bald wieder helfen zu dürfen.
+[2024-11-07 23:46:52] User: na
+[2024-11-07 23:46:52] Bot: Hallo! Wie kann ich Ihnen helfen?

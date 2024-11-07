@@ -1,4 +1,4 @@
-# Support-Chatbots zur Kaufberatung für Transformatoren
+# Support-Chatbot zur Kaufberatung für Transformatoren
 
 Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen Fragen zu Transformatoren zu unterstützen. Er bietet Informationen zu Transformator-Typen, Services vom Unternehmen Pfalztrafo und stellt Empfehlungen basierend auf spezifischen Kundenanfragen zur Verfügung.
 
@@ -34,13 +34,14 @@ Der Support-Chatbot zur Kaufberatung für Transformatoren basiert auf einem fein
 - **Fuzzywuzzy**: Für die Erkennung ähnlicher Anfragen (Fuzzy Matching).
 
 ## Projektstruktur
-Die Projektstruktur ist in mehrere Module und Datenquellen unterteilt:
+Die Projektstruktur ist in mehrere Module und Datenquellen unterteilt (Stand 04.11.2024):
 
 ```plaintext
 ├── chatbot_main.py              # Hauptskript zum Ausführen des Chatbots
 ├── train_model.py               # Trainingsskript zum Feinabstimmen des Modells
 ├── utils.py                     # Konfiguration und Hilfsfunktionen
 ├── data/
+│   ├── openthesaurus.txt        # OpenThesaurus Textdatei mit deutschen Synonymen
 │   ├── dialogues.json           # Häufig gestellte Fragen und Antworten
 │   ├── trafo_info.json          # Allgemeine Infos über Transformatoren
 │   ├── pfalztrafo_services.json # Dienstleistungen von Pfalztrafo
@@ -68,6 +69,7 @@ pip install transformers[torch]
 pip install faiss-gpu
 pip install faiss-cpu
 pip install fuzzywuzzy[speedup]
+pip install nltk
 ```
 
 
@@ -233,6 +235,16 @@ Geben Sie `exit` ein, um die Chat-Sitzung zu beenden.
 
 
 ## Versionshistorie
+
+### v1.1.0 - 07.11.2024
+- **Speicherung des Chatverlaufs**: Tägliche Protokollierung von Nutzer- und Bot-Nachrichten zur Nachverfolgung von Interaktionen.
+- **Speicherung der Trainingsdaten und -dauer**: Dokumentation der Trainingszeit, Verlustwerte, Epochenanzahl und Geräte-Spezifikationen für Transparenz und Wiederholbarkeit.
+- **Speicherung unbeantworteter Fragen**: Erfassung von Nutzeranfragen ohne Antwort für eine gezielte Erweiterung der Wissensbasis.
+- **Erweiterte Fallback-Strategie** für unbeantwortete Fragen: Dynamische Erkennung und Weiterleitung an relevante Kategorien oder Services.
+- **Kategorieerkennung und Fallback-Antwort**: Verbesserte Kategorisierung von Fragen zur optimierten Benutzerführung.
+- **Multilinguale Unterstützung** (Deutsch und Englisch): Erstellung separater JSON-Dateien für FAQs, Dialoge und Entscheidungstabellen in beiden Sprachen.
+- **Synonymunterstützung und Fuzzy Matching**: Einbindung von WordNet und OpenThesaurus für bessere Abdeckung ähnlicher Anfragen in Deutsch und Englisch.
+- **Struktur für nachhaltige Datenspeicherung**: Optimierte Ordnerstruktur und Versionierung zur langfristigen Wartung und Erweiterung.
 
 ### v1.0.0 - 04.11.2024
 - **Erstveröffentlichung** mit Hauptfunktionen:
