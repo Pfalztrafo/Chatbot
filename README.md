@@ -37,22 +37,33 @@ Der Support-Chatbot zur Kaufberatung für Transformatoren basiert auf einem fein
 Die Projektstruktur ist in mehrere Module und Datenquellen unterteilt (Stand 04.11.2024):
 
 ```plaintext
-├── chatbot_main.py              # Hauptskript zum Ausführen des Chatbots
-├── train_model.py               # Trainingsskript zum Feinabstimmen des Modells
-├── utils.py                     # Konfiguration und Hilfsfunktionen
-├── data/
-│   ├── openthesaurus.txt        # OpenThesaurus Textdatei mit deutschen Synonymen
-│   ├── dialogues.json           # Häufig gestellte Fragen und Antworten
-│   ├── trafo_info.json          # Allgemeine Infos über Transformatoren
-│   ├── pfalztrafo_services.json # Dienstleistungen von Pfalztrafo
-│   ├── rules.json               # Entscheidungsregeln für Empfehlungen
-├── modules/
-│   ├── dialogue_manager.py      # Modul zur Verwaltung von Dialogen
-│   ├── knowledge_base.py        # Modul für den Zugriff auf Transformatoren-Wissen
-│   ├── recommendation.py        # Modul für Kaufempfehlungen und Entscheidungslogik
-├── fine_tuned_model/            # Verzeichnis für das trainierte Modell
-├── .gitignore                   # Ausschließen der Git-Dateien wie fine_tuned_model wegen Speichergröße 
-└── README.md                    # Diese Dokumentation
+CHATBOT/
+├── chat_logs/                       # Ordner für gespeicherte Chat-Logs
+├── data/                            # Ordner für Daten und Konfigurationsdateien
+│   ├── decision_rules_de.json        # Entscheidungsregeln auf Deutsch
+│   ├── decision_rules_en.json        # Entscheidungsregeln auf Englisch
+│   ├── decision_trees_de.json        # Entscheidungsbäume auf Deutsch
+│   ├── decision_trees_en.json        # Entscheidungsbäume auf Englisch
+│   ├── dialogues_de.json             # Dialogdaten auf Deutsch
+│   ├── dialogues_en.json             # Dialogdaten auf Englisch
+│   ├── fallback_responses_de.json    # Fallback-Antworten auf Deutsch
+│   ├── fallback_responses_en.json    # Fallback-Antworten auf Englisch
+│   ├── openthesaurus.txt             # Synonyme aus OpenThesaurus
+│   └── unanswered_questions.json     # Datei für unbeantwortete Fragen
+├── fine_tuned_model/                 # Ordner für das feinabgestimmte Modell
+├── modules/                          # Ordner für Modul-Skripte
+│   ├── dialogue_manager.py           # Modul für das Dialogmanagement
+│   ├── knowledge_base.py             # Modul für Wissensbasis und FAQ-Suche
+│   └── recommendation.py             # Modul für Produktempfehlungen
+├── training_logs/                    # Ordner für Trainingsprotokolle
+│   └── training_logs.txt             # Datei für detaillierte Trainingsprotokolle
+│   └── training_progress.json        # Datei zur Speicherung des Trainingsfortschritts
+├── .gitignore                        # Git-Ignore-Datei
+├── chatbot_main.py                   # Hauptskript für den Chatbot-Betrieb
+├── README.md                         # Projektbeschreibung und Dokumentation
+├── train_model.py                    # Trainingsskript für das Modell
+└── utils.py                          # Hilfsfunktionen und allgemeine Einstellungen
+
 ```
 
 ## Installation

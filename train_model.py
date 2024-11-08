@@ -22,7 +22,7 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 log_file_path = "./training_logs/training_logs.txt"
 
 # Fortschritt-Datei für Trainingsepochen
-progress_file = "training_progress.json"
+progress_file = "training_logs/training_progress.json"
 
 def load_progress():
     try:
