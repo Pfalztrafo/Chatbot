@@ -1,0 +1,12 @@
+--- Training Run ---
+Start Time: 2024-11-08 01:12:50
+Total Epochs: 1
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
+Training Epoch: 1/1
+Loss: 30.645232371794872
+Training Time for Epoch: 26.03 seconds
+--- End of Training ---
+
