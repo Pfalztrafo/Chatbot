@@ -126,14 +126,26 @@ Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und k
 
 
 ### Ergebnisse
-#### Ergebnis v1.0.0 vom 04.11.2024 (Eigenes Laptop)
-- **Trainingseinheit**: 36 Epochen = 2 min
+#### Ergebnis v1.1.0 vom 08.11.2024 (Eigener Laptop)
+- **Trainingseinheit**: ? Epochen = ? min
 - **Parameter-Konfiguration**:
-  - `eval_strategy="no"`: Evaluation deaktiviert, nur Training
-  - `learning_rate=2e-5`: Feinabstimmungs-Lernrate für präzise Updates
-  - `per_device_train_batch_size=4`: Batch-Größe pro Gerät (RTX 3050 mit 6 GB VRAM)
-  - `num_train_epochs=3`: Anzahl der Epochen für bessere Modellanpassung
-  - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
+- **Parameter-Konfiguration**: `eval_strategy="no"`, `learning_rate=2e-5`, `per_device_train_batch_size=4`, `num_train_epochs=3`, `weight_decay=0.01`
+
+<details>
+<summary>Beispiel-Chat-08.11.2024</summary>
+
+Du: heeyy   
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+Du: hiii   
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+</details> ```
+
+
+#### Ergebnis v1.0.0 vom 04.11.2024 (Eigener Laptop)
+- **Trainingseinheit**: 36 Epochen = 2 min
+- **Parameter-Konfiguration**: `eval_strategy="no"`, `learning_rate=2e-5`, `per_device_train_batch_size=4`, `num_train_epochs=3`, `weight_decay=0.01`
 
 <details>
 <summary>Beispiel-Chat-05.11.2024</summary>
@@ -175,15 +187,9 @@ Du: Zertifikate für Trafos
 Bot: Ich habe leider keine Antwort auf diese Frage.
 </details> ```
 
-#### Ergebnis v1.0.0 vom 04.11.2024 (Eigenes Laptop)
+#### Ergebnis v1.0.0 vom 04.11.2024 (Eigener Laptop)
 - **Trainingseinheit**: 6 Epochen = 20 Sekunden
-- **Parameter-Konfiguration**:
-  - `eval_strategy="no"`: Evaluation deaktiviert, nur Training
-  - `learning_rate=2e-5`: Feinabstimmungs-Lernrate für präzise Updates
-  - `per_device_train_batch_size=4`: Batch-Größe pro Gerät (RTX 3050 mit 6 GB VRAM)
-  - `num_train_epochs=3`: Anzahl der Epochen für bessere Modellanpassung
-  - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
-
+- **Parameter-Konfiguration**: `eval_strategy="no"`, `learning_rate=2e-5`, `per_device_train_batch_size=4`, `num_train_epochs=3`, `weight_decay=0.01`
 <details>
 <summary>Beispiel-Chat-04.11.2024</summary>
 

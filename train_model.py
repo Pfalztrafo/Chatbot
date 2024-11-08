@@ -158,12 +158,12 @@ def main():
     tokenized_dataset = dataset.map(preprocess_function, batched=True)
 
     training_args = TrainingArguments(
-        output_dir="./fine_tuned_model",
-        eval_strategy="no",
-        learning_rate=2e-5,
-        per_device_train_batch_size=1,
-        num_train_epochs=1,
-        weight_decay=0.01
+        output_dir="./fine_tuned_model",   # Speicherort des Modells
+        eval_strategy="no",                # Evaluation deaktiviert, nur Training
+        learning_rate=2e-5,                # Feinabstimmungs-Lernrate
+        per_device_train_batch_size=4,     # Batch-Größe pro Gerät (RTX 3050 6GB -> 4)
+        num_train_epochs=1,                # Anzahl der Epochen für besseres Lernen
+        weight_decay=0.01                  # Gewichtszerfall zur Vermeidung von Overfitting
     )
     
     # Fortschritt des Trainings laden
