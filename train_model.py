@@ -162,7 +162,7 @@ def main():
         eval_strategy="no",                # Evaluation deaktiviert, nur Training
         learning_rate=2e-5,                # Feinabstimmungs-Lernrate
         per_device_train_batch_size=4,     # Batch-Größe pro Gerät (RTX 3050 6GB -> 4)
-        num_train_epochs=1,                # Anzahl der Epochen für besseres Lernen
+        num_train_epochs=3,                # Anzahl der Epochen für besseres Lernen
         weight_decay=0.01                  # Gewichtszerfall zur Vermeidung von Overfitting
     )
     
