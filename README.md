@@ -70,6 +70,8 @@ pip install faiss-gpu
 pip install faiss-cpu
 pip install fuzzywuzzy[speedup]
 pip install nltk
+pip install psutil
+pip install py-cpuinfo
 ```
 
 

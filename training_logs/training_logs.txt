@@ -1,12 +1,230 @@
 --- Training Run ---
-Start Time: 2024-11-08 01:12:50
-Total Epochs: 1
+Start Time: 2024-11-08 01:23:42
+Total Epochs: 4
 Learning Rate: 2e-05
 Batch Size per Device: 4
 Weight Decay: 0.01
 Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
-Training Epoch: 1/1
-Loss: 30.645232371794872
-Training Time for Epoch: 26.03 seconds
+Training Epoch: 1/4
+Loss: 23.234055739182693
+Training Time for Epoch: 69.37 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 01:24:53
+Total Epochs: 4
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
+Training Epoch: 2/4
+Loss: 6.892893734141293
+Training Time for Epoch: 71.36 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 01:26:03
+Total Epochs: 4
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
+Training Epoch: 3/4
+Loss: 3.3155233269063835
+Training Time for Epoch: 70.05 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 01:33:44
+Total Epochs: 5
+Learning Rate: 2e-05
+Batch Size per Device: 3
+Weight Decay: 0.01
+Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
+Training Epoch: 1/5
+Loss: 29.8928715632512
+Training Time for Epoch: 30.16 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 10:49:17
+Total Epochs: 6
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
+Training Epoch: 1/6
+Loss: 30.552828275240383
+Training Time for Epoch: 26.01 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 10:51:59
+Total Epochs: 8
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
+Training Epoch: 1/8
+Loss: 26.791178385416668
+Training Time for Epoch: 47.86 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 10:52:47
+Total Epochs: 8
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
+Training Epoch: 2/8
+Loss: 14.626214443108974
+Training Time for Epoch: 47.53 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 11:06:52
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 9
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications: {'Device': 'GPU', 'System': 'Windows', 'Version': '10.0.22631', 'Platform': 'Windows-11-10.0.22631-SP0', 'Processor': 'Intel64 Family 6 Model 186 Stepping 2, GenuineIntel', 'RAM (GB)': 6.44}
+
+Epoch Details:
+  Epoch 1: Loss = 30.5525, Training Time = 27.40 seconds
+
+Average Loss for This Run: 30.5525
+Total Training Time for This Run: 29.43 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 11:16:45
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 10
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+--- Training Run ---
+Start Time: 2024-11-08 11:20:07
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 11
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+--- Training Run ---
+Start Time: 2024-11-08 11:21:59
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 12
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+--- Training Run ---
+Start Time: 2024-11-08 11:24:30
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 13
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+--- Training Run ---
+Start Time: 2024-11-08 11:26:45
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 14
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  System: Windows
+  Platform: Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 30.5423, Training Time = 26.38 seconds
+
+Average Loss for This Run: 30.5423
+Total Training Time for This Run: 28.67 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 11:37:30
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 15
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 30.6424, Training Time = 26.68 seconds
+
+Average Loss for This Run: 30.6424
+Total Training Time for This Run: 28.75 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 11:42:08
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 16
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 30.5747, Training Time = 26.76 seconds
+
+Average Loss for This Run: 30.5747
+Total Training Time for This Run: 28.83 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 11:45:30
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 17
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 30.5059, Training Time = 26.58 seconds
+
+Average Loss for This Run: 30.5059
+Total Training Time for This Run: 28.89 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-08 11:47:33
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 18
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 30.5942, Training Time = 26.37 seconds
+
+Average Loss for This Run: 30.5942
+Total Training Time for This Run: 28.81 seconds
 --- End of Training ---
 
