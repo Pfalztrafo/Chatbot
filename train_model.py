@@ -10,8 +10,8 @@ import nltk
 from nltk.corpus import wordnet as wn
 
 # WordNet-Daten einmalig herunterladen
-nltk.download('wordnet')
-nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
+# nltk.download('wordnet')
+# nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
 
 # LLM google/flan-t5-base laden
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
