@@ -50,10 +50,14 @@ def get_device_spec():
         "Platform": platform.platform()
     }
     
-    # CPU-Informationen abrufen
+    # CPU-Informationen abrufen, falls verfügbar
     try:
         cpu_info = cpuinfo.get_cpu_info()
-        device_spec["CPU"] = cpu_info.get("brand_raw", "Unknown CPU")
+        brand = cpu_info.get("brand_raw", "Unknown CPU")
+        cores = psutil.cpu_count(logical=False)
+        threads = psutil.cpu_count(logical=True)
+        freq = psutil.cpu_freq().current if psutil.cpu_freq() else "Unknown"
+        device_spec["CPU"] = f"{brand} - {cores} Cores / {threads} Threads @ {freq} MHz"
     except Exception:
         pass  # Falls ein Fehler auftritt, bleibt die CPU-Info auf "Unknown CPU"
     
