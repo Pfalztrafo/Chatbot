@@ -145,7 +145,7 @@ Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und k
   - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
 
 <details>
-<summary>Beispiel-Chat-05.11.2024</summary>
+<summary>Beispiel-Chat-04.11.2024</summary>
 
 Du: heeyy   
 Bot: Ich habe leider keine Antwort auf diese Frage.
