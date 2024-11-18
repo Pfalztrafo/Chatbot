@@ -1,5 +1,4 @@
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
-from modules.knowledge_base import get_info_by_topic, get_service_description, load_faq_embeddings
 from modules.recommendation import get_advanced_recommendation
 from utils import format_output, preprocess_text
 from langchain.chains import RetrievalQA
@@ -116,15 +115,13 @@ qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, chain_type=
 
 # Embeddings-Modell und FAISS-Index einmalig laden
 embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-faq_index = load_faq_embeddings()
+faq_data = load_knowledge_base()  # Lade die Dialogdaten aus dialogues.json
+faq_index = FAISS.from_documents(faq_data, embeddings_model)  # Erstelle FAISS-Index
 
 
 # Fuzzy Matching und Embeddings-basierte Suche
 def get_faq_answer_fuzzy(user_input):
-    # Lade die ursprünglichen FAQ-Daten aus dialogues.json direkt
-    faq_data = load_knowledge_base()  # Wir verwenden hier die Funktion load_knowledge_base, die die FAQ-Daten bereits lädt
     user_input = preprocess_text(user_input)
-
     question_variants = []
     question_to_answer = {}
 
@@ -132,33 +129,15 @@ def get_faq_answer_fuzzy(user_input):
         question_variants.append(item.page_content)
         question_to_answer[item.page_content] = item.metadata["answer"]
 
-        # Prüfe auf Synonyme und füge diese zu den Variationen hinzu
-        if "synonyms" in item.metadata:
-            for synonym in item.metadata["synonyms"]:
-                question_variants.append(synonym)
-                question_to_answer[synonym] = item.metadata["answer"]
-
-        # Englische Synonyme über WordNet hinzufügen
-        english_synonyms = get_english_synonyms(item.page_content)
-        for synonym in english_synonyms:
-            question_variants.append(synonym)
-            question_to_answer[synonym] = item.metadata["answer"]
-
-        # Deutsche Synonyme über OpenThesaurus hinzufügen
-        german_synonyms = german_synonyms_dict.get(item.page_content, [])
-        for synonym in german_synonyms:
-            question_variants.append(synonym)
-            question_to_answer[synonym] = item.metadata["answer"]
-
-    # Fuzzy Matching auf alle Fragevarianten anwenden
+    # Fuzzy Matching anwenden
     best_match, score = process.extractOne(user_input, question_variants, scorer=fuzz.token_sort_ratio)
 
-    # Wenn Fuzzy Matching eine hohe Übereinstimmung findet, wird diese Antwort zurückgegeben
     if score > 70:
         return question_to_answer[best_match]
 
-    # Wenn Fuzzy Matching keine Übereinstimmung findet, Embeddings-basierte Suche als Fallback verwenden
+    # Fallback auf Embeddings-basierte Suche
     return search_faq_with_embeddings(user_input)
+
 
 
 
@@ -174,20 +153,35 @@ def search_faq_with_embeddings(query):
 
 
 
-# Chat-log
-def save_chat_to_txt(user_message, bot_response, folder="chat_logs"):
+def anonymize_ip(ip_address):
+    if ":" in ip_address:  # Prüfen, ob es sich um eine IPv6-Adresse handelt
+        return ":".join(ip_address.split(":")[:-1]) + ":xxxx"
+    elif "." in ip_address:  # Prüfen, ob es sich um eine IPv4-Adresse handelt
+        parts = ip_address.split('.')
+        if len(parts) == 4:
+            parts[-1] = "xxx"  # Letztes Oktett anonymisieren
+            return '.'.join(parts)
+    return ip_address  # Gib die IP zurück, falls sie nicht anonymisiert werden kann
+
+
+
+
+def save_chat_to_txt(user_message, bot_response, user_ip="Unbekannt", username="Unbekannt", folder="chat_logs"):
+    # Anonymisiere die IP-Adresse
+    anonymized_ip = anonymize_ip(user_ip)
+    
     # Stelle sicher, dass der Ordner für die Chat-Logs existiert
-    os.makedirs(folder, exist_ok=True)
+    os.makedirs(folder, exist_ok=True)  # Ordner erstellen, falls nicht vorhanden
 
     # Erstelle den Dateinamen basierend auf dem aktuellen Datum
     date_str = datetime.now().strftime("%Y-%m-%d")
     filename = os.path.join(folder, f"{date_str}_chat_log.txt")
 
     # Schreibe den Chatverlauf in die Datei
-    with open(filename, "a") as file:
+    with open(filename, "a", encoding="utf-8") as file:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        file.write(f"[{timestamp}] User: {user_message}\n")
-        file.write(f"[{timestamp}] Bot: {bot_response}\n")
+        file.write(f"[{timestamp}] [IP: {user_ip}] [User: {username}] {user_message}\n")
+        file.write(f"[{timestamp}] [Server] [Bot] {bot_response}\n")
 
 
 # Speichere unbefragte Fragen
@@ -246,9 +240,14 @@ def get_english_synonyms(word):
             synonyms.append(lemma.name())
     return list(set(synonyms))
 
+
+
+
 # Haupt-Chat-Funktion
 def chat():
     print("Starte den Chat (zum Beenden 'exit' eingeben)")
+    user_ip = "192.168.1.10"  # Beispiel-IP (kann dynamisch bezogen werden)
+    username = "JohnDoe"  # Beispiel-Username
     while True:
         user_input = input("Du: ")
         if user_input.lower() == "exit":
@@ -271,7 +270,7 @@ def chat():
             response = get_faq_answer_fuzzy(user_input) or qa_chain.run(user_input) or "Entschuldigung, dazu habe ich keine Informationen."
         
         # Speichere den Chatverlauf
-        save_chat_to_txt(user_input, response)
+        save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
 
         # Speichere unbeantwortete Fragen, falls keine Antwort gefunden wurde
         if response == "Ich habe leider keine Antwort auf diese Frage.":

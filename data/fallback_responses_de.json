@@ -1,7 +1,4 @@
 {
-    "Service": "Ich konnte Ihre Frage leider nicht genau beantworten. Unser Team bietet jedoch umfassende Wartungs- und Reparaturdienste an.",
     "Kaufberatung": "Es scheint, als wären Sie an einer Kaufempfehlung interessiert. Unsere Experten können Ihnen helfen, den richtigen Transformator auszuwählen.",
-    "Fragen": "Für spezifische technische Details zu unseren Produkten können Sie die technischen Spezifikationen prüfen oder unseren Support kontaktieren.",
-    "Allgemein": "Entschuldigung, ich konnte Ihre Frage nicht verstehen. Vielleicht kann ich Ihnen mit allgemeinen Informationen zu unseren Produkten und Dienstleistungen helfen.",
     "Fallback": "Entschuldigung, ich konnte Ihre Anfrage nicht verstehen. Könnten Sie sie bitte genauer formulieren?"
 }

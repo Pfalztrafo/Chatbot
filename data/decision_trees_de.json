@@ -17,16 +17,5 @@
                 "response": "Bitte lassen Sie uns wissen, wie wir Ihnen sonst weiterhelfen können."
             }
         }
-    },
-    "service": {
-        "question": "Suchen Sie Wartungs- oder Reparaturdienste?",
-        "options": {
-            "maintenance": {
-                "response": "Wir bieten umfassende Wartungsdienste für Transformatoren an, inklusive Inspektion und Reinigung."
-            },
-            "repair": {
-                "response": "Unser Reparaturdienst umfasst die Diagnose und Reparatur von Transformatorenteilen."
-            }
-        }
     }
 }

@@ -17,16 +17,5 @@
                 "response": "Please let us know how else we can assist you."
             }
         }
-    },
-    "service": {
-        "question": "Are you looking for maintenance or repair services?",
-        "options": {
-            "maintenance": {
-                "response": "We offer comprehensive maintenance services for transformers, including inspection and cleaning."
-            },
-            "repair": {
-                "response": "Our repair service includes diagnostics and repair of transformer components."
-            }
-        }
     }
 }

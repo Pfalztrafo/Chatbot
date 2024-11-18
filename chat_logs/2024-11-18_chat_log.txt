@@ -1,0 +1,6 @@
+[2024-11-18 00:12:49] [IP: 2a02:810b:4b1c:9e00:f8df:2e71:xxxx:xxxx] [User: Unbekannt] jo
+[2024-11-18 00:12:49] [Server] [Bot] Hallo! Wie kann ich Ihnen helfen?
+[2024-11-18 00:12:57] [IP: 2a02:810b:4b1c:9e00:f8df:2e71:xxxx:xxxx] [User: Unbekannt] k
+[2024-11-18 00:12:57] [Server] [Bot] Gern geschehen! Falls Sie noch weitere Fragen haben, stehe ich zur Verfügung.
+[2024-11-18 18:20:03] [IP: 192.168.1.10] [User: JohnDoe] yes
+[2024-11-18 18:20:03] [Server] [Bot] Willkommen! Wie kann ich behilflich sein?

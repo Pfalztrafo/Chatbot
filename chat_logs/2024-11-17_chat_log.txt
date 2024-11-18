@@ -1,0 +1,32 @@
+[2024-11-17 14:00:44] User: hi
+[2024-11-17 14:00:44] Bot: Hallo! Wie kann ich Ihnen helfen?
+[2024-11-17 14:00:47] User: hjfdfk
+[2024-11-17 14:00:47] Bot: Gern geschehen! Falls Sie noch weitere Fragen haben, stehe ich zur Verf�gung.
+[2024-11-17 14:00:52] User: fhgjdfghj
+[2024-11-17 14:00:52] Bot: Willkommen! Wie kann ich behilflich sein?
+[2024-11-17 14:01:03] User: ok ok trafo will ich. hast du
+[2024-11-17 14:01:03] Bot: Ich bin der digitale Assistent von Pfalztrafo und helfe Ihnen gerne mit Informationen rund um Transformatoren.
+[2024-11-17 22:05:21] [IP: 192.168.1.10] [User: JohnDoe] hiiii
+[2024-11-17 22:05:21] [Server] [Bot] Hallo! Wie kann ich Ihnen helfen?
+[2024-11-17 22:05:25] [IP: 192.168.1.10] [User: JohnDoe] brauch hilfe
+[2024-11-17 22:05:25] [Server] [Bot] Natürlich! Lassen Sie mich wissen, wie ich Ihnen helfen kann.
+[2024-11-17 22:05:30] [IP: 192.168.1.10] [User: JohnDoe] trafo kaufen
+[2024-11-17 22:05:30] [Server] [Bot] Bis später! Ich freue mich, Ihnen bald wieder helfen zu dürfen.
+[2024-11-17 22:05:38] [IP: 192.168.1.10] [User: JohnDoe] ecit
+[2024-11-17 22:05:38] [Server] [Bot] Ich bin der digitale Assistent von Pfalztrafo und helfe Ihnen gerne mit Informationen rund um Transformatoren.
+[2024-11-17 22:15:33] [IP: 2a02:810b:4b1c:9e00:f8df:2e71:6582:e4ee] [User: Unbekannt] k
+[2024-11-17 22:15:33] [Server] [Bot] Gern geschehen! Falls Sie noch weitere Fragen haben, stehe ich zur Verfügung.
+[2024-11-17 22:16:01] [IP: 2a02:810b:4b1c:9e00:f8df:2e71:6582:e4ee] [User: Unbekannt] k
+[2024-11-17 22:16:01] [Server] [Bot] Gern geschehen! Falls Sie noch weitere Fragen haben, stehe ich zur Verfügung.
+[2024-11-17 22:18:10] [IP: 2a02:810b:5d06:100:2c0e:c640:e5d5:55d0] [User: Unbekannt] Hello
+[2024-11-17 22:18:10] [Server] [Bot] Willkommen! Wie kann ich behilflich sein?
+[2024-11-17 22:18:25] [IP: 2a02:810b:5d06:100:2c0e:c640:e5d5:55d0] [User: Unbekannt] wie geht es dir
+[2024-11-17 22:18:25] [Server] [Bot] Danke der Nachfrage! Mir geht es gut. Wie kann ich Ihnen helfen?
+[2024-11-17 22:21:08] [IP: 2a02:810b:5d06:100:2c0e:c640:e5d5:55d0] [User: Unbekannt] ich hab dich vermisst
+[2024-11-17 22:21:08] [Server] [Bot] Natürlich! Lassen Sie mich wissen, wie ich Ihnen helfen kann.
+[2024-11-17 22:35:29] [IP: 2a02:810b:4b1c:9e00:f8df:2e71:6582:e4ee] [User: Unbekannt] hi
+[2024-11-17 22:35:29] [Server] [Bot] Hallo! Wie kann ich Ihnen helfen?
+[2024-11-17 22:37:24] [IP: 2a02:810b:4b1c:9e00:f8df:2e71:6582:e4ee] [User: Unbekannt] k
+[2024-11-17 22:37:24] [Server] [Bot] Gern geschehen! Falls Sie noch weitere Fragen haben, stehe ich zur Verfügung.
+[2024-11-17 22:41:37] [IP: 2a02:810b:4b1c:9e00:f8df:2e71:xxxx:xxxx] [User: Unbekannt] 54
+[2024-11-17 22:41:37] [Server] [Bot] Bis später! Ich freue mich, Ihnen bald wieder helfen zu dürfen.
