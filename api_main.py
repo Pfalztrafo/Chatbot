@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 # Konfiguration der CORS-Einstellungen
-allow_origins = ["https://alphatrafo.de"]  # Erlaube spezifische Domains
+allow_origins = ["https://alphatrafo.de", "https://api.alphatrafo.de"]  # Erlaube spezifische Domains
 allow_credentials = True
 allow_methods = ["*"]  # Erlaube alle HTTP-Methoden
 allow_headers = ["*"]  # Erlaube alle Header

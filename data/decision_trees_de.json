@@ -1,20 +1,68 @@
 {
     "kaufberatung": {
-        "question": "Möchten Sie mehr über unsere Produkte erfahren?",
+        "question": "Welche Art von Transformator suchen Sie?",
         "options": {
-            "yes": {
-                "question": "Benötigen Sie einen Transformator für Innen- oder Außeneinsatz?",
+            "Verteiltransformator": {
+                "question": "Wie viel kVA/MVA benötigen Sie?",
                 "options": {
-                    "indoor": {
-                        "response": "Ein Gießharztransformator wäre ideal für Innenräume."
+                    "5 MVA": {
+                        "question": "Welche Primärspannung benötigen Sie?",
+                        "options": {
+                            "20 kV": {
+                                "question": "Wird der Transformator indoor oder outdoor eingesetzt?",
+                                "options": {
+                                    "indoor": {
+                                        "response": "Ein Verteiltransformator mit 5 MVA und 20 kV ist für den Innenbereich geeignet. Wir empfehlen eine luftgekühlte Ausführung. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                                        "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Verteiltransformator&body=Leistung: 5 MVA%0D%0ASpannung: 20 kV%0D%0AUmgebung: Indoor%0D%0AKühlung: Luft"
+                                    },
+                                    "outdoor": {
+                                        "response": "Ein Verteiltransformator mit 5 MVA und 20 kV ist für den Außenbereich geeignet. Wir empfehlen eine ölgekühlte Ausführung. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                                        "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Verteiltransformator&body=Leistung: 5 MVA%0D%0ASpannung: 20 kV%0D%0AUmgebung: Outdoor%0D%0AKühlung: Öl"
+                                    }
+                                }
+                            },
+                            "30 kV": {
+                                "response": "Ein Verteiltransformator mit 5 MVA und 30 kV ist verfügbar. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                                "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Verteiltransformator&body=Leistung: 5 MVA%0D%0ASpannung: 30 kV"
+                            }
+                        }
                     },
-                    "outdoor": {
-                        "response": "Ein Öltransformator eignet sich am besten für den Außeneinsatz."
+                    "10 MVA": {
+                        "response": "Ein Verteiltransformator mit 10 MVA ist verfügbar. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                        "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Verteiltransformator&body=Leistung: 10 MVA"
                     }
                 }
             },
-            "no": {
-                "response": "Bitte lassen Sie uns wissen, wie wir Ihnen sonst weiterhelfen können."
+            "Leistungstransformator": {
+                "question": "Wie hoch ist die maximale Leistung (in MVA)?",
+                "options": {
+                    "20 MVA": {
+                        "question": "Welche Primärspannung benötigen Sie?",
+                        "options": {
+                            "110 kV": {
+                                "response": "Ein Leistungstransformator mit 20 MVA und 110 kV ist verfügbar. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                                "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Leistungstransformator&body=Leistung: 20 MVA%0D%0ASpannung: 110 kV"
+                            }
+                        }
+                    },
+                    "40 MVA": {
+                        "response": "Ein Leistungstransformator mit 40 MVA ist verfügbar. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                        "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Leistungstransformator&body=Leistung: 40 MVA"
+                    }
+                }
+            },
+            "Gießharz-Transformator": {
+                "question": "Für welche Umgebung ist der Transformator vorgesehen?",
+                "options": {
+                    "Feuchte Umgebungen": {
+                        "response": "Ein Gießharztransformator ist ideal für feuchte Umgebungen. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                        "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Gießharz-Transformator&body=Umgebung: Feucht"
+                    },
+                    "Staubige Umgebungen": {
+                        "response": "Ein Gießharztransformator ist ideal für staubige Umgebungen. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                        "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Gießharz-Transformator&body=Umgebung: Staubig"
+                    }
+                }
             }
         }
     }

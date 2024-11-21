@@ -32,7 +32,7 @@ class ChatbotGUI:
         """Startet den FastAPI-Server in einem separaten Thread."""
         def run_server():
             try:
-                uvicorn.run(app, host="127.0.0.1", port=8000)
+                uvicorn.run(app, host="0.0.0.0", port=8000)
             except Exception as e:
                 print(f"Fehler beim Starten der API: {e}")
                 self.api_status = "Offline"
