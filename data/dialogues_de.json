@@ -25,9 +25,9 @@
     },
     {
         "question": "Danke",
-        "answer": "Gern geschehen! Falls Sie noch weitere Fragen haben, stehe ich zur Verfügung.",
+        "answer": "Gern geschehen! Wenn Sie weitere Informationen benötigen, können Sie gerne weitere Fragen stellen oder uns direkt kontaktieren.",
         "category": "Allgemein",
-        "synonyms": ["Vielen Dank", "Dankeschön", "Danke dir", "Ich danke Ihnen"]
+        "synonyms": ["Vielen Dank", "Dankeschön", "Danke dir", "Ich danke Ihnen", "Danke schön", "Danke für die Hilfe"]
     },
     {
         "question": "Wer bist du?",
@@ -55,9 +55,9 @@
     },
     {
         "question": "Kann ich mit einem Menschen sprechen?",
-        "answer": "Falls ich Ihre Frage nicht beantworten kann, empfehle ich, unser Team direkt zu kontaktieren. Wir helfen Ihnen gerne weiter.",
+        "answer": "Falls ich Ihre Frage nicht beantworten kann, kontaktieren Sie bitte unser Team unter der Telefonnummer 01234-567890 oder per E-Mail unter kontakt@pfalztrafo.de. Wir helfen Ihnen gerne weiter.",
         "category": "Allgemein",
-        "synonyms": ["Mit einem Mitarbeiter sprechen?", "Einen Menschen sprechen", "Kann ich jemanden anrufen?"]
+        "synonyms": ["Mit einem Mitarbeiter sprechen?", "Einen Menschen sprechen", "Kann ich jemanden anrufen?", "Mit jemandem sprechen"]
     },
     {
         "question": "Bis später",
@@ -71,6 +71,7 @@
         "category": "Allgemein",
         "synonyms": ["Hilfe bitte", "Kannst du mir helfen?", "Ich brauche Unterstützung", "Hilfe"]
     },
+
 
 
 
@@ -177,7 +178,41 @@
             "Normen für Transformatoren", 
             "Zertifikate für Trafos"
         ]
+    },
+    {
+        "question": "Wir planen, Transformatoren auszutauschen.",
+        "answer": "Benötigen Sie Hilfe bei der Entsorgung des alten Transformators? Bitte senden Sie uns Bilder des Typenschilds und Details zur aktuellen Installation. Wir helfen Ihnen gerne bei der Planung.",
+        "category": "Service",
+        "synonyms": ["Trafo ersetzen", "Transformator wechseln", "Alten Transformator austauschen"]
+    },
+    {
+        "question": "Können Sie eine PCB-Analyse durchführen?",
+        "answer": "Ja, wir bieten PCB-Analysen an. Bitte senden Sie uns eine Ölprobe Ihres Transformators. Weitere Informationen dazu finden Sie auf unserer Webseite.",
+        "category": "Service",
+        "synonyms": ["Ölprobe Analyse", "PCB-Test", "Analyse des Trafo-Öls"]
+    },
+    {
+        "question": "Welche Zertifikate haben Ihre Transformatoren?",
+        "answer": "Unsere Transformatoren erfüllen aktuelle DIN VDE- und IEC-Normen. Weitere Details finden Sie in unseren Datenblättern.",
+        "category": "Technik",
+        "synonyms": ["Trafo Zertifikate", "Welche Normen erfüllen Ihre Trafos?", "DIN VDE Transformator"]
+    },
+    {
+        "question": "Wir benötigen einen Transformator für einen Schmelzofen.",
+        "answer": "Bitte geben Sie die erforderliche Leistung, Spannung und Umgebung an. Wir erstellen Ihnen gerne ein individuelles Angebot.",
+        "category": "Vertrieb",
+        "synonyms": ["Trafo für Schmelzofen", "Transformator für Ofen", "Ofen-Trafo"]
+    },
+    {
+        "question": "Wir möchten einen Transformator verlagern.",
+        "answer": "Bitte teilen Sie uns mit, ob es spezielle Anforderungen wie Brandschutz gibt und ob der Transformator im Innen- oder Außenbereich installiert werden soll. Wir helfen Ihnen gerne weiter.",
+        "category": "Service",
+        "synonyms": ["Trafo verlagern", "Transformator Standort ändern", "Trafo umbauen"]
     }
+    
+    
+    
+
 
 
 ]
