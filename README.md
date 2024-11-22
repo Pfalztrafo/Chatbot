@@ -78,6 +78,7 @@ als Exe erstellen
 Probleme mit pydantic
 pip uninstall pydantic
 pip install pydantic==1.10.8
+pip install langdetect
 
 ```
 

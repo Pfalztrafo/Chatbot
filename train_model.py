@@ -33,8 +33,12 @@ def load_progress():
     return progress
 
 def save_progress(progress):
-    with open(progress_file, "w") as file:
-        json.dump(progress, file)
+    try:
+        with open(progress_file, "w") as file:
+            json.dump(progress, file, indent=4)
+    except Exception as e:
+        print(f"Fehler beim Speichern des Fortschritts: {e}")
+
 
 
 
@@ -178,17 +182,25 @@ def load_data(language="de"):
             default_recommendation = rule_data.get("default_recommendation", "")
             if default_recommendation:
                 data.append({"input": f"{application} Empfehlung", "output": default_recommendation})
-            for condition in rule_data.get("conditions", []):
-                param = condition["parameter"]
-                threshold = condition["threshold"]
-                data.append({
-                    "input": f"{application} {param} > {threshold}",
-                    "output": condition["recommendation_above"]
-                })
-                data.append({
-                    "input": f"{application} {param} <= {threshold}",
-                    "output": condition["recommendation_below"]
-                })
+
+        for condition in rule_data.get("conditions", []):
+            param = condition["parameter"]
+            threshold_low = condition.get("threshold_low", 0)
+            threshold_high = condition.get("threshold_high", float("inf"))
+
+            data.append({
+                "input": f"{application} {param} < {threshold_low}",
+                "output": condition.get("recommendation_below", "Keine Empfehlung verfügbar.")
+            })
+            data.append({
+                "input": f"{application} {param} zwischen {threshold_low} und {threshold_high}",
+                "output": condition.get("recommendation_between", "Keine Empfehlung verfügbar.")
+            })
+            data.append({
+                "input": f"{application} {param} > {threshold_high}",
+                "output": condition.get("recommendation_above", "Keine Empfehlung verfügbar.")
+            })
+
     return data
 
 # Daten um Synonyme erweitern
@@ -219,69 +231,81 @@ def preprocess_function(examples):
     model_inputs["labels"] = labels
     return model_inputs
 
-# Hauptfunktion für das Training in beiden Sprachen
+# Hauptfunktion für das Training pro Sprache
 def main():
-    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-    german_synonyms_dict = load_openthesaurus_text()
-    languages = ["de", "en"]  # Unterstützte Sprachen
+    german_synonyms_dict = load_openthesaurus_text()  # Synonyme für Deutsch laden
+    languages = ["de", "en"]  # Unterstützte Sprachen: Deutsch und Englisch
 
-    all_training_data = []
     for lang in languages:
+        print(f"Starte das Training für {lang}...")
+
+        # Speicherort für das Modell pro Sprache
+        output_dir = f"./fine_tuned_model_{lang}"
+        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+
+        # Trainingsdaten laden und erweitern
         training_data = load_data(language=lang)
         training_data = expand_with_synonyms(training_data, german_synonyms_dict)
-        all_training_data.extend(training_data)
 
-    dataset = Dataset.from_dict({
-        "input": [item["input"] for item in all_training_data],
-        "output": [item["output"] for item in all_training_data]
-    })
-    tokenized_dataset = dataset.map(preprocess_function, batched=True)
-
-    training_args = TrainingArguments(
-        output_dir="./fine_tuned_model",   # Speicherort des Modells
-        eval_strategy="no",                # Evaluation deaktiviert, nur Training
-        learning_rate=2e-5,                # Feinabstimmungs-Lernrate
-        per_device_train_batch_size=4,     # Batch-Größe pro Gerät (RTX 3050 6GB -> 4)
-        num_train_epochs=1,                # Anzahl der Epochen für besseres Lernen
-        weight_decay=0.01                  # Gewichtszerfall zur Vermeidung von Overfitting
-    )
-
-    # Fortschritt des Trainings laden und aktualisieren
-    progress = load_progress()
-    num_train_epochs = training_args.num_train_epochs
-    progress["total_epochs"] += num_train_epochs
-    save_progress(progress)
-
-    device_spec = get_device_spec()
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=tokenized_dataset
-    )
-
-    epoch_logs = []
-    start_time = datetime.now()
-    for epoch in range(num_train_epochs):
-        epoch_start_time = datetime.now()
-        loss = trainer.train().training_loss
-        epoch_training_time = (datetime.now() - epoch_start_time).total_seconds()
-        
-        # Speichere Informationen für diese Epoche
-        epoch_logs.append({
-            "epoch_num": epoch + 1,
-            "loss": loss,
-            "training_time": epoch_training_time
+        # Dataset erstellen
+        dataset = Dataset.from_dict({
+            "input": [item["input"] for item in training_data],
+            "output": [item["output"] for item in training_data]
         })
+        tokenized_dataset = dataset.map(preprocess_function, batched=True)
 
-    # Speichere das Modell und den Tokenizer am Ende des Trainings
-    model.save_pretrained("./fine_tuned_model")
-    tokenizer.save_pretrained("./fine_tuned_model")
-    
-    total_training_time = (datetime.now() - start_time).total_seconds()
-    log_training_details(training_args, progress["total_epochs"], device_spec, epoch_logs, total_training_time)
+        # Trainingsargumente festlegen
+        training_args = TrainingArguments(
+            output_dir=output_dir,            # Sprachspezifischer Speicherort
+            eval_strategy="no",               # Kein Evaluation-Schritt
+            learning_rate=2e-5,               # Feinabstimmungs-Lernrate
+            per_device_train_batch_size=4,    # Batch-Größe
+            num_train_epochs=1,               # Anzahl der Trainings-Epochen
+            weight_decay=0.01                 # Vermeidung von Overfitting
+        )
 
-    print(f"Total Training Time: {total_training_time:.2f} seconds")
-    print("Das feingetunte Modell und der Tokenizer wurden erfolgreich gespeichert.")
+        # Fortschritt des Trainings laden und aktualisieren
+        progress = load_progress()
+        num_train_epochs = training_args.num_train_epochs
+        progress["total_epochs"] += num_train_epochs
+        save_progress(progress)
+
+        # Gerätespezifikationen abrufen
+        device_spec = get_device_spec()
+
+        # Trainer einrichten und Training starten
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=tokenized_dataset
+        )
+
+        epoch_logs = []  # Logs für jedes Training
+        start_time = datetime.now()
+        for epoch in range(num_train_epochs):
+            epoch_start_time = datetime.now()
+            loss = trainer.train().training_loss
+            epoch_training_time = (datetime.now() - epoch_start_time).total_seconds()
+
+            # Informationen zu jeder Epoche speichern
+            epoch_logs.append({
+                "epoch_num": epoch + 1,
+                "loss": loss,
+                "training_time": epoch_training_time
+            })
+
+        # Modell und Tokenizer für die Sprache speichern
+        model.save_pretrained(output_dir)
+        tokenizer.save_pretrained(output_dir)
+
+        total_training_time = (datetime.now() - start_time).total_seconds()
+
+        # Trainingsdetails loggen
+        log_training_details(training_args, progress["total_epochs"], device_spec, epoch_logs, total_training_time)
+
+        print(f"Training für {lang} abgeschlossen.")
+        print(f"Das feingetunte Modell für {lang} wurde unter {output_dir} gespeichert.")
+        print(f"Total Training Time for {lang}: {total_training_time:.2f} seconds\n")
 
 if __name__ == "__main__":
     main()

@@ -316,3 +316,43 @@ Loss: 30.687686011904763
 Training Time for Epoch: 135.39 seconds
 --- End of Training ---
 
+--- Training Run ---
+Start Time: 2024-11-22 18:27:53
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 26
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD
+  RAM: 27.90 GB
+  GPU: N/A
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 35.3409, Training Time = 44.57 seconds
+
+Average Loss for This Run: 35.3409
+Total Training Time for This Run: 51.60 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-22 18:28:49
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 27
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD
+  RAM: 27.90 GB
+  GPU: N/A
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 35.6238, Training Time = 46.81 seconds
+
+Average Loss for This Run: 35.6238
+Total Training Time for This Run: 54.52 seconds
+--- End of Training ---
+

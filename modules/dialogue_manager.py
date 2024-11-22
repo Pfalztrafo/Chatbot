@@ -10,17 +10,22 @@ def load_dialogues(language="de"):
 # Antwort auf eine FAQ-Frage basierend auf der Sprache
 def get_faq_answer(question, language="de"):
     dialogues = load_dialogues(language)
-    question = preprocess_text(question)
+    processed_question = preprocess_text(question)
 
     for item in dialogues:
-        if preprocess_text(item["question"]) in question:
+        # Exakte Übereinstimmung prüfen
+        if preprocess_text(item["question"]) == processed_question:
             return item["answer"]
+        
+        # Synonyme prüfen
         if "synonyms" in item:
             for synonym in item["synonyms"]:
-                if preprocess_text(synonym) in question:
+                if preprocess_text(synonym) == processed_question:
                     return item["answer"]
 
-    return "Ich habe leider keine Antwort auf diese Frage."
+    # Keine Antwort gefunden
+    return None
+
 
 # Suche nach verwandten FAQ-Antworten basierend auf der Sprache
 def get_related_faq(question, language="de"):
