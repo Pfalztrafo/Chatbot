@@ -108,7 +108,7 @@ Um das Modell anzupassen oder zu erweitern:
 ```bash
 python train_model.py
 ```
-Der Pfad `fine_tuned_model` wird erstellt und speichert das trainierte Modell.
+Der Pfad `fine_tuned_model_de` und `fine_tuned_model_en` werden erstellt und speichert das trainierte Modell.
 
 3. Trainingseinstellungen wie num_train_epochs und per_device_train_batch_size können in train_model.py angepasst werden.
 
@@ -116,7 +116,7 @@ Der Pfad `fine_tuned_model` wird erstellt und speichert das trainierte Modell.
 Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und können je nach Hardware und gewünschtem Ergebnis angepasst werden:
 
 - **output_dir**: Der Speicherort für das trainierte Modell und die Checkpoints.  
-  Beispiel: `output_dir="./fine_tuned_model"` legt einen Ordner an, der während des Trainings automatisch mit Modellen und Checkpoints befüllt wird.
+  Beispiel: `output_dir="./fine_tuned_model_de" und "./fine_tuned_model_de"` legt einen Ordner an, der während des Trainings automatisch mit Modellen und Checkpoints befüllt wird.
 
 - **eval_strategy**: Legt fest, ob und wie oft eine Evaluation während des Trainings erfolgt.  
   Wenn `eval_strategy="no"` gesetzt ist, erfolgt keine Evaluation, was Speicher spart und das Training beschleunigt. Alternativ kann `eval_strategy="steps"` oder `"epoch"` gewählt werden, um nach jeder bestimmten Schrittanzahl bzw. Epoche eine Evaluation durchzuführen. Regelmäßige Evaluationen erhöhen jedoch die GPU-Auslastung und Trainingszeit.
@@ -136,6 +136,24 @@ Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und k
 
 
 ### Ergebnisse
+
+#### Ergebnis v1.2.0 vom 22.11.2024 (Eigenes Laptop)
+- **Trainingseinheit**: ? Epochen = ? min
+- **Parameter-Konfiguration**:
+  - `eval_strategy="no"`: Evaluation deaktiviert, nur Training
+  - `learning_rate=2e-5`: Feinabstimmungs-Lernrate für präzise Updates
+  - `per_device_train_batch_size=4`: Batch-Größe pro Gerät (RTX 3050 mit 6 GB VRAM)
+  - `num_train_epochs=3`: Anzahl der Epochen für bessere Modellanpassung
+  - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
+
+<details>
+<summary>Beispiel-Chat-22.11.2024</summary>
+
+Du: heeyy   
+Bot: Ich habe leider keine Antwort auf diese Frage.
+
+</details> ```
+
 #### Ergebnis v1.0.0 vom 04.11.2024 (Eigenes Laptop)
 - **Trainingseinheit**: 36 Epochen = 2 min
 - **Parameter-Konfiguration**:
@@ -246,7 +264,10 @@ Geben Sie `exit` ein, um die Chat-Sitzung zu beenden.
 
 ## Versionshistorie
 
-### v1.1.0 - 07.11.2024
+### v1.2.0 - 22.11.2024
+- **Speicherung des Chatverlaufs**: Tägliche Protokollierung von Nutzer- und Bot-Nachrichten zur Nachverfolgung von Interaktionen.
+
+### v1.1.1 - 07.11.2024
 - **Speicherung des Chatverlaufs**: Tägliche Protokollierung von Nutzer- und Bot-Nachrichten zur Nachverfolgung von Interaktionen.
 - **Speicherung der Trainingsdaten und -dauer**: Dokumentation der Trainingszeit, Verlustwerte, Epochenanzahl und Geräte-Spezifikationen für Transparenz und Wiederholbarkeit.
 - **Speicherung unbeantworteter Fragen**: Erfassung von Nutzeranfragen ohne Antwort für eine gezielte Erweiterung der Wissensbasis.
