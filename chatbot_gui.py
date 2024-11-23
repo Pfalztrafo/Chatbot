@@ -108,7 +108,7 @@ class ChatbotGUI:
                 return json.load(f)
         except FileNotFoundError:
             return {
-                "ip": "127.0.0.1",
+                "ip": "0.0.0.0",
                 "port": 8000,
                 "allow_origins": ["*"],
                 "allow_methods": ["*"],
@@ -389,7 +389,6 @@ class ChatbotGUI:
                 messagebox.showerror("Fehler", f"Training fehlgeschlagen: {e}")
 
         threading.Thread(target=training_task, daemon=True).start()
-
 
 
 # Anwendung starten
