@@ -60,11 +60,22 @@ class ChatbotGUI:
             messagebox.showerror("Fehler", f"Ungültiges JSON-Format: {e}")
             self.root.quit()
 
+
     def start_api_server(self):
         """Startet den FastAPI-Server in einem separaten Thread."""
         def run_server():
             try:
-                uvicorn.run(app, host=self.config["ip"], port=self.config["port"])
+                ssl_config = self.load_ssl_config()
+                if ssl_config:
+                    uvicorn.run(
+                        app,
+                        host=self.config["ip"],
+                        port=self.config["port"],
+                        ssl_keyfile=ssl_config["keyfile"],
+                        ssl_certfile=ssl_config["certfile"]
+                    )
+                else:
+                    uvicorn.run(app, host=self.config["ip"], port=self.config["port"])
             except Exception as e:
                 print(f"Fehler beim Starten der API: {e}")
                 self.api_status = "Offline"
@@ -75,10 +86,22 @@ class ChatbotGUI:
 
         # Überprüfen, ob der Server gestartet ist
         try:
-            requests.get(f"http://{self.config['ip']}:{self.config['port']}/stats")
+            requests.get(f"https://{self.config['ip']}:{self.config['port']}/stats", verify=False)
             self.api_status = "Online"
         except requests.ConnectionError:
             self.api_status = "Offline"
+
+    def load_ssl_config(self):
+        """Prüft, ob SSL-Zertifikate verfügbar sind, und gibt die Pfade zurück."""
+        ssl_keyfile = "/home/ismail/Chatbot/SSL/privkey.pem"
+        ssl_certfile = "/home/ismail/Chatbot/SSL/fullchain.pem"
+
+        if os.path.exists(ssl_keyfile) and os.path.exists(ssl_certfile):
+            return {"keyfile": ssl_keyfile, "certfile": ssl_certfile}
+        return None
+
+
+
 
     def update_system_stats(self):
         """Aktualisiert die CPU- und RAM-Auslastung in der Übersicht."""
@@ -150,11 +173,12 @@ class ChatbotGUI:
         self.update_system_stats()
         self.update_statistics()
 
+
     def update_statistics(self):
         """Holt echte Statistiken von der API und aktualisiert die Labels."""
         try:
             # API-Endpunkt für Statistiken
-            response = requests.get(f"http://{self.config['ip']}:{self.config['port']}/stats")
+            response = requests.get(f"https://{self.config['ip']}:{self.config['port']}/stats", verify=False)
             if response.status_code == 200:
                 stats = response.json()
                 avg_response_time = stats.get("avg_response_time", 0)
@@ -172,6 +196,7 @@ class ChatbotGUI:
 
         # Wiederholtes Aktualisieren der Werte
         self.root.after(30000, self.update_statistics)  # Aktualisierung alle 30 Sekunden
+
 
     def create_training_tab(self):
         """Erstellt den Training-Tab."""
