@@ -169,7 +169,9 @@ class ChatbotGUI:
         """Holt echte Statistiken von der API und aktualisiert die Labels."""
         try:
             # API-Endpunkt für Statistiken
-            response = requests.get(f"https://{self.config['ip']}:{self.config['port']}/stats", verify="/home/ismail/Chatbot/SSL/fullchain.pem")
+            response = requests.get(f"https://localhost:{self.config['port']}/stats", verify="/home/ismail/Chatbot/SSL/fullchain.pem")
+
+
             if response.status_code == 200:
                 stats = response.json()
                 avg_response_time = stats.get("avg_response_time", 0)
