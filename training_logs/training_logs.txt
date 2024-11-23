@@ -476,3 +476,133 @@ Average Loss for This Run: 35.6966
 Total Training Time for This Run: 12.81 seconds
 --- End of Training ---
 
+--- Training Run ---
+Start Time: 2024-11-23 04:01:57
+Total Epochs in This Run: 4
+Cumulative Total Epochs: 37
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 30.1735, Training Time = 91.31 seconds
+  Epoch 2: Loss = 22.7968, Training Time = 78.14 seconds
+  Epoch 3: Loss = 14.6648, Training Time = 73.86 seconds
+  Epoch 4: Loss = 6.2362, Training Time = 74.85 seconds
+
+Average Loss for This Run: 18.4678
+Total Training Time for This Run: 320.79 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-23 04:09:42
+Total Epochs in This Run: 4
+Cumulative Total Epochs: 41
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 30.5111, Training Time = 121.67 seconds
+  Epoch 2: Loss = 21.0167, Training Time = 119.35 seconds
+  Epoch 3: Loss = 9.4683, Training Time = 112.89 seconds
+  Epoch 4: Loss = 4.9376, Training Time = 105.64 seconds
+
+Average Loss for This Run: 16.4834
+Total Training Time for This Run: 461.56 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-23 04:14:42
+Total Epochs in This Run: 2
+Cumulative Total Epochs: 43
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 33.0488, Training Time = 31.67 seconds
+  Epoch 2: Loss = 28.7034, Training Time = 30.29 seconds
+
+Average Loss for This Run: 30.8761
+Total Training Time for This Run: 64.56 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-23 04:16:16
+Total Epochs in This Run: 2
+Cumulative Total Epochs: 45
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 33.6003, Training Time = 48.48 seconds
+  Epoch 2: Loss = 28.6256, Training Time = 40.13 seconds
+
+Average Loss for This Run: 31.1130
+Total Training Time for This Run: 91.55 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-23 04:18:00
+Total Epochs in This Run: 2
+Cumulative Total Epochs: 47
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 32.8203, Training Time = 32.67 seconds
+  Epoch 2: Loss = 28.4884, Training Time = 27.33 seconds
+
+Average Loss for This Run: 30.6543
+Total Training Time for This Run: 62.76 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2024-11-23 04:19:25
+Total Epochs in This Run: 2
+Cumulative Total Epochs: 49
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1: Loss = 34.0124, Training Time = 43.00 seconds
+  Epoch 2: Loss = 28.5672, Training Time = 37.85 seconds
+
+Average Loss for This Run: 31.2898
+Total Training Time for This Run: 82.93 seconds
+--- End of Training ---
+

@@ -283,7 +283,7 @@ def main():
             eval_strategy="no",               # Kein Evaluation-Schritt
             learning_rate=2e-5,               # Feinabstimmungs-Lernrate
             per_device_train_batch_size=4,    # Batch-Größe
-            num_train_epochs=1,               # Anzahl der Trainings-Epochen
+            num_train_epochs=2,               # Anzahl der Trainings-Epochen
             weight_decay=0.01                 # Vermeidung von Overfitting
         )
 

@@ -25,6 +25,22 @@ from langdetect import detect, DetectorFactory
 # nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
 
 
+# Funktion, um deutsche Synonyme aus openthesaurus.txt zu laden
+def load_openthesaurus_text(filepath="data/openthesaurus.txt"):
+    synonyms_dict = {}
+    try:
+        with open(filepath, "r", encoding="utf-8") as file:
+            for line in file:
+                synonyms = line.strip().split(";")
+                for word in synonyms:
+                    synonyms_dict[word] = synonyms
+    except FileNotFoundError:
+        print(f"[DEBUG] Datei {filepath} nicht gefunden. Synonyme werden nicht geladen.")
+    return synonyms_dict
+
+# Globale Initialisierung von german_synonyms_dict
+german_synonyms_dict = load_openthesaurus_text()
+
 # Spracheinstellung (Standard: Deutsch)
 language = "de"
 
@@ -125,13 +141,25 @@ def set_language(user_input):
 
 # Wissensdatenbank laden
 def load_knowledge_base():
+    """
+    Lädt die Dialogdaten aus der JSON-Datei und bereitet sie für die Suche vor.
+    """
     with open(get_file_path("dialogues"), "r", encoding="utf-8") as file:
         raw_data = json.load(file)
-    documents = [
-        Document(page_content=item["question"], metadata={"answer": item["answer"]})
-        for item in raw_data
-    ]
+    
+    documents = []
+    for item in raw_data:
+        # Hauptfrage hinzufügen
+        documents.append(Document(page_content=item["question"], metadata={"answer": item["answer"]}))
+        
+        # Synonyme hinzufügen
+        if "synonyms" in item:
+            for synonym in item["synonyms"]:
+                documents.append(Document(page_content=synonym, metadata={"answer": item["answer"]}))
+    
+    print(f"[DEBUG] FAQ-Daten geladen: {len(documents)} Einträge")
     return documents
+
 
 
 
@@ -146,18 +174,65 @@ qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, chain_type=
 
 
 
+
+# FAQ-Daten basierend auf der Sprache laden
+def load_faq_data():
+    """
+    Lädt die FAQ-Daten, erweitert sie mit Synonymen und erstellt einen FAISS-Index.
+    """
+    global faq_data, faq_index, embeddings_model
+
+    # FAQ-Daten laden
+    faq_data = load_knowledge_base()
+    embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+    faq_index = FAISS.from_documents(faq_data, embeddings_model)
+
+    #print(f"[DEBUG] FAQ-Daten geladen: {len(faq_data)} Einträge")
+
+
 # Fuzzy Matching und Embeddings
 def get_faq_answer_fuzzy(user_input):
-    user_input = preprocess_text(user_input)
+    """
+    Fuzzy Matching und Embeddings-basierte Suche für FAQ-Antworten.
+    Diese Funktion berücksichtigt Synonyme aus der JSON-Datei und verwendet Fuzzy Matching.
+    Falls keine passende Antwort gefunden wird, wird auf Embeddings-basierte Suche zurückgegriffen.
+    """
+    user_input = preprocess_text(user_input)  # Eingabe vorverarbeiten
     question_variants = []
     question_to_answer = {}
-    for item in knowledge_base:
+
+    # FAQ-Fragen und Synonyme in Variantenliste einfügen
+    for item in faq_data:
+        # Hauptfrage hinzufügen
         question_variants.append(item.page_content)
         question_to_answer[item.page_content] = item.metadata["answer"]
+
+        # Synonyme aus JSON hinzufügen
+        if "synonyms" in item.metadata:
+            synonyms = item.metadata["synonyms"]
+            for synonym in synonyms:
+                question_variants.append(synonym)
+                question_to_answer[synonym] = item.metadata["answer"]
+
+    # Debugging: Zeige, welche Varianten für das Matching verwendet werden
+    print(f"[DEBUG] Anzahl der Matching-Varianten: {len(question_variants)}")
+    print(f"[DEBUG] Eingabe: {user_input}")
+
+    # Fuzzy Matching anwenden
     best_match, score = process.extractOne(user_input, question_variants, scorer=fuzz.token_sort_ratio)
-    if score > 70:
+
+    # Debugging: Ergebnis des Fuzzy Matchings anzeigen
+    print(f"[DEBUG] Beste Übereinstimmung: {best_match} mit Score: {score}")
+
+    # Wenn der Score über dem Schwellenwert liegt, Rückgabe der Antwort
+    if score > 80:  # Schwellenwert anpassen, falls nötig
         return question_to_answer[best_match]
+
+    # Fallback: Embeddings-basierte Suche, falls Fuzzy Matching keine gute Übereinstimmung findet
+    print(f"[DEBUG] Fuzzy Matching hat keine ausreichende Übereinstimmung gefunden. Fallback auf Embeddings.")
     return search_faq_with_embeddings(user_input)
+
+
 
 
 
@@ -168,20 +243,14 @@ def search_faq_with_embeddings(query):
     Suche nach der besten Übereinstimmung basierend auf Embeddings.
     """
     try:
-        # Sicherstellen, dass query ein String ist
-        if not isinstance(query, str):
-            return None  # Kein Ergebnis gefunden
-
-        # Verwende die `invoke`-Methode statt `get_relevant_documents`
-        results = retriever.invoke({"query": query})
-        # results = retriever.get_relevant_documents(query)
-
+        embedding = embeddings_model.embed_query(query)
+        results = faq_index.similarity_search_by_vector(embedding, k=1)
         if results and results[0].metadata.get("answer"):
             return results[0].metadata["answer"]
-        else:
-            return None  # Kein Ergebnis gefunden
-    except Exception:
-        return None  # Kein Ergebnis gefunden
+        return None
+    except Exception as e:
+        print(f"[DEBUG] Fehler bei der Embeddings-Suche: {e}")
+        return None
 
 
 
@@ -221,47 +290,37 @@ def chat():
     print("Starte den Chat (zum Beenden 'exit' eingeben)")
     user_ip = "192.168.1.10"
     username = "JohnDoe"
+    load_faq_data()  # Daten initial laden
+
     while True:
-        user_input = input("Du: ")
+        user_input = input("Du: ").strip()
+        if not user_input:
+            print("[DEBUG] Leere Eingabe erkannt. Bitte geben Sie eine Frage ein.")
+            continue
         if user_input.lower() == "exit":
             print("Chat beendet.")
             break
 
         set_language(user_input)
+        load_faq_data()  # FAQ-Daten neu laden, wenn Sprache gewechselt wird
         user_input = preprocess_text(user_input)
         category = detect_category(user_input)
         fallback_responses = load_fallback_responses()
 
         if category == "Service":
             response = fallback_responses.get("Service", fallback_responses["Fallback"])
-            print(format_output(response))
-            save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
-            continue
-
-        if category == "Technik":
-            response = get_advanced_recommendation(user_input, {}, language)
-            if response:
-                print(format_output(response))
-                save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
-                continue
-            response = fallback_responses.get("Technik", fallback_responses["Fallback"])
-            print(format_output(response))
-            save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
-            continue
-
-        # Prüfen, ob FAQ eine Antwort liefert
-        response = get_faq_answer_fuzzy(user_input)  # Verwende jetzt fuzzy matching
-        if response:
-            print(format_output(response))
-            save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
+        elif category == "Technik":
+            response = get_advanced_recommendation(user_input, {}, language) or fallback_responses.get("Technik")
         else:
-            # Unbeantwortete Frage speichern und Fallback ausgeben
-            print("Unanswered question detected. Saving to file...")
-            save_unanswered_question(user_input, "data/unanswered_questions.json")
-            response = fallback_responses["Fallback"]
-            print(format_output(response))
-            save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
+            response = get_faq_answer_fuzzy(user_input) or fallback_responses["Fallback"]
 
+        # Unbeantwortete Frage speichern, wenn keine Antwort gefunden wird
+        if not response or response == fallback_responses["Fallback"]:
+            print("[DEBUG] Unanswered question detected. Saving...")
+            save_unanswered_question(user_input, "data/unanswered_questions.json")
+
+        print(format_output(response))
+        save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
 
 
 if __name__ == "__main__":
