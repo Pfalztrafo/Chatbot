@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from train_model import main as start_training_process  # Importiere die main-Funktion aus train_model.py
-from api_main import allow_origins, allow_credentials, allow_methods, allow_headers, app  # Importiere die FastAPI-App und Parameter
+#from api_main import allow_origins, allow_credentials, allow_methods, allow_headers, app  # Importiere die FastAPI-App und Parameter
 from chatbot_main import get_faq_answer_fuzzy  # Importiere die benötigten Funktionen
 from utils import preprocess_text
 import os
