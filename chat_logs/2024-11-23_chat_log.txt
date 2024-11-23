@@ -72,3 +72,13 @@
 [2024-11-23 05:03:09] [Server] [Bot] Willkommen! Wie kann ich behilflich sein?
 [2024-11-23 05:03:21] [IP: 192.168.1.10] [User: JohnDoe] trafo lieferzeit
 [2024-11-23 05:03:21] [Server] [Bot] Die Lieferzeit hängt vom Typ und der Verfügbarkeit ab. Für genaue Informationen füllen Sie bitte unser Kontaktformular aus oder kontaktieren Sie uns telefonisch.
+[2024-11-23 10:27:34] [IP: 192.168.1.10] [User: JohnDoe] test
+[2024-11-23 10:27:34] [Server] [Bot] Ja, wir bieten PCB-Analysen an. Bitte senden Sie uns eine Ölprobe Ihres Transformators. Weitere Informationen dazu finden Sie auf unserer Webseite.
+[2024-11-23 10:43:40] [IP: 192.168.1.10] [User: JohnDoe] hi
+[2024-11-23 10:43:40] [Server] [Bot] Willkommen! Wie kann ich behilflich sein?
+[2024-11-23 10:43:45] [IP: 192.168.1.10] [User: JohnDoe] wie gehts
+[2024-11-23 10:43:45] [Server] [Bot] Danke der Nachfrage! Mir geht es gut. Wie kann ich Ihnen helfen?
+[2024-11-23 10:43:51] [IP: 192.168.1.10] [User: JohnDoe] huu
+[2024-11-23 10:43:51] [Server] [Bot] Auf Wiedersehen! Ich freue mich, Ihnen bald wieder helfen zu dürfen.
+[2024-11-23 10:43:56] [IP: 192.168.1.10] [User: JohnDoe] sehr gut
+[2024-11-23 10:43:56] [Server] [Bot] Willkommen! Wie kann ich behilflich sein?

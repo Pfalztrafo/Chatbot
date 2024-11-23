@@ -11,6 +11,8 @@ import json
 import psutil
 import requests
 import time
+from chatbot_main import load_faq_data
+
 
 
 class ChatbotGUI:
@@ -28,6 +30,9 @@ class ChatbotGUI:
         # Globale Variable für Logs definieren
         self.chat_logs_dir = "chat_logs"
         os.makedirs(self.chat_logs_dir, exist_ok=True)
+
+        # FAQ-Daten initial laden
+        load_faq_data(language=self.config.get("language", "de"))
 
         # API-Status
         self.api_status = "Offline"
@@ -381,6 +386,8 @@ class ChatbotGUI:
 
 # Anwendung starten
 if __name__ == "__main__":
+    # FAQ-Daten laden
+    load_faq_data(language="de")
     root = tk.Tk()
     app = ChatbotGUI(root)
     root.mainloop()

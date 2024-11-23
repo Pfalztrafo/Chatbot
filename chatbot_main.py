@@ -18,6 +18,7 @@ from langdetect import detect, DetectorFactory
 
 
 
+faq_data = None  # Initialisierung außerhalb der Funktion
 
 
 # WordNet-Daten einmalig herunterladen
@@ -45,7 +46,10 @@ german_synonyms_dict = load_openthesaurus_text()
 language = "de"
 
 # Dynamische Pfade für JSON-Dateien
-def get_file_path(file_type):
+def get_file_path(file_type, language="de"):
+    """
+    Gibt den Dateipfad basierend auf dem Typ und der Sprache zurück.
+    """
     file_mapping = {
         "dialogues": f"data/dialogues_{language}.json",
         "decision_rules": f"data/decision_rules_{language}.json",
@@ -53,6 +57,7 @@ def get_file_path(file_type):
         "fallback_responses": f"data/fallback_responses_{language}.json"
     }
     return file_mapping.get(file_type)
+
 
 
 # Kategorie erkennen
@@ -140,13 +145,14 @@ def set_language(user_input):
 
 
 # Wissensdatenbank laden
-def load_knowledge_base():
+def load_knowledge_base(language="de"):
     """
     Lädt die Dialogdaten aus der JSON-Datei und bereitet sie für die Suche vor.
     """
-    with open(get_file_path("dialogues"), "r", encoding="utf-8") as file:
+    file_path = get_file_path("dialogues", language)  # Korrigierter Aufruf mit Sprache
+    with open(file_path, "r", encoding="utf-8") as file:
         raw_data = json.load(file)
-    
+
     documents = []
     for item in raw_data:
         # Hauptfrage hinzufügen
@@ -156,9 +162,11 @@ def load_knowledge_base():
         if "synonyms" in item:
             for synonym in item["synonyms"]:
                 documents.append(Document(page_content=synonym, metadata={"answer": item["answer"]}))
-    
+
     print(f"[DEBUG] FAQ-Daten geladen: {len(documents)} Einträge")
     return documents
+
+
 
 
 
@@ -176,18 +184,54 @@ qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, chain_type=
 
 
 # FAQ-Daten basierend auf der Sprache laden
-def load_faq_data():
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.schema import Document
+from utils import preprocess_text
+import json
+
+# FAQ-Daten basierend auf der Sprache laden
+def load_faq_data(language="de"):
     """
     Lädt die FAQ-Daten, erweitert sie mit Synonymen und erstellt einen FAISS-Index.
+    Diese Funktion initialisiert das Embeddings-Modell nur einmal und verwendet
+    globale Variablen für die FAQ-Daten und den Index.
     """
     global faq_data, faq_index, embeddings_model
 
-    # FAQ-Daten laden
-    faq_data = load_knowledge_base()
-    embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-    faq_index = FAISS.from_documents(faq_data, embeddings_model)
+    # Initialisiere das Embeddings-Modell nur, wenn es nicht existiert oder None ist
+    if "embeddings_model" not in globals() or embeddings_model is None:
+        embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+        print("[DEBUG] Embeddings-Modell initialisiert.")
 
-    #print(f"[DEBUG] FAQ-Daten geladen: {len(faq_data)} Einträge")
+    # Lade die FAQ-Daten aus der JSON-Datei
+    faq_data = []
+    file_path = f"data/dialogues_{language}.json"
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            raw_data = json.load(file)
+
+        # Konvertiere die FAQ-Daten in Documents für FAISS
+        for item in raw_data:
+            # Hauptfrage als Dokument hinzufügen
+            faq_data.append(Document(page_content=preprocess_text(item["question"]),
+                                      metadata={"answer": item["answer"]}))
+            
+            # Füge Synonyme hinzu, falls vorhanden
+            if "synonyms" in item:
+                for synonym in item["synonyms"]:
+                    faq_data.append(Document(page_content=preprocess_text(synonym),
+                                              metadata={"answer": item["answer"]}))
+        print(f"[DEBUG] FAQ-Daten geladen: {len(faq_data)} Einträge")
+    except FileNotFoundError:
+        print(f"[ERROR] FAQ-Datei nicht gefunden: {file_path}")
+    except json.JSONDecodeError as e:
+        print(f"[ERROR] Fehler beim Lesen der FAQ-Datei: {e}")
+
+    # Erstelle einen FAISS-Index für die FAQ-Daten
+    faq_index = FAISS.from_documents(faq_data, embeddings_model)
+    print("[DEBUG] FAISS-Index erstellt.")
+
 
 
 # Fuzzy Matching und Embeddings
@@ -215,21 +259,21 @@ def get_faq_answer_fuzzy(user_input):
                 question_to_answer[synonym] = item.metadata["answer"]
 
     # Debugging: Zeige, welche Varianten für das Matching verwendet werden
-    print(f"[DEBUG] Anzahl der Matching-Varianten: {len(question_variants)}")
-    print(f"[DEBUG] Eingabe: {user_input}")
+    #print(f"[DEBUG] Anzahl der Matching-Varianten: {len(question_variants)}")
+    #print(f"[DEBUG] Eingabe: {user_input}")
 
     # Fuzzy Matching anwenden
     best_match, score = process.extractOne(user_input, question_variants, scorer=fuzz.token_sort_ratio)
 
     # Debugging: Ergebnis des Fuzzy Matchings anzeigen
-    print(f"[DEBUG] Beste Übereinstimmung: {best_match} mit Score: {score}")
+    #print(f"[DEBUG] Beste Übereinstimmung: {best_match} mit Score: {score}")
 
     # Wenn der Score über dem Schwellenwert liegt, Rückgabe der Antwort
     if score > 80:  # Schwellenwert anpassen, falls nötig
         return question_to_answer[best_match]
 
     # Fallback: Embeddings-basierte Suche, falls Fuzzy Matching keine gute Übereinstimmung findet
-    print(f"[DEBUG] Fuzzy Matching hat keine ausreichende Übereinstimmung gefunden. Fallback auf Embeddings.")
+    #print(f"[DEBUG] Fuzzy Matching hat keine ausreichende Übereinstimmung gefunden. Fallback auf Embeddings.")
     return search_faq_with_embeddings(user_input)
 
 
@@ -324,4 +368,5 @@ def chat():
 
 
 if __name__ == "__main__":
+    load_faq_data()  # Daten initial laden
     chat()
