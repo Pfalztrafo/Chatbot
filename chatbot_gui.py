@@ -84,12 +84,6 @@ class ChatbotGUI:
         api_thread = threading.Thread(target=run_server, daemon=True)
         api_thread.start()
 
-        # Überprüfen, ob der Server gestartet ist
-        try:
-            requests.get(f"https://{self.config['ip']}:{self.config['port']}/stats", verify=False)
-            self.api_status = "Online"
-        except requests.ConnectionError:
-            self.api_status = "Offline"
 
     def load_ssl_config(self):
         """Prüft, ob SSL-Zertifikate verfügbar sind, und gibt die Pfade zurück."""
@@ -158,12 +152,9 @@ class ChatbotGUI:
         self.active_chats_label = ttk.Label(self.overview_tab, text="Aktive Chats: 0", font=("Arial", 12))
         self.active_chats_label.pack(pady=5)
 
-        ttk.Label(self.overview_tab, text="API-Status", font=("Arial", 16)).pack(pady=10)
-        self.api_status_label = ttk.Label(self.overview_tab, text=f"API: {self.api_status}", foreground="green" if self.api_status == "Online" else "red", font=("Arial", 12))
-        self.api_status_label.pack(pady=5)
 
         ttk.Label(self.overview_tab, text="Version", font=("Arial", 16)).pack(pady=10)
-        self.version_label = ttk.Label(self.overview_tab, text="Version: 1.2.0", font=("Arial", 12))
+        self.version_label = ttk.Label(self.overview_tab, text="Version: 1.3.1", font=("Arial", 12))
         self.version_label.pack(pady=5)
 
         self.quit_button = ttk.Button(self.overview_tab, text="Beenden", command=self.root.quit)
