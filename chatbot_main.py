@@ -250,7 +250,7 @@ def chat():
             continue
 
         # Prüfen, ob FAQ eine Antwort liefert
-        response = get_faq_answer(user_input, language)
+        response = get_faq_answer_fuzzy(user_input)  # Verwende jetzt fuzzy matching
         if response:
             print(format_output(response))
             save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
@@ -261,6 +261,7 @@ def chat():
             response = fallback_responses["Fallback"]
             print(format_output(response))
             save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
+
 
 
 if __name__ == "__main__":

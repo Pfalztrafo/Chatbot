@@ -276,3 +276,27 @@
 [2024-11-22 21:51:25] [Server] [Bot] Hallo! Wie kann ich Ihnen helfen?
 [2024-11-22 21:51:28] [IP: 192.168.1.10] [User: JohnDoe] igkhjgfdlhök
 [2024-11-22 21:51:28] [Server] [Bot] Entschuldigung, ich konnte Ihre Anfrage nicht verstehen. Könnten Sie sie bitte genauer formulieren?
+[2024-11-22 23:02:01] [IP: 192.168.1.10] [User: JohnDoe] hallo
+[2024-11-22 23:02:01] [Server] [Bot] Hallo! Wie kann ich Ihnen helfen?
+[2024-11-22 23:02:07] [IP: 192.168.1.10] [User: JohnDoe] wie geht es dir
+[2024-11-22 23:02:07] [Server] [Bot] Entschuldigung, ich konnte Ihre Anfrage nicht verstehen. Könnten Sie sie bitte genauer formulieren?
+[2024-11-22 23:02:27] [IP: 192.168.1.10] [User: JohnDoe] wie geht es dir?
+[2024-11-22 23:02:27] [Server] [Bot] Danke der Nachfrage! Mir geht es gut. Wie kann ich Ihnen helfen?
+[2024-11-22 23:02:32] [IP: 192.168.1.10] [User: JohnDoe] tschüss
+[2024-11-22 23:02:32] [Server] [Bot] Auf Wiedersehen! Ich freue mich, Ihnen bald wieder helfen zu dürfen.
+[2024-11-22 23:02:39] [IP: 192.168.1.10] [User: JohnDoe] bis späterr
+[2024-11-22 23:02:39] [Server] [Bot] Entschuldigung, ich konnte Ihre Anfrage nicht verstehen. Könnten Sie sie bitte genauer formulieren?
+[2024-11-22 23:02:55] [IP: 192.168.1.10] [User: JohnDoe] welche dienstleistungen bietet pfalztrafo an?
+[2024-11-22 23:02:55] [Server] [Bot] Keine spezifische Empfehlung für Ihre Anwendung gefunden.
+[2024-11-22 23:03:14] [IP: 192.168.1.10] [User: JohnDoe] welche transformator-typen gibt es?
+[2024-11-22 23:03:14] [Server] [Bot] Keine spezifische Empfehlung für Ihre Anwendung gefunden.
+[2024-11-22 23:03:21] [IP: 192.168.1.10] [User: JohnDoe] wie lange hält ein transformator?
+[2024-11-22 23:03:21] [Server] [Bot] Keine spezifische Empfehlung für Ihre Anwendung gefunden.
+[2024-11-22 23:03:41] [IP: 192.168.1.10] [User: JohnDoe] wie lange dauert die lieferung eines transformators?
+[2024-11-22 23:03:41] [Server] [Bot] Die Lieferzeit hängt vom Typ und der Verfügbarkeit ab. Für genaue Informationen füllen Sie bitte unser Kontaktformular aus oder kontaktieren Sie uns telefonisch.
+[2024-11-22 23:09:35] [IP: 192.168.1.10] [User: JohnDoe] hii
+[2024-11-22 23:09:35] [Server] [Bot] Hallo! Wie kann ich Ihnen helfen?
+[2024-11-22 23:09:41] [IP: 192.168.1.10] [User: JohnDoe] bis späterr
+[2024-11-22 23:09:41] [Server] [Bot] Bis später! Ich freue mich, Ihnen bald wieder helfen zu dürfen.
+[2024-11-22 23:09:44] [IP: 192.168.1.10] [User: JohnDoe] yes
+[2024-11-22 23:09:44] [Server] [Bot] Entschuldigung, ich konnte Ihre Anfrage nicht verstehen. Könnten Sie sie bitte genauer formulieren?

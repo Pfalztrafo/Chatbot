@@ -2,14 +2,57 @@ from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from chatbot_main import get_faq_answer_fuzzy, save_chat_to_txt  # Importiere die benötigten Funktionen
 from fastapi.middleware.cors import CORSMiddleware
+import os
+import uvicorn
+from fastapi import FastAPI
+import time
+import requests
+
 
 app = FastAPI()
+
+# Beispiel für globale Variablen zur Speicherung von Statistiken
+statistics = {
+    "avg_response_time": 0,
+    "total_requests": 0,
+    "active_chats": 0,
+    "start_time": time.time()
+}
+
+@app.get("/stats")
+async def get_statistics():
+    # Durchschnittliche Antwortzeit simulieren (später ersetzen)
+    uptime = time.time() - statistics["start_time"]
+    avg_response_time = statistics["avg_response_time"]
+    total_requests = statistics["total_requests"]
+    active_chats = statistics["active_chats"]
+    return {
+        "uptime": uptime,
+        "avg_response_time": avg_response_time,
+        "total_requests": total_requests,
+        "active_chats": active_chats
+    }
 
 # Konfiguration der CORS-Einstellungen
 allow_origins = ["https://alphatrafo.de", "https://api.alphatrafo.de"]  # Erlaube spezifische Domains
 allow_credentials = True
 allow_methods = ["*"]  # Erlaube alle HTTP-Methoden
 allow_headers = ["*"]  # Erlaube alle Header
+
+
+def load_ssl_config():
+    """Prüft, ob SSL-Zertifikate verfügbar sind und gibt die Pfade zurück."""
+    ssl_keyfile = "/home/ismail/chatbot/SSL/privkey.pem"
+    ssl_certfile = "/home/ismail/chatbot/SSL/fullchain.pem"
+
+    if os.path.exists(ssl_keyfile) and os.path.exists(ssl_certfile):
+        return {"keyfile": ssl_keyfile, "certfile": ssl_certfile}
+    else:
+        return None
+
+
+
+
 
 # Funktion zur Anonymisierung der IP-Adresse
 def anonymize_ip(ip_address):
@@ -61,3 +104,20 @@ async def chat_with_bot(query: Query, request: Request):
 
     # Antwort zurückgeben
     return {"response": response}
+
+
+if __name__ == "__main__":
+    ssl_config = load_ssl_config()
+
+    if ssl_config:
+        print("SSL-Zertifikate gefunden. Server wird mit HTTPS gestartet.")
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=8000,
+            ssl_keyfile=ssl_config["keyfile"],
+            ssl_certfile=ssl_config["certfile"]
+        )
+    else:
+        print("Keine SSL-Zertifikate gefunden. Server wird mit HTTP gestartet.")
+        uvicorn.run(app, host="0.0.0.0", port=8000)

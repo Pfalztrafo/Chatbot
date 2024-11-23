@@ -74,11 +74,8 @@ pip install nltk
 Integration Webseite
 pip install fastapi uvicorn
 
-als Exe erstellen
-Probleme mit pydantic
-pip uninstall pydantic
-pip install pydantic==1.10.8
 pip install langdetect
+pip install uvicorn
 
 ```
 

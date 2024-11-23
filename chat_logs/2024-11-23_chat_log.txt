@@ -1,0 +1,6 @@
+[2024-11-23 00:30:26] [IP: 192.168.1.10] [User: JohnDoe] hii
+[2024-11-23 00:30:26] [Server] [Bot] Hallo! Wie kann ich Ihnen helfen?
+[2024-11-23 00:30:29] [IP: 192.168.1.10] [User: JohnDoe] gut und dir
+[2024-11-23 00:30:29] [Server] [Bot] Entschuldigung, ich konnte Ihre Anfrage nicht verstehen. Könnten Sie sie bitte genauer formulieren?
+[2024-11-23 01:41:08] [IP: 192.168.1.10] [User: JohnDoe] test
+[2024-11-23 01:41:08] [Server] [Bot] Entschuldigung, ich konnte Ihre Anfrage nicht verstehen. Könnten Sie sie bitte genauer formulieren?

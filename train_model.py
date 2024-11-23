@@ -10,10 +10,29 @@ import nltk
 from nltk.corpus import wordnet as wn
 import psutil  # Zum Abrufen der detaillierten Systeminformationen
 import cpuinfo # CPU Infos holen
+import json
+
 
 # WordNet-Daten einmalig herunterladen
 # nltk.download('wordnet')
 # nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
+
+
+
+def load_config():
+    """Lädt Konfigurationsparameter aus der Datei config.json."""
+    try:
+        with open("config.json", "r", encoding="utf-8") as f:
+            config = json.load(f)
+            if not config:
+                raise ValueError("Die Datei ist leer.")
+            return config
+    except FileNotFoundError:
+        raise FileNotFoundError("Die Datei 'config.json' wurde nicht gefunden. Bitte erstellen.")
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Fehler beim Lesen der config.json: Ungültiges JSON-Format. {e}")
+
+
 
 # LLM google/flan-t5-base laden
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -253,6 +272,10 @@ def main():
             "output": [item["output"] for item in training_data]
         })
         tokenized_dataset = dataset.map(preprocess_function, batched=True)
+
+
+        # Konfigurationsparameter laden
+        config = load_config()
 
         # Trainingsargumente festlegen
         training_args = TrainingArguments(
