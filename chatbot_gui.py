@@ -174,7 +174,7 @@ class ChatbotGUI:
         """Holt echte Statistiken von der API und aktualisiert die Labels."""
         try:
             # API-Endpunkt für Statistiken
-            response = requests.get("http://127.0.0.1:8000/stats")
+            response = requests.get("https://0.0.0.0:8000/stats")
             if response.status_code == 200:
                 stats = response.json()
                 avg_response_time = stats.get("avg_response_time", 0)
