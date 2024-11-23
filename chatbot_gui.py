@@ -158,7 +158,7 @@ class ChatbotGUI:
         self.version_label.pack(pady=5)
 
         # SSL-Status anzeigen
-        ssl_status = "Aktiviert" if os.path.exists("/home/ismail/chatbot/SSL/privkey.pem") and os.path.exists("/home/ismail/chatbot/SSL/fullchain.pem") else "Deaktiviert"
+        ssl_status = "Aktiviert" if os.path.exists("/home/ismail/Chatbot/SSL/privkey.pem") and os.path.exists("/home/ismail/Chatbot/SSL/fullchain.pem") else "Deaktiviert"
         self.ssl_status_label = ttk.Label(self.overview_tab, text=f"SSL-Status: {ssl_status}", font=("Arial", 12))
         self.ssl_status_label.pack(pady=5)
 
