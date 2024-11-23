@@ -1,18 +1,15 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from train_model import main as start_training_process  # Importiere die main-Funktion aus train_model.py
-#from api_main import allow_origins, allow_credentials, allow_methods, allow_headers, app  # Importiere die FastAPI-App und Parameter
+from api_main import app  # Importiere die FastAPI-App
 from chatbot_main import get_faq_answer_fuzzy  # Importiere die benötigten Funktionen
 from utils import preprocess_text
 import os
 import threading
 import uvicorn
 import json
-from tqdm import tqdm
 import psutil
 import requests
-
-
 
 
 class ChatbotGUI:
@@ -21,12 +18,11 @@ class ChatbotGUI:
         self.root.title("Chatbot Management Dashboard")
         self.root.geometry("800x600")
 
-         # Konfiguration laden
+        # Konfiguration laden
         self.config = self.load_config()
 
-        #Statistik
+        # Statistik
         self.update_statistics()
-
 
         # Globale Variable für Logs definieren
         self.chat_logs_dir = "chat_logs"
@@ -44,11 +40,31 @@ class ChatbotGUI:
         # Systemstatistiken starten (nach dem Erstellen der Widgets)
         self.update_system_stats()
 
+    def load_config(self):
+        """Lädt Konfigurationsparameter aus config.json."""
+        try:
+            with open("config.json", "r", encoding="utf-8") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return {
+                "ip": "0.0.0.0",
+                "port": 8000,
+                "allow_origins": ["*"],
+                "allow_methods": ["*"],
+                "allow_headers": ["*"],
+                "epochs": 1,
+                "learning_rate": 0.00002,
+                "batch_size": 4
+            }
+        except json.JSONDecodeError as e:
+            messagebox.showerror("Fehler", f"Ungültiges JSON-Format: {e}")
+            self.root.quit()
+
     def start_api_server(self):
         """Startet den FastAPI-Server in einem separaten Thread."""
         def run_server():
             try:
-                uvicorn.run(app, host="0.0.0.0", port=8000)
+                uvicorn.run(app, host=self.config["ip"], port=self.config["port"])
             except Exception as e:
                 print(f"Fehler beim Starten der API: {e}")
                 self.api_status = "Offline"
@@ -56,9 +72,14 @@ class ChatbotGUI:
         # Server in einem separaten Thread starten
         api_thread = threading.Thread(target=run_server, daemon=True)
         api_thread.start()
-        self.api_status = "Online"
 
-    
+        # Überprüfen, ob der Server gestartet ist
+        try:
+            requests.get(f"http://{self.config['ip']}:{self.config['port']}/stats")
+            self.api_status = "Online"
+        except requests.ConnectionError:
+            self.api_status = "Offline"
+
     def update_system_stats(self):
         """Aktualisiert die CPU- und RAM-Auslastung in der Übersicht."""
         # CPU-Auslastung abrufen
@@ -73,7 +94,6 @@ class ChatbotGUI:
 
         # Wiederholtes Aktualisieren der Werte
         self.root.after(1000, self.update_system_stats)  # Alle 1 Sekunde aktualisieren
-
 
     def create_widgets(self):
         # Tabs erstellen
@@ -99,40 +119,6 @@ class ChatbotGUI:
         self.create_test_tab()
         self.create_settings_tab()
 
-
-#------------------------
-    def load_config(self):
-        """Lädt Konfigurationsparameter aus config.json."""
-        try:
-            with open("config.json", "r", encoding="utf-8") as f:
-                return json.load(f)
-        except FileNotFoundError:
-            return {
-                "ip": "0.0.0.0",
-                "port": 8000,
-                "allow_origins": ["*"],
-                "allow_methods": ["*"],
-                "allow_headers": ["*"],
-                "epochs": 1,
-                "learning_rate": 0.00002,
-                "batch_size": 4
-            }
-        except json.JSONDecodeError as e:
-            messagebox.showerror("Fehler", f"Ungültiges JSON-Format: {e}")
-            self.root.quit()
-
-    def save_config(self):
-        """Speichert die aktuellen Konfigurationsparameter in config.json."""
-        try:
-            with open("config.json", "w", encoding="utf-8") as f:
-                json.dump(self.config, f, indent=4)
-            messagebox.showinfo("Erfolg", "Einstellungen gespeichert.")
-        except Exception as e:
-            messagebox.showerror("Fehler", f"Fehler beim Speichern der Konfiguration: {e}")
-
-
-
-    # Tab: Übersicht
     def create_overview_tab(self):
         ttk.Label(self.overview_tab, text="CPU- und RAM-Auslastung", font=("Arial", 16)).pack(pady=10)
         self.cpu_label = ttk.Label(self.overview_tab, text="CPU: 0%", font=("Arial", 12))
@@ -157,11 +143,6 @@ class ChatbotGUI:
         self.version_label = ttk.Label(self.overview_tab, text="Version: 1.2.0", font=("Arial", 12))
         self.version_label.pack(pady=5)
 
-        # SSL-Status anzeigen
-        ssl_status = "Aktiviert" if os.path.exists("/home/ismail/Chatbot/SSL/privkey.pem") and os.path.exists("/home/ismail/Chatbot/SSL/fullchain.pem") else "Deaktiviert"
-        self.ssl_status_label = ttk.Label(self.overview_tab, text=f"SSL-Status: {ssl_status}", font=("Arial", 12))
-        self.ssl_status_label.pack(pady=5)
-
         self.quit_button = ttk.Button(self.overview_tab, text="Beenden", command=self.root.quit)
         self.quit_button.pack(pady=10)
 
@@ -169,12 +150,11 @@ class ChatbotGUI:
         self.update_system_stats()
         self.update_statistics()
 
-
     def update_statistics(self):
         """Holt echte Statistiken von der API und aktualisiert die Labels."""
         try:
             # API-Endpunkt für Statistiken
-            response = requests.get("https://0.0.0.0:8000/stats")
+            response = requests.get(f"http://{self.config['ip']}:{self.config['port']}/stats")
             if response.status_code == 200:
                 stats = response.json()
                 avg_response_time = stats.get("avg_response_time", 0)
@@ -191,9 +171,8 @@ class ChatbotGUI:
             print(f"Fehler beim Aktualisieren der Statistiken: {e}")
 
         # Wiederholtes Aktualisieren der Werte
-        self.root.after(30000, self.update_statistics)  # Aktualisierung alle 5 Sekunden
+        self.root.after(30000, self.update_statistics)  # Aktualisierung alle 30 Sekunden
 
-    # Tab: Training
     def create_training_tab(self):
         """Erstellt den Training-Tab."""
         ttk.Label(self.training_tab, text="Training Parameter", font=("Arial", 16)).pack(pady=10)
@@ -228,9 +207,6 @@ class ChatbotGUI:
         self.train_button = ttk.Button(self.training_tab, text="Training starten", command=self.start_training)
         self.train_button.pack(pady=10)
 
-
-
-    # Tab: Logs
     def create_logs_tab(self):
         ttk.Label(self.logs_tab, text="Chat Logs", font=("Arial", 16)).pack(pady=10)
         self.logs_text = tk.Text(self.logs_tab, height=20, width=80)
@@ -255,7 +231,6 @@ class ChatbotGUI:
         else:
             self.logs_text.insert(tk.END, "Keine Logs verfügbar.")
 
-    # Tab: Testen
     def create_test_tab(self):
         ttk.Label(self.test_tab, text="Chat Terminal", font=("Arial", 16)).pack(pady=10)
         self.chat_history = tk.Text(self.test_tab, height=20, width=80, state="disabled")
@@ -281,7 +256,6 @@ class ChatbotGUI:
         self.chat_history.config(state="disabled")
         self.chat_history.see(tk.END)
 
-
     def apply_settings(self):
         """Speichert die geänderten API-Einstellungen in config.json."""
         try:
@@ -304,10 +278,6 @@ class ChatbotGUI:
             # Allgemeine Fehlerbehandlung
             messagebox.showerror("Fehler", f"Ein Fehler ist aufgetreten: {e}")
 
-
-
-
-    # Tab: Einstellung
     def create_settings_tab(self):
         """Erstellt den Einstellungen-Tab."""
         ttk.Label(self.settings_tab, text="API Einstellungen", font=("Arial", 16)).pack(pady=10)
@@ -346,7 +316,6 @@ class ChatbotGUI:
         self.save_button = ttk.Button(self.settings_tab, text="Einstellungen speichern", command=self.apply_settings)
         self.save_button.pack(pady=20)
 
-
     def update_training_logs(self):
         log_path = "./training_logs/training_logs.txt"
         if os.path.exists(log_path):
@@ -362,8 +331,6 @@ class ChatbotGUI:
             self.training_logs_text.insert(tk.END, "Keine Logs verfügbar.")
             self.training_logs_text.config(state="disabled")
 
-
-
     def start_training(self):
         def training_task():
             try:
@@ -371,13 +338,13 @@ class ChatbotGUI:
                 epochs = int(self.epochs_entry.get())
                 lr = float(self.lr_entry.get())
                 batch_size = int(self.batch_entry.get())
-                
+
                 # Dummy-Training (ersetze mit echter Training-Logik)
                 from tqdm import tqdm
                 for i in tqdm(range(epochs), desc="Training läuft"):
                     self.progress_bar["value"] = (i + 1) * (100 / epochs)
                     self.root.update_idletasks()
-                
+
                 self.update_training_logs()  # Logs anzeigen
                 messagebox.showinfo("Erfolg", "Training abgeschlossen!")
                 self.config["epochs"] = int(self.epochs_entry.get())
@@ -389,7 +356,6 @@ class ChatbotGUI:
                 messagebox.showerror("Fehler", f"Training fehlgeschlagen: {e}")
 
         threading.Thread(target=training_task, daemon=True).start()
-
 
 # Anwendung starten
 if __name__ == "__main__":
