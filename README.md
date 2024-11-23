@@ -76,7 +76,8 @@ pip install fastapi uvicorn
 
 pip install langdetect
 pip install uvicorn
-
+pip install py-cpuinfo
+pip install psutil
 ```
 
 

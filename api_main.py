@@ -42,8 +42,8 @@ allow_headers = ["*"]  # Erlaube alle Header
 
 def load_ssl_config():
     """Prüft, ob SSL-Zertifikate verfügbar sind und gibt die Pfade zurück."""
-    ssl_keyfile = "/home/ismail/chatbot/SSL/privkey.pem"
-    ssl_certfile = "/home/ismail/chatbot/SSL/fullchain.pem"
+    ssl_keyfile = "/home/ismail/Chatbot/SSL/privkey.pem"
+    ssl_certfile = "/home/ismail/Chatbot/SSL/fullchain.pem"
 
     if os.path.exists(ssl_keyfile) and os.path.exists(ssl_certfile):
         return {"keyfile": ssl_keyfile, "certfile": ssl_certfile}
