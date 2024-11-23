@@ -10,6 +10,7 @@ import uvicorn
 import json
 import psutil
 import requests
+import time
 
 
 class ChatbotGUI:
@@ -83,6 +84,9 @@ class ChatbotGUI:
         # Server in einem separaten Thread starten
         api_thread = threading.Thread(target=run_server, daemon=True)
         api_thread.start()
+        
+        # Kurze Pause, um sicherzustellen, dass der Server startet
+        time.sleep(2)
 
 
     def load_ssl_config(self):
