@@ -235,10 +235,46 @@ class ChatbotGUI:
         self.train_button.pack(pady=10)
 
     def create_logs_tab(self):
+        """Erstellt den Tab für Chat-Logs und startet die dynamische Aktualisierung."""
         ttk.Label(self.logs_tab, text="Chat Logs", font=("Arial", 16)).pack(pady=10)
-        self.logs_text = tk.Text(self.logs_tab, height=20, width=80)
+        self.logs_text = tk.Text(self.logs_tab, height=20, width=80, state="disabled")
         self.logs_text.pack(pady=10)
-        self.display_logs()
+        self.update_logs()
+
+    def update_logs(self):
+        """Prüft regelmäßig auf neue Einträge und aktualisiert die Anzeige der Chat-Logs."""
+        try:
+            log_files = sorted(
+                [f for f in os.listdir(self.chat_logs_dir) if f.endswith(".txt")],
+                key=lambda x: os.path.getctime(os.path.join(self.chat_logs_dir, x)),
+                reverse=True
+            )
+            if log_files:
+                log_path = os.path.join(self.chat_logs_dir, log_files[0])
+                try:
+                    with open(log_path, "r", encoding="utf-8") as file:
+                        logs = file.read()
+                except UnicodeDecodeError:
+                    with open(log_path, "r", encoding="latin-1") as file:
+                        logs = file.read()
+                self.logs_text.config(state="normal")
+                self.logs_text.delete("1.0", tk.END)
+                self.logs_text.insert(tk.END, logs)
+                self.logs_text.see(tk.END)  # Scrollt automatisch ans Ende
+                self.logs_text.config(state="disabled")
+            else:
+                self.logs_text.config(state="normal")
+                self.logs_text.delete("1.0", tk.END)
+                self.logs_text.insert(tk.END, "Keine Logs verfügbar.")
+                self.logs_text.see(tk.END)  # Falls keine Logs vorhanden sind, auch ans Ende scrollen
+                self.logs_text.config(state="disabled")
+        except Exception as e:
+            print(f"Fehler beim Aktualisieren der Logs: {e}")
+
+        # Logs alle 2 Sekunden aktualisieren
+        self.root.after(10000, self.update_logs)
+
+
 
     def display_logs(self):
         log_files = sorted(
