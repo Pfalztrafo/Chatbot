@@ -23,7 +23,7 @@ class ChatbotGUI:
         self.config = self.load_config()
 
         # Statistik
-        self.update_statistics()
+        #self.update_statistics()
 
         # Globale Variable für Logs definieren
         self.chat_logs_dir = "chat_logs"
@@ -84,7 +84,7 @@ class ChatbotGUI:
         # Server in einem separaten Thread starten
         api_thread = threading.Thread(target=run_server, daemon=True)
         api_thread.start()
-        
+
         # Kurze Pause, um sicherzustellen, dass der Server startet
         time.sleep(2)
 
@@ -149,12 +149,12 @@ class ChatbotGUI:
 
         # Nach Erstellung der Labels die Systemstatistiken starten
         ttk.Label(self.overview_tab, text="Statistiken", font=("Arial", 16)).pack(pady=10)
-        self.response_time_label = ttk.Label(self.overview_tab, text="Durchschnittliche Antwortzeit: 0 ms", font=("Arial", 12))
-        self.response_time_label.pack(pady=5)
-        self.total_requests_label = ttk.Label(self.overview_tab, text="Gesamtanzahl der Anfragen: 0", font=("Arial", 12))
-        self.total_requests_label.pack(pady=5)
-        self.active_chats_label = ttk.Label(self.overview_tab, text="Aktive Chats: 0", font=("Arial", 12))
-        self.active_chats_label.pack(pady=5)
+        #self.response_time_label = ttk.Label(self.overview_tab, text="Durchschnittliche Antwortzeit: 0 ms", font=("Arial", 12))
+        #self.response_time_label.pack(pady=5)
+        #self.total_requests_label = ttk.Label(self.overview_tab, text="Gesamtanzahl der Anfragen: 0", font=("Arial", 12))
+        #self.total_requests_label.pack(pady=5)
+        #self.active_chats_label = ttk.Label(self.overview_tab, text="Aktive Chats: 0", font=("Arial", 12))
+        #self.active_chats_label.pack(pady=5)
 
 
         ttk.Label(self.overview_tab, text="Version", font=("Arial", 16)).pack(pady=10)
@@ -166,7 +166,7 @@ class ChatbotGUI:
 
         # Nach Erstellung der Labels die Statistiken und Systemauslastung starten
         self.update_system_stats()
-        self.update_statistics()
+        #self.update_statistics()
 
 
     def update_statistics(self):
