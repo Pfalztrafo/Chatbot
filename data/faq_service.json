@@ -1,0 +1,48 @@
+[
+    {
+        "question": "Welche Dienstleistungen bietet Pfalztrafo an?",
+        "answer": "Pfalztrafo bietet ein breites Spektrum an Dienstleistungen rund um Transformatoren, darunter die Wartung und Instandhaltung von Öl- und Gießharztransformatoren, Ölprobenentnahme und Analyse, Abdichtung von Komponenten sowie die Installation von Schutz- und Überwachungseinrichtungen. Zudem werden Transformatoren umweltgerecht entsorgt und wiederverwertet. Speziallösungen wie Ölauffangwannen und Lackierungen gehören ebenfalls zum Angebot.",
+        "category": "Service",
+        "synonyms": [
+            "Welche Services hat Pfalztrafo?",
+            "Was bietet Pfalztrafo an?",
+            "Welche Pfalztrafo-Dienstleistungen gibt es?",
+            "Dienstleistungen von Pfalztrafo",
+            "Welche Leistungen bietet Pfalztrafo an?",
+            "Welche Trafo-Dienstleistungen bietet Pfalztrafo an?",
+            "Welche Services hat Pfalztrafo für Trafos?",
+            "Was bietet ihr an?"
+        ]
+    },
+    {
+        "question": "Können Transformatoren repariert werden?",
+        "answer": "Ja, wir bieten auch Reparaturdienste an. Für Details füllen Sie bitte unser Kontaktformular aus oder kontaktieren Sie uns telefonisch.",
+        "category": "Service",
+        "synonyms": [
+            "Transformator reparieren", 
+            "Reparaturservice für Trafo", 
+            "Kann man einen Trafo reparieren?", 
+            "Transformator Wartung und Reparatur", 
+            "Reparieren Sie Trafos?"
+        ]
+    },
+    {
+        "question": "Wir planen, Transformatoren auszutauschen.",
+        "answer": "Benötigen Sie Hilfe bei der Entsorgung des alten Transformators? Bitte senden Sie uns Bilder des Typenschilds und Details zur aktuellen Installation. Wir helfen Ihnen gerne bei der Planung.",
+        "category": "Service",
+        "synonyms": ["Trafo ersetzen", "Transformator wechseln", "Alten Transformator austauschen"]
+    },
+    {
+        "question": "Können Sie eine PCB-Analyse durchführen?",
+        "answer": "Ja, wir bieten PCB-Analysen an. Bitte senden Sie uns eine Ölprobe Ihres Transformators. Weitere Informationen dazu finden Sie auf unserer Webseite.",
+        "category": "Service",
+        "synonyms": ["Ölprobe Analyse", "PCB-Test", "Analyse des Trafo-Öls"]
+    },
+    {
+        "question": "Wir möchten einen Transformator verlagern.",
+        "answer": "Bitte teilen Sie uns mit, ob es spezielle Anforderungen wie Brandschutz gibt und ob der Transformator im Innen- oder Außenbereich installiert werden soll. Wir helfen Ihnen gerne weiter.",
+        "category": "Service",
+        "synonyms": ["Trafo verlagern", "Transformator Standort ändern", "Trafo umbauen"]
+    }
+
+]

@@ -1,0 +1,110 @@
+{
+    "kaufberatung": {
+        "question": "Welche Art von Transformator wird benötigt?",
+        "options": {
+            "Öl-Trafo": {
+                "question": "Welche Bauweise wird benötigt?",
+                "options": {
+                    "Hermetik": {
+                        "question": "Gibt es spezielle Anforderungen an den Standort?",
+                        "options": {
+                            "Innenaufstellung": {
+                                "question": "Welche Leistung wird benötigt?",
+                                "options": {
+                                    "400 kVA": {
+                                        "question": "Welche Spannungsebene wird benötigt?",
+                                        "options": {
+                                            "10-0,4 kV": {
+                                                "question": "Welche Schaltgruppe wird benötigt?",
+                                                "options": {
+                                                    "Dyn5": {
+                                                        "question": "Welche Anzapfung wird benötigt?",
+                                                        "options": {
+                                                            "±2x2,5%": {
+                                                                "question": "Welche Anschlüsse werden HV-seitig benötigt?",
+                                                                "options": {
+                                                                    "Steckdurchführungen": {
+                                                                        "question": "Werden US-seitig Anschlussfahnen benötigt?",
+                                                                        "options": {
+                                                                            "Ja": {
+                                                                                "question": "Wird ein Thermometer benötigt?",
+                                                                                "options": {
+                                                                                    "Ja": {
+                                                                                        "question": "Wird ein Schutzblock benötigt?",
+                                                                                        "options": {
+                                                                                            "DMCR": {
+                                                                                                "question": "Welche Frequenz wird benötigt?",
+                                                                                                "options": {
+                                                                                                    "50 Hz": {
+                                                                                                        "question": "Welche Kurzschlussspannung muss der Trafo erfüllen?",
+                                                                                                        "options": {
+                                                                                                            "Uk: 4%": {
+                                                                                                                "question": "Welche Abmessungen darf der Trafo maximal haben?",
+                                                                                                                "response": "Basierend auf Ihren Angaben erstellen wir Ihnen ein individuelles Angebot. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                                                                                                                "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Öl-Trafo&body=Typ: Hermetik%0D%0AStandort: Innenaufstellung%0D%0ALeistung: 400 kVA%0D%0ASpannungsebene: 10-0,4 kV%0D%0ASchaltgruppe: Dyn5%0D%0AAnzapfung: ±2x2,5%%0D%0AHV-Anschlüsse: Steckdurchführungen%0D%0AUS-Anschlüsse: Anschlussfahnen%0D%0AThermometer: Ja%0D%0ASchutzblock: DMCR%0D%0AFrequenz: 50 Hz%0D%0AKurzschlussspannung: Uk: 4%%0D%0AAbmessungen: [Hier eintragen]"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "Ausdehner": {
+                        "question": "Gibt es spezielle Anforderungen an den Standort?",
+                        "options": {
+                            "Außenaufstellung": {
+                                "question": "Welche Leistung wird benötigt?",
+                                "options": {
+                                    "1250 kVA": {
+                                        "question": "Welche Spannungsebene wird benötigt?",
+                                        "options": {
+                                            "20-0,4 kV": {
+                                                "response": "Basierend auf Ihren Angaben erstellen wir Ihnen ein individuelles Angebot. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                                                "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Öl-Trafo&body=Typ: Ausdehner%0D%0AStandort: Außenaufstellung%0D%0ALeistung: 1250 kVA%0D%0ASpannungsebene: 20-0,4 kV"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Gießharz-Trafo": {
+                "question": "Gibt es spezielle Anforderungen an den Standort?",
+                "options": {
+                    "Feuchte Umgebungen": {
+                        "question": "Welche Leistung wird benötigt?",
+                        "options": {
+                            "500 kVA": {
+                                "question": "Welche Spannungsebene wird benötigt?",
+                                "options": {
+                                    "10-0,4 kV": {
+                                        "response": "Basierend auf Ihren Angaben erstellen wir Ihnen ein individuelles Angebot. Bitte klicken Sie hier, um Ihre Anfrage zu senden.",
+                                        "mailto": "mailto:vertrieb@pfalztrafo.de?subject=Anfrage für Gießharz-Trafo&body=Standort: Feuchte Umgebungen%0D%0ALeistung: 500 kVA%0D%0ASpannungsebene: 10-0,4 kV"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

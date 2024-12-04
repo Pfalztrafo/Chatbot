@@ -1,0 +1,620 @@
+[
+    {
+        "question": "Was kostet ein Transformator?",
+        "answer": "Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bitte füllen Sie das Kontaktformular auf unserer Webseite aus oder rufen Sie uns direkt an.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Preis für Transformator", 
+            "Wie viel kostet ein Trafo?", 
+            "Transformator Kosten", 
+            "Preis eines Trafos", 
+            "Kosten für Trafo"
+        ]
+    },
+    {
+        "question": "Wie lange dauert die Lieferung eines Transformators?",
+        "answer": "Die Lieferzeit hängt vom Typ und der Verfügbarkeit ab. Für genaue Informationen füllen Sie bitte unser Kontaktformular aus oder kontaktieren Sie uns telefonisch.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Lieferzeit für Transformator", 
+            "Wann wird ein Trafo geliefert?", 
+            "Wie lange dauert es, einen Transformator zu bekommen?", 
+            "Lieferdauer Trafo",
+            "Wie schnell bekomme ich einen Trafo?"
+        ]
+    },
+    {
+        "question": "Bieten Sie auch gebrauchte Transformatoren an?",
+        "answer": "Für Informationen zu gebrauchten Transformatoren können Sie unser Kontaktformular auf der Webseite ausfüllen oder uns direkt anrufen.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Gebrauchte Transformatoren", 
+            "Verkaufen Sie gebrauchte Trafos?", 
+            "Haben Sie gebrauchte Transformatoren?", 
+            "Second-Hand Transformatoren", 
+            "Transformator gebraucht kaufen"
+        ]
+    },
+    {
+        "question": "Wir benötigen einen Transformator für einen Schmelzofen.",
+        "answer": "Bitte geben Sie die erforderliche Leistung, Spannung und Umgebung an. Wir erstellen Ihnen gerne ein individuelles Angebot.",
+        "category": "Vertrieb",
+        "synonyms": ["Trafo für Schmelzofen", "Transformator für Ofen", "Ofen-Trafo"]
+    },
+    {
+        "question": "Welche Transformator-Größe ist die richtige für uns?",
+        "answer": "Die Wahl der Transformator-Größe hängt von der benötigten Leistung und Spannung ab. Bitte teilen Sie uns Ihre Anforderungen mit, und wir beraten Sie gerne.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Welche Trafo-Größe ist passend?",
+            "Welche Leistung hat der richtige Transformator?",
+            "Passende Trafo-Größe finden",
+            "Transformator-Größe bestimmen",
+            "Wie groß sollte der Trafo sein?"
+        ]
+    },
+    {
+        "question": "Können Sie Transformatoren individuell anpassen?",
+        "answer": "Ja, wir bieten maßgeschneiderte Transformatoren an, die speziell auf Ihre Anforderungen abgestimmt sind. Kontaktieren Sie uns für ein individuelles Angebot.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Individuelle Transformatoren",
+            "Maßgeschneiderte Trafos",
+            "Angepasste Transformatoren",
+            "Kundenspezifische Trafos",
+            "Sonderanfertigungen für Transformatoren"
+        ]
+    },
+    {
+        "question": "Bieten Sie Beratung für Transformator-Kauf an?",
+        "answer": "Ja, unser Team berät Sie gerne bei der Auswahl des richtigen Transformators. Bitte rufen Sie uns an oder nutzen Sie unser Kontaktformular.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Beratung für Trafo-Kauf",
+            "Kaufberatung Transformatoren",
+            "Transformator auswählen",
+            "Hilfe bei Trafo-Kauf",
+            "Welcher Transformator ist der richtige?"
+        ]
+    },
+    {
+        "question": "Liefern Sie Transformatoren ins Ausland?",
+        "answer": "Ja, wir liefern Transformatoren weltweit. Für weitere Informationen kontaktieren Sie uns bitte direkt.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Export von Transformatoren",
+            "Lieferung von Trafos ins Ausland",
+            "Trafos international kaufen",
+            "Trafo-Export",
+            "Transformator ins Ausland liefern"
+        ]
+    },
+    {
+        "question": "Welche Garantien bieten Sie für Transformatoren?",
+        "answer": "Wir bieten eine Herstellergarantie auf alle unsere Transformatoren. Für Details zu den Garantiebedingungen kontaktieren Sie uns bitte.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Transformator Garantie",
+            "Welche Garantie gibt es auf Trafos?",
+            "Garantieleistung für Transformatoren",
+            "Wie lange ist ein Transformator garantiert?",
+            "Garantiebedingungen für Trafo"
+        ]
+    },
+    {
+        "question": "Können Sie Transformatoren mit kurzer Lieferzeit anbieten?",
+        "answer": "Ja, wir haben einige Transformatoren auf Lager, die kurzfristig verfügbar sind. Bitte kontaktieren Sie uns für Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Transformatoren schnell verfügbar",
+            "Lieferbare Trafos",
+            "Kurzfristige Lieferung von Transformatoren",
+            "Trafos auf Lager",
+            "Schnelle Lieferung von Transformatoren"
+        ]
+    },
+    
+    {
+        "question": "Welche Informationen benötigen Sie, um einen passenden Transformator zu empfehlen?",
+        "answer": "Wir benötigen Details zur Leistung, Spannung, Schaltgruppe und zum Einsatzort des Transformators. Bitte nutzen Sie unser Anfrageformular, um uns diese Informationen mitzuteilen.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Welche Details brauchen Sie für eine Empfehlung?",
+            "Welche Infos sind wichtig für die Trafo-Beratung?",
+            "Was muss ich angeben, um einen Trafo zu kaufen?",
+            "Welche Angaben benötigen Sie für Transformatoren?"
+        ]
+    },
+    {
+        "question": "Kann ich einen Transformator für PV-Anwendungen bei Ihnen kaufen?",
+        "answer": "Ja, wir bieten Transformatoren für PV-Anwendungen an. Bitte teilen Sie uns Ihre Anforderungen mit, wie z. B. Leistung, Spannung und Standort.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo für PV-Anlage kaufen",
+            "Transformator für Solaranlage",
+            "Haben Sie Trafos für Photovoltaik?",
+            "PV-Transformator kaufen",
+            "Trafos für PV-Systeme"
+        ]
+    },
+    {
+        "question": "Welche Spannungsebenen können Ihre Transformatoren abdecken?",
+        "answer": "Unsere Transformatoren decken Spannungsebenen wie 10-0,4 kV, 20-0,4 kV und umschaltbare Optionen ab. Kontaktieren Sie uns für individuelle Anforderungen.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Welche Spannungen bieten Sie an?",
+            "Trafo-Spannungsebenen",
+            "Welche Spannung kann ein Trafo haben?",
+            "Transformator für 10-0,4 kV",
+            "Welche Spannungsbereiche gibt es bei Pfalztrafo?"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren auf Lager?",
+        "answer": "Ja, wir haben einige Transformatoren auf Lager, die sofort verfügbar sind. Kontaktieren Sie uns für weitere Informationen.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Sind Transformatoren sofort verfügbar?",
+            "Gibt es Trafos auf Lager?",
+            "Verfügbarkeit von Transformatoren",
+            "Trafos direkt kaufen",
+            "Vorrätige Transformatoren"
+        ]
+    },
+    {
+        "question": "Sind Ihre Transformatoren umweltfreundlich?",
+        "answer": "Unsere Transformatoren entsprechen modernen Umweltstandards und sind für nachhaltige Anwendungen optimiert. Kontaktieren Sie uns für Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Umweltfreundliche Transformatoren",
+            "Nachhaltigkeit bei Trafos",
+            "Transformatoren und Umweltschutz",
+            "Ökologische Trafos",
+            "Nachhaltige Trafo-Lösungen"
+        ]
+    },
+    {
+        "question": "Bieten Sie Ersatzteile für Transformatoren an?",
+        "answer": "Ja, wir bieten eine breite Palette von Ersatzteilen für Transformatoren an. Teilen Sie uns mit, welche Teile Sie benötigen.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo-Ersatzteile",
+            "Ersatzteile für Transformatoren",
+            "Kann ich Ersatzteile kaufen?",
+            "Verfügbarkeit von Trafo-Komponenten",
+            "Transformator-Zubehör"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren für Ladeinfrastruktur von Elektroautos?",
+        "answer": "Ja, wir bieten Transformatoren, die speziell für die Ladeinfrastruktur von Elektroautos geeignet sind. Kontaktieren Sie uns für ein individuelles Angebot.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafos für Elektroauto-Ladestationen",
+            "Transformatoren für E-Auto-Ladung",
+            "Ladeinfrastruktur-Trafos",
+            "E-Mobilität Transformatoren",
+            "Trafo für E-Auto-Ladepunkte"
+        ]
+    },
+    {
+        "question": "Können Sie Transformatoren direkt an Baustellen liefern?",
+        "answer": "Ja, wir liefern Transformatoren direkt an Baustellen oder andere gewünschte Standorte. Kontaktieren Sie uns für weitere Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Lieferung von Trafos an Baustellen",
+            "Transport von Transformatoren",
+            "Baustellenlieferung Trafo",
+            "Trafos direkt an Standort liefern",
+            "Lieferoptionen für Transformatoren"
+        ]
+    },
+    {
+        "question": "Bieten Sie technische Unterstützung bei der Installation von Transformatoren?",
+        "answer": "Ja, wir unterstützen Sie bei der Installation und Inbetriebnahme von Transformatoren. Unser Team steht Ihnen gerne zur Verfügung.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Technische Hilfe bei Trafo-Installation",
+            "Unterstützung bei Transformatoren-Inbetriebnahme",
+            "Trafo-Installation",
+            "Hilfe bei Trafo-Montage",
+            "Technische Beratung bei Transformatoren"
+        ]
+    },
+    {
+        "question": "Bieten Sie Finanzierung oder Leasing für Transformatoren an?",
+        "answer": "Ja, wir bieten flexible Finanzierungs- und Leasingoptionen für Transformatoren. Kontaktieren Sie uns, um mehr zu erfahren.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Kann man Transformatoren finanzieren?",
+            "Leasingoptionen für Transformatoren",
+            "Transformator kaufen auf Raten",
+            "Bieten Sie Ratenzahlung für Trafos?",
+            "Transformatoren mieten oder leasen"
+        ]
+    },
+    {
+        "question": "Können Sie Transformatoren für Notstromsysteme liefern?",
+        "answer": "Ja, wir bieten Transformatoren, die speziell für Notstromanwendungen entwickelt wurden. Kontaktieren Sie uns für Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo für Notstromsysteme",
+            "Transformator für Backup-Systeme",
+            "Notstrom-Trafo",
+            "Transformator für Generatoren",
+            "Trafos für Notstromanlagen"
+        ]
+    },
+    {
+        "question": "Wie stellen Sie die Qualität Ihrer Transformatoren sicher?",
+        "answer": "Unsere Transformatoren durchlaufen strenge Qualitätskontrollen und entsprechen internationalen Standards. Kontaktieren Sie uns für weitere Informationen.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Qualitätskontrollen für Transformatoren",
+            "Sind Ihre Trafos zertifiziert?",
+            "Qualitätsstandards bei Transformatoren",
+            "Wie garantieren Sie Qualität?",
+            "Transformatoren mit Qualitätsgarantie"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren für extreme Umweltbedingungen?",
+        "answer": "Ja, wir bieten Transformatoren, die speziell für extreme Bedingungen wie hohe Temperaturen oder Feuchtigkeit ausgelegt sind.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafos für extreme Bedingungen",
+            "Transformatoren für heiße Umgebungen",
+            "Transformator für feuchte Umgebung",
+            "Spezielle Transformatoren für Umweltbedingungen",
+            "Extremeinsatz Transformatoren"
+        ]
+    },
+    {
+        "question": "Können Sie Transformatoren für industrielle Anwendungen liefern?",
+        "answer": "Ja, wir bieten Transformatoren, die speziell für Industrieanlagen ausgelegt sind. Teilen Sie uns Ihre Anforderungen mit.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo für Industrie",
+            "Transformatoren für Produktionsanlagen",
+            "Industrie-Trafos",
+            "Transformator für Fabriken",
+            "Trafos für industrielle Zwecke"
+        ]
+    },
+    {
+        "question": "Welches Kühlmedium ist für meinen Transformator geeignet?",
+        "answer": "Die Wahl des Kühlmediums hängt von der Anwendung und dem Standort ab. Wir beraten Sie gerne bei der Auswahl.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Kühlung für Transformator auswählen",
+            "Welches Kühlmittel für Trafo?",
+            "Transformator Kühlungsoptionen",
+            "Öl- oder Gießharzkühlung für Transformator",
+            "Kühlmedium für Trafos"
+        ]
+    },
+    {
+        "question": "Können Sie alte Transformatoren recyceln?",
+        "answer": "Ja, wir bieten Recycling- und Entsorgungsservices für alte Transformatoren an. Kontaktieren Sie uns für weitere Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Recycling von Transformatoren",
+            "Alte Trafos entsorgen",
+            "Transformator-Recycling",
+            "Wohin mit alten Trafos?",
+            "Trafos nachhaltig entsorgen"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren für Wohngebiete?",
+        "answer": "Ja, wir bieten Transformatoren, die speziell für den Einsatz in Wohngebieten entwickelt wurden. Kontaktieren Sie uns für ein Angebot.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo für Wohnhäuser",
+            "Transformatoren für Stadtgebiete",
+            "Transformator für Wohnsiedlungen",
+            "Trafos für Wohngebiete",
+            "Transformator für Stromverteilung in Wohngebieten"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren für erneuerbare Energien?",
+        "answer": "Ja, wir bieten Transformatoren für Anwendungen wie Wind- und Solaranlagen an. Kontaktieren Sie uns für Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Transformatoren für Windkraftanlagen",
+            "Trafos für Solaranlagen",
+            "Transformator für erneuerbare Energie",
+            "Erneuerbare Energien Trafo",
+            "Transformatoren für Photovoltaik"
+        ]
+    },
+    {
+        "question": "Bieten Sie Wartungsverträge für Transformatoren an?",
+        "answer": "Ja, wir bieten maßgeschneiderte Wartungsverträge an, um die Lebensdauer und Effizienz Ihrer Transformatoren zu maximieren.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo Wartungsverträge",
+            "Regelmäßige Wartung von Transformatoren",
+            "Transformatorwartung",
+            "Serviceverträge für Trafos",
+            "Wartung für Transformatoren buchen"
+        ]
+    },
+    {
+        "question": "Wie lange hält ein Transformator?",
+        "answer": "Die Lebensdauer eines Transformators beträgt bei guter Wartung etwa 20 bis 30 Jahre. Kontaktieren Sie uns für Wartungsangebote.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Lebensdauer eines Trafos",
+            "Wie lange lebt ein Transformator?",
+            "Trafo Lebensspanne",
+            "Haltbarkeit eines Transformatoren",
+            "Wie langlebig sind Transformatoren?"
+        ]
+    },
+    {
+        "question": "Wie schwer ist ein Transformator?",
+        "answer": "Das Gewicht eines Transformators hängt von seiner Größe und Leistung ab. Kontaktieren Sie uns für spezifische Angaben.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Gewicht eines Trafos",
+            "Wie viel wiegt ein Transformator?",
+            "Trafo-Gewicht",
+            "Schwere eines Transformatoren",
+            "Wie schwer sind Transformatoren?"
+        ]
+    },
+    {
+        "question": "Welche Kühlmethoden bieten Ihre Transformatoren?",
+        "answer": "Wir bieten Transformatoren mit Öl- und Gießharzkühlung an. Wir beraten Sie gerne, welche Kühlmethode für Ihre Anwendung geeignet ist.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Kühlmethoden für Transformatoren",
+            "Wie werden Trafos gekühlt?",
+            "Transformatoren mit Ölkühlung",
+            "Gießharzkühlung bei Trafos",
+            "Welche Kühlung hat ein Transformator?"
+        ]
+    },
+    {
+        "question": "Welche Frequenzen unterstützen Ihre Transformatoren?",
+        "answer": "Unsere Transformatoren unterstützen Frequenzen von 50 Hz und 60 Hz. Kontaktieren Sie uns für spezifische Anforderungen.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo-Frequenzen",
+            "Welche Frequenz hat ein Transformator?",
+            "50 Hz oder 60 Hz Transformatoren",
+            "Frequenzbereiche von Trafos",
+            "Transformator-Frequenzoptionen"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren für kleine Unternehmen?",
+        "answer": "Ja, wir bieten Transformatoren, die speziell für kleine Unternehmen und lokale Anwendungen geeignet sind.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo für kleine Firmen",
+            "Transformator für Gewerbe",
+            "Kleine Transformatoren kaufen",
+            "Trafo für Kleinunternehmen",
+            "Trafos für lokale Anwendungen"
+        ]
+    },
+    {
+        "question": "Wie werden Transformatoren transportiert?",
+        "answer": "Transformatoren werden sicher verpackt und mit spezialisierten Logistikunternehmen transportiert. Kontaktieren Sie uns für Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Wie werden Trafos geliefert?",
+            "Transport von Transformatoren",
+            "Lieferung von Trafos",
+            "Transportoptionen für Transformatoren",
+            "Trafo-Transportlösungen"
+        ]
+    },
+    {
+        "question": "Wie lange ist die Garantie für Transformatoren?",
+        "answer": "Unsere Transformatoren haben eine Garantiezeit von bis zu 2 Jahren. Für spezielle Garantien kontaktieren Sie uns bitte.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Garantie auf Transformatoren",
+            "Wie lange gilt die Trafo-Garantie?",
+            "Trafo-Garantiezeit",
+            "Garantiebedingungen für Trafos",
+            "Garantiezeitraum bei Transformatoren"
+        ]
+    },
+    {
+        "question": "Können Sie Transformatoren für die Lebensmittelindustrie liefern?",
+        "answer": "Ja, wir bieten Transformatoren, die den speziellen Anforderungen der Lebensmittelindustrie entsprechen. Kontaktieren Sie uns für ein Angebot.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo für Lebensmittelproduktion",
+            "Transformator für Lebensmittelindustrie",
+            "Spezielle Trafos für Lebensmittelanlagen",
+            "Industrie-Trafos für Lebensmittel",
+            "Lebensmittelproduktions-Trafo"
+        ]
+    },
+    {
+        "question": "Wie wähle ich den richtigen Transformator aus?",
+        "answer": "Die Wahl des Transformators hängt von Ihren spezifischen Anforderungen ab. Wir helfen Ihnen gerne, den richtigen Transformator zu finden.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Welcher Transformator ist der richtige?",
+            "Wie finde ich den passenden Trafo?",
+            "Trafo-Auswahlhilfe",
+            "Wie wähle ich einen Trafo aus?",
+            "Passender Transformator für meine Anforderungen"
+        ]
+    },
+    {
+        "question": "Bieten Sie Transformatoren für hohe Spannungen an?",
+        "answer": "Transformatoren für hohe Spannungsbereiche sind in unserem Sortiment verfügbar. Kontaktieren Sie uns für ein individuelles Angebot.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Transformator für hohe Spannung",
+            "Hochspannungs-Trafos",
+            "Spannungsbereich von Transformatoren",
+            "Trafo für große Spannungen",
+            "Hochspannungs-Transformator kaufen"
+        ]
+    },
+    {
+        "question": "Sind Ihre Transformatoren für Innen- und Außeninstallationen geeignet?",
+        "answer": "Unsere Transformatoren sind sowohl für Innen- als auch Außeninstallationen geeignet. Bitte teilen Sie uns Ihre Anforderungen mit.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Transformatoren für Innenbereich",
+            "Trafos für Außenbereich",
+            "Trafo-Installationsorte",
+            "Einsatzbereich für Transformatoren",
+            "Innen- und Außentrafos"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren für Umspannwerke?",
+        "answer": "Wir bieten Transformatoren an, die speziell für den Einsatz in Umspannwerken konzipiert sind.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo für Umspannwerke",
+            "Transformatoren für Energienetze",
+            "Transformator für Netzwerke",
+            "Umspannwerk-Transformatoren",
+            "Trafos für Stromnetze"
+        ]
+    },
+    {
+        "question": "Bieten Sie Transformatoren für temporäre Installationen an?",
+        "answer": "Für temporäre Installationen können wir Ihnen passende Transformatoren anbieten. Kontaktieren Sie uns für Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo für temporären Einsatz",
+            "Transformator für mobile Installationen",
+            "Temporäre Trafos",
+            "Einsatz von Transformatoren für kurze Zeit",
+            "Kurzfristige Installationen mit Trafo"
+        ]
+    },
+    {
+        "question": "Unterstützen Sie bei der Planung von Transformatoren?",
+        "answer": "Wir unterstützen Sie bei der Planung und Dimensionierung Ihrer Transformatoren.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Planungshilfe für Transformatoren",
+            "Dimensionierung von Trafos",
+            "Wie plane ich einen Trafo?",
+            "Transformatorenplanung",
+            "Trafo-Dimensionierungsunterstützung"
+        ]
+    },
+    {
+        "question": "Bieten Sie Transformatoren mit hoher Kurzschlussfestigkeit an?",
+        "answer": "Transformatoren für spezielle Anforderungen wie hohe Kurzschlussfestigkeit sind bei uns erhältlich.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo mit Kurzschlussfestigkeit",
+            "Transformatoren für hohe Belastungen",
+            "Hohe Festigkeit bei Transformatoren",
+            "Trafos für spezielle Belastungen",
+            "Transformatoren für starke Belastungen"
+        ]
+    },
+    {
+        "question": "Haben Ihre Transformatoren Spannungsumschaltmöglichkeiten?",
+        "answer": "Ja, wir liefern Transformatoren mit verschiedenen Spannungsumschaltmöglichkeiten. Teilen Sie uns Ihre Anforderungen mit.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo mit umschaltbarer Spannung",
+            "Spannungsumschalter bei Transformatoren",
+            "Flexible Spannungseinstellungen",
+            "Transformator-Spannungsumschalter",
+            "Trafos mit variabler Spannung"
+        ]
+    },
+    {
+        "question": "Sind Ihre Transformatoren wartungsfreundlich?",
+        "answer": "Unsere Transformatoren sind wartungsfreundlich und bieten hohe Betriebssicherheit.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Wartungsfreundliche Trafos",
+            "Transformatoren mit geringem Wartungsaufwand",
+            "Trafo-Betriebssicherheit",
+            "Wartungsarme Transformatoren",
+            "Trafo-Wartungserleichterungen"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren mit Geräuschdämpfung?",
+        "answer": "Transformatoren mit spezieller Geräuschdämpfung sind auf Anfrage erhältlich.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Leise Transformatoren",
+            "Trafos mit Geräuschreduktion",
+            "Geräuschreduzierte Transformatoren",
+            "Transformator-Lärmreduktion",
+            "Trafo-Geräuschdämmung"
+        ]
+    },
+    {
+        "question": "Sind Ihre Transformatoren energieeffizient?",
+        "answer": "Wir bieten Transformatoren mit minimalen Leerlaufverlusten für maximale Energieeffizienz.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Energieeffiziente Transformatoren",
+            "Trafo mit wenig Verlusten",
+            "Energiesparende Trafos",
+            "Effizienz bei Transformatoren",
+            "Transformator mit hoher Effizienz"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren mit Brandschutzmaßnahmen?",
+        "answer": "Transformatoren mit Brandschutzmaßnahmen sind für spezielle Anwendungen verfügbar.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Trafo mit Brandschutz",
+            "Brandschutz bei Transformatoren",
+            "Brandsichere Trafos",
+            "Transformatoren für sichere Anwendungen",
+            "Brandschutzlösungen für Transformatoren"
+        ]
+    },
+    {
+        "question": "Bieten Sie Transformatoren mit spezifischen Abmessungen an?",
+        "answer": "Ja, wir bieten Transformatoren mit kundenspezifischen Abmessungen an.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Individuelle Abmessungen für Transformatoren",
+            "Trafo nach Maß",
+            "Maßgeschneiderte Transformatoren",
+            "Trafos mit speziellen Abmessungen",
+            "Transformator-Dimensionen"
+        ]
+    },
+    {
+        "question": "Erfüllen Ihre Transformatoren internationale Standards?",
+        "answer": "Unsere Transformatoren erfüllen alle gängigen Normen und Zertifizierungen.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Normen für Transformatoren",
+            "Zertifizierte Trafos",
+            "Internationale Standards für Transformatoren",
+            "Trafo-Zertifizierungen",
+            "Welche Standards haben Ihre Trafos?"
+        ]
+    },
+    {
+        "question": "Haben Sie Transformatoren für Offshore-Anwendungen?",
+        "answer": "Transformatoren für Offshore-Anwendungen sind in unserem Sortiment verfügbar. Kontaktieren Sie uns für Details.",
+        "category": "Vertrieb",
+        "synonyms": [
+            "Offshore-Transformatoren",
+            "Trafos für maritime Anwendungen",
+            "Transformator für Offshore",
+            "Trafo für Meereseinsatz",
+            "Spezialtransformatoren für Offshore"
+        ]
+    }
+]

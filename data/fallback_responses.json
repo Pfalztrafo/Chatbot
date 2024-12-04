@@ -1,6 +1,5 @@
 {
     "Kaufberatung": "Es scheint, als wären Sie an einer Kaufempfehlung interessiert. Unsere Experten können Ihnen helfen, den richtigen Transformator auszuwählen.",
     "Service": "Für Service-Anfragen besuchen Sie bitte unsere [Service-Seite](https://pfalztrafo.de/service).",
-    "Technik": "Es scheint, dass Sie eine technische Frage haben. Bitte geben Sie Details an, um eine präzisere Empfehlung zu erhalten.",
     "Fallback": "Entschuldigung, ich konnte Ihre Anfrage nicht verstehen. Könnten Sie sie bitte genauer formulieren?"
 }
