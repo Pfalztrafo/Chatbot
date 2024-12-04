@@ -43,6 +43,80 @@
         "answer": "Bitte teilen Sie uns mit, ob es spezielle Anforderungen wie Brandschutz gibt und ob der Transformator im Innen- oder Außenbereich installiert werden soll. Wir helfen Ihnen gerne weiter.",
         "category": "Service",
         "synonyms": ["Trafo verlagern", "Transformator Standort ändern", "Trafo umbauen"]
+    },
+    {
+        "question": "Bieten Sie Ersatzteile für Transformatoren an?",
+        "answer": "Ja, wir bieten eine breite Palette von Ersatzteilen für Transformatoren an. Bitte fragen Sie die Service Abteilung an.[Service-Seite](https://pfalztrafo.de/service)",
+        "category": "Service",
+        "synonyms": [
+            "Trafo-Ersatzteile",
+            "Ersatzteile für Transformatoren",
+            "Kann ich Ersatzteile kaufen?",
+            "Verfügbarkeit von Trafo-Komponenten",
+            "Transformator-Zubehör"
+        ]
+    },
+    {
+        "question": "Bieten Sie technische Unterstützung bei der Installation von Transformatoren?",
+        "answer": "Ja, wir unterstützen Sie bei der Installation und Inbetriebnahme von Transformatoren. Bitte fragen Sie die Service Abteilung an.[Service-Seite](https://pfalztrafo.de/service) Unser Team steht Ihnen gerne zur Verfügung.",
+        "category": "Service",
+        "synonyms": [
+            "Technische Hilfe bei Trafo-Installation",
+            "Unterstützung bei Transformatoren-Inbetriebnahme",
+            "Trafo-Installation",
+            "Hilfe bei Trafo-Montage",
+            "Technische Beratung bei Transformatoren"
+        ]
+    },
+    {
+        "question": "Können Sie alte Transformatoren recyceln?",
+        "answer": "Ja, wir bieten fachgerechte Recycling- und Entsorgungsservices für alte Transformatoren an. Voraussetzung ist eine vorherige PCB-Analyse. Bitte fragen Sie die Service Abteilung an.[Service-Seite](https://pfalztrafo.de/service)",
+        "category": "Service",
+        "synonyms": [
+            "Recycling von Transformatoren",
+            "Alte Trafos entsorgen",
+            "Transformator-Recycling",
+            "Wohin mit alten Trafos?",
+            "Trafos nachhaltig entsorgen"
+        ]
+    },
+    {
+        "question": "Bieten Sie Wartungsverträge für Transformatoren an?",
+        "answer": "Ja, wir bieten individuelle Wartungsverträge an, um die Lebensdauer und Effizienz Ihrer Transformatoren zu maximieren. Bitte fragen Sie die Service Abteilung an.[Service-Seite](https://pfalztrafo.de/service)",
+        "category": "Service",
+        "synonyms": [
+            "Trafo Wartungsverträge",
+            "Regelmäßige Wartung von Transformatoren",
+            "Transformatorwartung",
+            "Serviceverträge für Trafos",
+            "Wartung für Transformatoren buchen"
+        ]
+    },
+    {
+        "question": "Wie lange hält ein Transformator?",
+        "answer": "Die Lebensdauer eines Transformators beträgt bei guter Wartung etwa 20 bis 30 Jahre. Bitte fragen Sie die Service Abteilung an.[Service-Seite](https://pfalztrafo.de/service)",
+        "category": "Service",
+        "synonyms": [
+            "Lebensdauer eines Trafos",
+            "Wie lange lebt ein Transformator?",
+            "Trafo Lebensspanne",
+            "Haltbarkeit eines Transformatoren",
+            "Wie langlebig sind Transformatoren?"
+        ]
+    },
+    {
+        "question": "Welche Transformator-Typen gibt es?",
+        "answer": "Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.",
+        "category": "Technik",
+        "synonyms": [
+            "Welche Arten von Transformatoren gibt es?", 
+            "Transformator-Typen", 
+            "Welche Transformatoren-Typen existieren?",
+            "Unterschiedliche Transformatorarten",
+            "Welche verschiedenen Transformatoren gibt es?",
+            "Welche Trafo-Typen gibt es?",
+            "Arten von Trafos"
+        ]
     }
 
 ]
