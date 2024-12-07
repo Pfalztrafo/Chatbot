@@ -1,340 +1,346 @@
+import json
+import os
+from datetime import datetime
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from modules.dialogue_manager import get_faq_answer, save_unanswered_question, get_related_faq
 from modules.recommendation import get_advanced_recommendation
-from utils import format_output, preprocess_text
+from utils import format_output, preprocess_text, MODEL_NAME
 from langchain.chains import RetrievalQA
 from langchain_huggingface import HuggingFacePipeline, HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.schema import Document
-from fuzzywuzzy import fuzz, process
-import json
 import torch
-import os
-from datetime import datetime
-import nltk
-from nltk.corpus import wordnet as wn
-from utils import MODEL_NAME
-from modules.dialogue_manager import get_faq_answer
-from langdetect import detect, DetectorFactory
+from nltk.translate.bleu_score import sentence_bleu
+from rouge_score import rouge_scorer
+from nltk.translate.meteor_score import single_meteor_score
+from spellchecker import SpellChecker
 
-
-
+# Globale Variablen
 faq_data = None  # Initialisierung außerhalb der Funktion
+config = None  # Konfiguration wird später geladen
 
-
-# WordNet-Daten einmalig herunterladen
-# nltk.download('wordnet')
-# nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
-
-
-# Funktion, um deutsche Synonyme aus openthesaurus.txt zu laden
-def load_openthesaurus_text(filepath="data/openthesaurus.txt"):
-    synonyms_dict = {}
-    try:
-        with open(filepath, "r", encoding="utf-8") as file:
-            for line in file:
-                synonyms = line.strip().split(";")
-                for word in synonyms:
-                    synonyms_dict[word] = synonyms
-    except FileNotFoundError:
-        print(f"[DEBUG] Datei {filepath} nicht gefunden. Synonyme werden nicht geladen.")
-    return synonyms_dict
-
-# Globale Initialisierung von german_synonyms_dict
-german_synonyms_dict = load_openthesaurus_text()
-
-# Spracheinstellung (Standard: Deutsch)
-language = "de"
 
 # Dynamische Pfade für JSON-Dateien
-def get_file_path(file_type, language="de"):
-    """
-    Gibt den Dateipfad basierend auf dem Typ und der Sprache zurück.
-    """
+def get_file_path(file_type):
     file_mapping = {
-        "dialogues": f"data/dialogues_{language}.json",
-        "decision_rules": f"data/decision_rules_{language}.json",
-        "decision_trees": f"data/decision_trees_{language}.json",
-        "fallback_responses": f"data/fallback_responses_{language}.json"
+        "faq_general": "data/faq_general.json",
+        "faq_sales": "data/faq_sales.json",
+        "fallback_responses": "data/fallback_responses.json"
     }
     return file_mapping.get(file_type)
+
+# Konfiguration laden
+def load_config():
+    global config
+    try:
+        with open("config.json", "r", encoding="utf-8") as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        print("Konfigurationsdatei nicht gefunden. Standardwerte werden verwendet.")
+        config = {
+            "use_fuzzy_matching": True,
+            "use_embeddings": True,
+            "use_ki_generative": True,
+            "embedding_model": "sentence-transformers/all-mpnet-base-v2"
+        }
+    except json.JSONDecodeError as e:
+        print(f"Fehler beim Laden der Konfigurationsdatei: {e}")
+        config = {
+            "use_fuzzy_matching": True,
+            "use_embeddings": True,
+            "use_ki_generative": True,
+            "embedding_model": "sentence-transformers/all-mpnet-base-v2"
+        }
+
+# Modell und Tokenizer laden
+def load_model_and_tokenizer():
+    if os.path.exists(MODEL_PATH):
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_PATH)
+        print("Verwende das feingetunte Modell.")
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+        print("Kein feingetuntes Modell gefunden. Verwende das Standardmodell.")
+    return model, tokenizer
+
+# Wissensbasis für RAG vorbereiten
+def setup_retriever(knowledge_base, embeddings):
+    faiss_index = FAISS.from_documents(knowledge_base, embeddings)
+    return faiss_index
+
+# Wissensdatenbank laden
+def load_knowledge_base():
+    knowledge_base = []
+    for file_key in ["faq_general", "faq_sales"]:
+        file_path = get_file_path(file_key)
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                raw_data = json.load(file)
+            for item in raw_data:
+                knowledge_base.append(Document(page_content=item["question"], metadata={"answer": item["answer"], "category": item.get("category", "Allgemein")}))
+        except FileNotFoundError:
+            print(f"[ERROR] FAQ-Datei nicht gefunden: {file_path}")
+        except json.JSONDecodeError as e:
+            print(f"[ERROR] Fehler beim Lesen der FAQ-Datei: {e}")
+    print(f"[DEBUG] FAQ-Daten geladen: {len(knowledge_base)} Einträge")
+    return knowledge_base
+
+# Globale Initialisierung
+MODEL_PATH = "./fine_tuned_model"
+load_config()
+device = 0 if torch.cuda.is_available() else -1
+model, tokenizer = load_model_and_tokenizer()
+hf_pipeline = pipeline("text2text-generation", model=model, tokenizer=tokenizer, device=device)
+llm = HuggingFacePipeline(pipeline=hf_pipeline)
+
+embeddings = HuggingFaceEmbeddings(model_name=config.get("embedding_model", "sentence-transformers/all-mpnet-base-v2"))
+knowledge_base = load_knowledge_base()
+faiss_index = setup_retriever(knowledge_base, embeddings)
+qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=faiss_index.as_retriever(), chain_type="stuff")
+
+# Synonym- und Rechtschreibkorrektur
+def normalize_and_correct_input(user_input, synonym_dict):
+    """
+    Normalisiert die Eingabe basierend auf OpenThesaurus-Synonymen und korrigiert Rechtschreibfehler.
+    """
+    spell = SpellChecker(language="de")  # PySpellChecker für Deutsch
+    words = user_input.split()
+    processed_words = []
+
+    for word in words:
+        # Synonym prüfen und ersetzen
+        if word.lower() in synonym_dict:
+            processed_words.append(synonym_dict[word.lower()])
+        else:
+            # Rechtschreibkorrektur, wenn kein Synonym gefunden wird
+            corrected_word = spell.correction(word)
+            processed_words.append(corrected_word if corrected_word else word)
+
+    return " ".join(processed_words)
+
+# OpenThesaurus-Daten laden
+def load_openthesaurus_data(file_path):
+    """
+    Lädt die OpenThesaurus-Daten aus einer Textdatei und erstellt ein Synonym-Wörterbuch.
+    """
+    synonym_dict = {}
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            for line in file:
+                synonyms = line.strip().split("|")
+                for synonym in synonyms:
+                    synonym_dict[synonym.lower()] = synonyms[0]  # Erster Begriff als Hauptbegriff
+    except FileNotFoundError:
+        print(f"[ERROR] OpenThesaurus-Datei nicht gefunden: {file_path}")
+    return synonym_dict
+
+# Globale Initialisierung für OpenThesaurus
+synonym_dict = load_openthesaurus_data("data/openthesaurus.txt")  # Pfad anpassen
+
+
+
+# Fuzzy und Embeddings: zentrale Logik
+def get_best_faq_response(user_input):
+    """
+    Mehrstufige Verarbeitung von Benutzeranfragen:
+    - Kategorieerkennung
+    - Fuzzy Matching
+    - Embedding-basierte Suche (Kategorie / Global)
+    - Generative Antwort
+    - Fallback
+    """
+    scores = {"fuzzy": 0.0, "embedding": 0.0, "ki": 0.0}
+    response = None
+    category_detected = detect_category(user_input)
+    print(f"[DEBUG] Erkannte Kategorie: {category_detected}")
+
+    # Konfigurationsoptionen
+    use_fuzzy_matching = config.get("use_fuzzy_matching", True)
+    use_embeddings = config.get("use_embeddings", True)
+    use_ki_generative = config.get("use_ki_generative", True)
+
+    fuzzy_threshold = config.get("fuzzy_threshold", 70)
+    embedding_threshold = config.get("embedding_threshold", 0.7)
+    ki_confidence_threshold = config.get("ki_confidence_threshold", 0.5)
+
+    # Schritt 1: Fuzzy Matching (kategoriebasiert)
+    if use_fuzzy_matching:
+        print("[DEBUG] Direktes Fuzzy Matching aktiv...")
+        fuzzy_response, fuzzy_score = get_faq_answer(user_input, threshold=fuzzy_threshold, category=category_detected)
+        scores["fuzzy"] = fuzzy_score / 100
+        if fuzzy_response:
+            print(f"[DEBUG] Fuzzy Score: {scores['fuzzy']:.2f}")
+            response = fuzzy_response
+            return response, scores, category_detected
+
+    # Schritt 2: Embedding-basierte Suche (kategoriebasiert)
+    if use_embeddings:
+        print("[DEBUG] Embeddings-basierte Suche innerhalb der Kategorie aktiv...")
+        embedding_response, embedding_score, doc = search_faq_with_embeddings(user_input, category=category_detected, return_score=True)
+        scores["embedding"] = embedding_score
+        if embedding_response and embedding_score >= embedding_threshold:
+            print(f"[DEBUG] Embedding Score (Kategorie): {scores['embedding']:.2f}")
+            response = embedding_response
+            category_detected = doc.metadata.get("category", "Allgemein")
+            return response, scores, category_detected
+
+    # Schritt 3: Embedding-basierte Suche (global, ohne Kategorie)
+    if use_embeddings:
+        print("[DEBUG] Embeddings-basierte Suche ohne Kategorie aktiv...")
+        embedding_response, embedding_score, doc = search_faq_with_embeddings(user_input, category=None, return_score=True)
+        scores["embedding"] = embedding_score
+
+        # Nur Embedding-Antwort nutzen, wenn der Score den Schwellenwert erfüllt
+        if embedding_response and embedding_score >= embedding_threshold:
+            print(f"[DEBUG] Embedding Score (global): {scores['embedding']:.2f}")
+            response = embedding_response
+            category_detected = doc.metadata.get("category", "Allgemein")
+            return response, scores, category_detected
+        else:
+            print(f"[DEBUG] Embedding Score ({embedding_score:.2f}) ist unter dem Schwellenwert ({embedding_threshold}). Generative KI wird verwendet...")
+
+
+
+    # Schritt 4: Generative KI-Antwort
+    if use_ki_generative:
+        print("[DEBUG] Generative KI-Antwort aktiv...")
+        response, ki_confidence = generate_ki_response(user_input)
+        scores["ki"] = ki_confidence
+        print(f"[DEBUG] KI Score: {scores['ki']:.2f}")
+        if response and ki_confidence >= ki_confidence_threshold:
+            category_detected = "Generative KI"
+            return response, scores, category_detected
+
+    # Schritt 5: Fallback
+    print("[DEBUG] Keine passende Antwort gefunden. Fallback wird genutzt...")
+    response = get_related_faq(user_input)
+    save_unanswered_question(user_input)
+    print(f"[DEBUG] Fallback-Antwort genutzt: {response}")
+
+    return response, scores, category_detected
 
 
 
 # Kategorie erkennen
 def detect_category(user_input):
+    """
+    Erkennt die Kategorie basierend auf Schlüsselwörtern im Benutzerinput.
+    """
     user_input = user_input.lower()
-    if any(keyword in user_input for keyword in ["wartung", "service", "reparatur", "inspektion", "austausch", "reinigung"]):
-        return "Service"
-    elif any(keyword in user_input for keyword in ["kaufen", "angebot", "verfügbarkeit", "lieferung", "produkt", "preis"]):
-        return "Kaufberatung"
-    elif any(keyword in user_input for keyword in ["spannung", "leistung", "technisch", "transformator", "typ", "spezifikation", "kva", "mva", "anschluss"]):
-        return "Technik"
-    else:
-        return "Allgemein"
 
-# Fallback-Antwort laden
-def load_fallback_responses():
-    with open(get_file_path("fallback_responses"), "r", encoding="utf-8") as file:
-        return json.load(file)
+    # Kategorien definieren
+    categories = {
+        "Begrüßung": ["hi", "hallo", "hey", "guten tag", "servus", "grüß dich"],
+        "Abschied": ["tschüss", "bis bald", "auf wiedersehen", "ciao", "mach's gut"],
+        "Dank": ["danke", "vielen dank", "dankeschön", "danke dir", "danke schön"],
+        "Systeminformation": ["wer bist du", "was kannst du", "wie funktioniert das", "bist du ein mensch"],
+        "Zusätzliche Informationen": ["ich brauche hilfe", "hilfe bitte", "unterstützung", "ich benötige hilfe"],
+        "Kauf": ["kaufen", "angebot", "preis", "bestellen", "verfügbarkeit"],
+        "Lieferung": ["lieferung", "versand", "lieferzeit", "transport"],
+        "Beratung": ["empfehlung", "entscheidung", "geeignet", "passend"],
+        "Produktinformationen": ["informationen", "produkt", "details", "spezifikationen"],
+        "Technik": ["spannung", "leistung", "anschluss", "technisch"],
+        "Nachhaltigkeit & Qualität": ["nachhaltig", "energieeffizient", "qualität", "ökodesign"],
+        "Vertrieb": ["verkaufen", "vertrieb", "angebot anfordern", "verkauf", "kundenservice"]
+    }
 
-def fallback_response(user_input):
-    responses = load_fallback_responses()
-    category = detect_category(user_input)
-    return responses.get(category, responses["Fallback"])
+    # Kategorie basierend auf Schlüsselwörtern erkennen
+    for category, keywords in categories.items():
+        if any(keyword in user_input for keyword in keywords):
+            print(f"[DEBUG] Erkannte Kategorie: {category}")  # Debug-Ausgabe
+            return category
 
-#----------------------------
-# Dynamischer Pfad für das Modell basierend auf der Sprache
-def get_model_path():
-    return f"./fine_tuned_model_{language}"
-
-# Überprüfen, ob das Modell existiert, und das richtige Modell laden
-def load_model_and_tokenizer():
-    model_path = get_model_path()
-    if os.path.exists(model_path):
-        tokenizer = AutoTokenizer.from_pretrained(model_path)
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
-        print(f"Verwende das feingetunte Modell für Sprache: {language}.")
-    else:
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-        print(f"Kein feingetuntes Modell für {language} gefunden. Verwende das Standardmodell.")
-    return model, tokenizer
-
-
-# Wissensbasis für RAG vorbereiten
-def setup_retriever(knowledge_base):
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-    faiss_index = FAISS.from_documents(knowledge_base, embeddings)
-    retriever = faiss_index.as_retriever()
-    return retriever
-
-
-#----------------------------
-DetectorFactory.seed = 0  # Für reproduzierbare Ergebnisse
-
-
-def set_language(user_input):
-    """
-    Sprachwechsel basierend auf expliziten Nutzeranfragen:
-    - Wechsel zu Englisch nur bei "Can you speak English".
-    - Wechsel zu Deutsch nur bei "Ich möchte in Deutsch schreiben".
-    - Standard: Deutsch bleibt die Sprache.
-    """
-    global language, model, tokenizer, hf_pipeline, llm, knowledge_base, retriever
-
-    if "can you speak english" in user_input.lower():
-        language = "en"
-        print("Sprache umgestellt: Englisch")
-    elif "ich möchte in deutsch schreiben" in user_input.lower():
-        language = "de"
-        print("Sprache umgestellt: Deutsch")
-    else:
-        # Keine Änderung der Sprache
-        return
-
-    # Modell und Pipeline basierend auf der aktuellen Sprache neu laden
-    model_path = f"./fine_tuned_model_{language}"
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
-    hf_pipeline = pipeline("text2text-generation", model=model, tokenizer=tokenizer, device=device)
-    llm = HuggingFacePipeline(pipeline=hf_pipeline)
-
-    # Wissensdatenbank und Retriever neu laden
-    knowledge_base = load_knowledge_base()
-    retriever = setup_retriever(knowledge_base)
-
-
-# Wissensdatenbank laden
-def load_knowledge_base(language="de"):
-    """
-    Lädt die Dialogdaten aus der JSON-Datei und bereitet sie für die Suche vor.
-    """
-    file_path = get_file_path("dialogues", language)  # Korrigierter Aufruf mit Sprache
-    with open(file_path, "r", encoding="utf-8") as file:
-        raw_data = json.load(file)
-
-    documents = []
-    for item in raw_data:
-        # Hauptfrage hinzufügen
-        documents.append(Document(page_content=item["question"], metadata={"answer": item["answer"]}))
-        
-        # Synonyme hinzufügen
-        if "synonyms" in item:
-            for synonym in item["synonyms"]:
-                documents.append(Document(page_content=synonym, metadata={"answer": item["answer"]}))
-
-    print(f"[DEBUG] FAQ-Daten geladen: {len(documents)} Einträge")
-    return documents
-
-
-
-
-
-
-# Globale Initialisierung
-device = 0 if torch.cuda.is_available() else -1
-model, tokenizer = load_model_and_tokenizer()
-hf_pipeline = pipeline("text2text-generation", model=model, tokenizer=tokenizer, device=device)
-llm = HuggingFacePipeline(pipeline=hf_pipeline)
-knowledge_base = load_knowledge_base()
-retriever = setup_retriever(knowledge_base)
-qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, chain_type="stuff")
-
-
-
-
-# FAQ-Daten basierend auf der Sprache laden
-from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.schema import Document
-from utils import preprocess_text
-import json
-
-# FAQ-Daten basierend auf der Sprache laden
-def load_faq_data(language="de"):
-    """
-    Lädt die FAQ-Daten, erweitert sie mit Synonymen und erstellt einen FAISS-Index.
-    Diese Funktion initialisiert das Embeddings-Modell nur einmal und verwendet
-    globale Variablen für die FAQ-Daten und den Index.
-    """
-    global faq_data, faq_index, embeddings_model
-
-    # Initialisiere das Embeddings-Modell nur, wenn es nicht existiert oder None ist
-    if "embeddings_model" not in globals() or embeddings_model is None:
-        embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-        print("[DEBUG] Embeddings-Modell initialisiert.")
-
-    # Lade die FAQ-Daten aus der JSON-Datei
-    faq_data = []
-    file_path = f"data/dialogues_{language}.json"
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            raw_data = json.load(file)
-
-        # Konvertiere die FAQ-Daten in Documents für FAISS
-        for item in raw_data:
-            # Hauptfrage als Dokument hinzufügen
-            faq_data.append(Document(page_content=preprocess_text(item["question"]),
-                                      metadata={"answer": item["answer"]}))
-            
-            # Füge Synonyme hinzu, falls vorhanden
-            if "synonyms" in item:
-                for synonym in item["synonyms"]:
-                    faq_data.append(Document(page_content=preprocess_text(synonym),
-                                              metadata={"answer": item["answer"]}))
-        print(f"[DEBUG] FAQ-Daten geladen: {len(faq_data)} Einträge")
-    except FileNotFoundError:
-        print(f"[ERROR] FAQ-Datei nicht gefunden: {file_path}")
-    except json.JSONDecodeError as e:
-        print(f"[ERROR] Fehler beim Lesen der FAQ-Datei: {e}")
-
-    # Erstelle einen FAISS-Index für die FAQ-Daten
-    faq_index = FAISS.from_documents(faq_data, embeddings_model)
-    print("[DEBUG] FAISS-Index erstellt.")
-
-
-
-# Fuzzy Matching und Embeddings
-def get_faq_answer_fuzzy(user_input):
-    """
-    Fuzzy Matching und Embeddings-basierte Suche für FAQ-Antworten.
-    Diese Funktion berücksichtigt Synonyme aus der JSON-Datei und verwendet Fuzzy Matching.
-    Falls keine passende Antwort gefunden wird, wird auf Embeddings-basierte Suche zurückgegriffen.
-    """
-    user_input = preprocess_text(user_input)  # Eingabe vorverarbeiten
-    question_variants = []
-    question_to_answer = {}
-
-    # FAQ-Fragen und Synonyme in Variantenliste einfügen
-    for item in faq_data:
-        # Hauptfrage hinzufügen
-        question_variants.append(item.page_content)
-        question_to_answer[item.page_content] = item.metadata["answer"]
-
-        # Synonyme aus JSON hinzufügen
-        if "synonyms" in item.metadata:
-            synonyms = item.metadata["synonyms"]
-            for synonym in synonyms:
-                question_variants.append(synonym)
-                question_to_answer[synonym] = item.metadata["answer"]
-
-    # Debugging: Zeige, welche Varianten für das Matching verwendet werden
-    #print(f"[DEBUG] Anzahl der Matching-Varianten: {len(question_variants)}")
-    #print(f"[DEBUG] Eingabe: {user_input}")
-
-    # Fuzzy Matching anwenden
-    best_match, score = process.extractOne(user_input, question_variants, scorer=fuzz.token_sort_ratio)
-
-    # Debugging: Ergebnis des Fuzzy Matchings anzeigen
-    #print(f"[DEBUG] Beste Übereinstimmung: {best_match} mit Score: {score}")
-
-    # Wenn der Score über dem Schwellenwert liegt, Rückgabe der Antwort
-    if score > 80:  # Schwellenwert anpassen, falls nötig
-        return question_to_answer[best_match]
-
-    # Fallback: Embeddings-basierte Suche, falls Fuzzy Matching keine gute Übereinstimmung findet
-    #print(f"[DEBUG] Fuzzy Matching hat keine ausreichende Übereinstimmung gefunden. Fallback auf Embeddings.")
-    return search_faq_with_embeddings(user_input)
-
-
+    #print("[DEBUG] Erkannte Kategorie: Allgemein")  # Debug-Ausgabe
+    return "Allgemein"
 
 
 
 
 # Embeddings-Suche
-def search_faq_with_embeddings(query):
+def search_faq_with_embeddings(query, category=None, return_score=False):
     """
-    Suche nach der besten Übereinstimmung basierend auf Embeddings.
+    Durchsucht die FAQs basierend auf Embeddings und berücksichtigt optional eine Kategorie.
     """
+    embedding_vector = embeddings.embed_query(query)
+    filtered_documents = knowledge_base
+
+    # Filter nach Kategorie
+    if category:
+        filtered_documents = [doc for doc in knowledge_base if doc.metadata.get("category") == category]
+        print(f"[DEBUG] Gefilterte Dokumente für Kategorie '{category}': {len(filtered_documents)}")
+
+    # Fallback: Wenn keine Dokumente für die Kategorie gefunden werden
+    if not filtered_documents:
+        print("[DEBUG] Keine Dokumente für die Kategorie gefunden. Verwende gesamte Wissensbasis.")
+        filtered_documents = knowledge_base
+
+    # Suche mit Embeddings
     try:
-        embedding = embeddings_model.embed_query(query)
-        results = faq_index.similarity_search_by_vector(embedding, k=1)
-        if results and results[0].metadata.get("answer"):
-            return results[0].metadata["answer"]
-        return None
+        faiss_index = FAISS.from_documents(filtered_documents, embeddings)
+        results = faiss_index.similarity_search_with_score_by_vector(embedding_vector, k=1)
+
+        if results:
+            best_result, raw_score = results[0]
+
+            # FAISS-Rohscore direkt verwenden
+            print(f"[DEBUG] FAISS-Roh-Score: {raw_score:.2f}")
+
+            answer = best_result.metadata.get("answer", "")
+            return (answer, raw_score, best_result) if return_score else answer
     except Exception as e:
         print(f"[DEBUG] Fehler bei der Embeddings-Suche: {e}")
-        return None
+    return (None, float('inf'), None) if return_score else None
 
 
 
+
+# Generative KI-Antwort
+def generate_ki_response(query):
+    try:
+        generated = hf_pipeline(query, max_length=100, num_return_sequences=1)[0]
+        return generated["generated_text"], generated.get("score", 0.0)
+    except Exception as e:
+        print(f"[DEBUG] Fehler bei der KI-Generierung: {e}")
+        return None, 0.0
+
+# Berechnung von BLEU, ROUGE, METEOR
+def calculate_bleu(reference, hypothesis):
+    reference_tokens = [reference.split()]
+    hypothesis_tokens = hypothesis.split()
+    return sentence_bleu(reference_tokens, hypothesis_tokens)
+
+def calculate_rouge(reference, hypothesis):
+    scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
+    scores = scorer.score(reference, hypothesis)
+    return scores['rougeL'].fmeasure
+
+def calculate_meteor(reference, hypothesis):
+    reference_tokens = reference.split()
+    hypothesis_tokens = hypothesis.split()
+    return single_meteor_score(reference_tokens, hypothesis_tokens)
 
 # Chat-Logs speichern
-def save_chat_to_txt(user_message, bot_response, user_ip="Unbekannt", username="Unbekannt", folder="chat_logs"):
+def save_chat_to_txt(user_message, bot_response, scores, user_ip="Unbekannt", folder="chat_logs"):
+    """
+    Speichert den Chat-Verlauf in einer Textdatei mit Datum und Zeitstempel.
+    """
     os.makedirs(folder, exist_ok=True)
     date_str = datetime.now().strftime("%Y-%m-%d")
     filename = os.path.join(folder, f"{date_str}_chat_log.txt")
     with open(filename, "a", encoding="utf-8") as file:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        file.write(f"[{timestamp}] [IP: {user_ip}] [User: {username}] {user_message}\n")
-        file.write(f"[{timestamp}] [Server] [Bot] {bot_response}\n")
-
-
-def save_unanswered_question(user_message, filename="data/unanswered_questions.json"):
-    question_data = {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "question": user_message,
-        "category": detect_category(user_message),
-        "answer": ""
-    }
-    os.makedirs(os.path.dirname(filename), exist_ok=True)  # Verzeichnisse erstellen, falls nicht vorhanden
-    try:
-        with open(filename, "r", encoding="utf-8") as file:
-            data = json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        data = []  # Leere Liste, falls Datei nicht existiert oder ungültig ist
-    data.append(question_data)
-    with open(filename, "w", encoding="utf-8") as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)
-
-
+        # Scores mit zwei Nachkommastellen formatieren
+        score_text = (f"Fuzzy: {scores['fuzzy']:.2f}, "
+                      f"Emb.: {scores['embedding']:.2f}, "
+                      f"KI: {scores['ki']:.2f}")
+        file.write(f"[{timestamp}] [IP: {user_ip}] {user_message}\n")
+        file.write(f"[{timestamp}] [Server] [Bot ({score_text})]: {bot_response}\n")
 
 # Haupt-Chat-Funktion
 def chat():
     print("Starte den Chat (zum Beenden 'exit' eingeben)")
     user_ip = "192.168.1.10"
-    username = "JohnDoe"
-    load_faq_data()  # Daten initial laden
 
     while True:
         user_input = input("Du: ").strip()
@@ -345,28 +351,14 @@ def chat():
             print("Chat beendet.")
             break
 
-        set_language(user_input)
-        load_faq_data()  # FAQ-Daten neu laden, wenn Sprache gewechselt wird
-        user_input = preprocess_text(user_input)
-        category = detect_category(user_input)
-        fallback_responses = load_fallback_responses()
+        response, scores, category_detected = get_best_faq_response(user_input)
 
-        if category == "Service":
-            response = fallback_responses.get("Service", fallback_responses["Fallback"])
-        elif category == "Technik":
-            response = get_advanced_recommendation(user_input, {}, language) or fallback_responses.get("Technik")
-        else:
-            response = get_faq_answer_fuzzy(user_input) or fallback_responses["Fallback"]
-
-        # Unbeantwortete Frage speichern, wenn keine Antwort gefunden wird
-        if not response or response == fallback_responses["Fallback"]:
-            print("[DEBUG] Unanswered question detected. Saving...")
-            save_unanswered_question(user_input, "data/unanswered_questions.json")
+        # Unbeantwortete Frage speichern
+        if response == "Entschuldigung, ich konnte Ihre Anfrage nicht verstehen.":
+            save_unanswered_question(user_input)
 
         print(format_output(response))
-        save_chat_to_txt(user_input, response, user_ip=user_ip, username=username)
-
+        save_chat_to_txt(user_input, response, scores, user_ip=user_ip)
 
 if __name__ == "__main__":
-    load_faq_data()  # Daten initial laden
     chat()

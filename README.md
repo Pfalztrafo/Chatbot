@@ -78,6 +78,9 @@ pip install langdetect
 pip install uvicorn
 pip install py-cpuinfo
 pip install psutil
+pip install rouge-score
+pip install pyspellchecker
+
 ```
 
 

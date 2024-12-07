@@ -60,52 +60,6 @@ def save_progress(progress):
 
 
 
-
-
-# Systeminformationen und GPU-Verfügbarkeit
-def get_device_spec():
-    # Initialisiere die Gerätespezifikationen
-    device_spec = {
-        "Device": "GPU" if torch.cuda.is_available() else "CPU",
-        "CPU": "Unknown CPU",
-        "RAM": "Unknown RAM",
-        "GPU": "Unknown GPU",
-        "Platform": platform.platform()
-    }
-    
-    # CPU-Informationen abrufen, falls verfügbar
-    try:
-        cpu_info = cpuinfo.get_cpu_info()
-        brand = cpu_info.get("brand_raw", "Unknown CPU")
-        cores = psutil.cpu_count(logical=False)
-        threads = psutil.cpu_count(logical=True)
-        freq = psutil.cpu_freq().current if psutil.cpu_freq() else "Unknown"
-        device_spec["CPU"] = f"{brand} - {cores} Cores / {threads} Threads @ {freq} MHz"
-    except Exception:
-        pass  # Falls ein Fehler auftritt, bleibt die CPU-Info auf "Unknown CPU"
-    
-    # RAM-Informationen in GB abrufen
-    try:
-        total_memory = psutil.virtual_memory().total / (1024 ** 3)  # Umrechnung in GB
-        device_spec["RAM"] = f"{total_memory:.2f} GB"
-    except Exception:
-        pass  # Falls ein Fehler auftritt, bleibt die RAM-Info auf "Unknown RAM"
-    
-    # GPU-Informationen abrufen, falls verfügbar
-    try:
-        if torch.cuda.is_available():
-            gpu_name = torch.cuda.get_device_name(0)
-            gpu_memory = round(torch.cuda.get_device_properties(0).total_memory / 1e9, 2)  # Umrechnung in GB
-            device_spec["GPU"] = f"{gpu_name} ({gpu_memory} GB)"
-        else:
-            device_spec["GPU"] = "N/A"
-    except Exception:
-        pass  # Falls ein Fehler auftritt, bleibt die GPU-Info auf "Unknown GPU"
-    
-    return device_spec
-
-
-
 # Trainingsdetails loggen mit verbesserter Struktur und Speicherinformationen
 def log_training_details(training_args, total_epochs, device_spec, epoch_logs, total_training_time):
     os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
@@ -165,170 +119,121 @@ def get_device_spec():
     return device_spec
 
 
-
-# Funktion zum Laden von OpenThesaurus-Synonymen
-def load_openthesaurus_text(filepath="data/openthesaurus.txt"):
-    synonyms_dict = {}
-    with open(filepath, "r", encoding="utf-8") as file:
-        for line in file:
-            synonyms = line.strip().split(";")
-            for word in synonyms:
-                synonyms_dict[word] = synonyms
-    return synonyms_dict
-
-# Funktion, um englische Synonyme aus WordNet zu holen
-def get_english_synonyms(word):
-    synonyms = []
-    for syn in wn.synsets(word):
-        for lemma in syn.lemmas():
-            synonyms.append(lemma.name())
-    return list(set(synonyms))
-
 # Trainingsdaten laden und erweitern
-def load_data(language="de"):
+def load_data():
+    """
+    Lädt Trainingsdaten aus mehreren FAQ-Dateien und berücksichtigt Kategorien.
+    """
     data = []
-    dialogues_file = f"data/dialogues_{language}.json"
-    rules_file = f"data/decision_rules_{language}.json"
+    files_to_load = ["data/faq_general.json", "data/faq_sales.json"]
 
-    with open(dialogues_file, "r", encoding="utf-8") as file:
-        dialogues = json.load(file)
-        for item in dialogues:
-            data.append({"input": item["question"], "output": item["answer"]})
-
-    with open(rules_file, "r", encoding="utf-8") as file:
-        rules = json.load(file)
-        for application, rule_data in rules.items():
-            default_recommendation = rule_data.get("default_recommendation", "")
-            if default_recommendation:
-                data.append({"input": f"{application} Empfehlung", "output": default_recommendation})
-
-        for condition in rule_data.get("conditions", []):
-            param = condition["parameter"]
-            threshold_low = condition.get("threshold_low", 0)
-            threshold_high = condition.get("threshold_high", float("inf"))
-
-            data.append({
-                "input": f"{application} {param} < {threshold_low}",
-                "output": condition.get("recommendation_below", "Keine Empfehlung verfügbar.")
-            })
-            data.append({
-                "input": f"{application} {param} zwischen {threshold_low} und {threshold_high}",
-                "output": condition.get("recommendation_between", "Keine Empfehlung verfügbar.")
-            })
-            data.append({
-                "input": f"{application} {param} > {threshold_high}",
-                "output": condition.get("recommendation_above", "Keine Empfehlung verfügbar.")
-            })
-
+    for file_path in files_to_load:
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                dialogues = json.load(file)
+                for item in dialogues:
+                    data.append({
+                        "input": item["question"],
+                        "output": item["answer"],
+                        "category": item.get("category", "Allgemein")  # Kategorie berücksichtigen
+                    })
+        except FileNotFoundError:
+            print(f"[WARNUNG] Datei {file_path} nicht gefunden. Überspringe diese Datei.")
+        except json.JSONDecodeError as e:
+            print(f"[FEHLER] Fehler beim Lesen von {file_path}: {e}. Überspringe diese Datei.")
+    
+    if not data:
+        raise ValueError("Keine Trainingsdaten gefunden! Überprüfen Sie die JSON-Dateien.")
     return data
 
-# Daten um Synonyme erweitern
-def expand_with_synonyms(data, german_synonyms_dict):
-    expanded_data = []
-    for item in data:
-        input_text = item["input"]
-        expanded_data.append(item)
-        
-        # Deutsche Synonyme hinzufügen
-        german_synonyms = german_synonyms_dict.get(input_text, [])
-        for synonym in german_synonyms:
-            expanded_data.append({"input": synonym, "output": item["output"]})
 
-        # Englische Synonyme hinzufügen
-        english_synonyms = get_english_synonyms(input_text)
-        for synonym in english_synonyms:
-            expanded_data.append({"input": synonym, "output": item["output"]})
-    
-    return expanded_data
 
 # Daten für das Modell vorbereiten
 def preprocess_function(examples):
-    inputs = examples["input"]
+    inputs = [f"[{category}] {question}" for category, question in zip(examples["category"], examples["input"])]
     targets = examples["output"]
     model_inputs = tokenizer(inputs, max_length=128, padding="max_length", truncation=True)
     labels = tokenizer(targets, max_length=128, padding="max_length", truncation=True).input_ids
     model_inputs["labels"] = labels
     return model_inputs
 
+
 # Hauptfunktion für das Training pro Sprache
 def main():
-    german_synonyms_dict = load_openthesaurus_text()  # Synonyme für Deutsch laden
-    languages = ["de", "en"]  # Unterstützte Sprachen: Deutsch und Englisch
+    # Nur eine Sprache trainieren (z. B. Deutsch)
+    print("Starte das Training...")
 
-    for lang in languages:
-        print(f"Starte das Training für {lang}...")
+    # Speicherort für das Modell
+    output_dir = "./fine_tuned_model"
+    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
 
-        # Speicherort für das Modell pro Sprache
-        output_dir = f"./fine_tuned_model_{lang}"
-        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+    # Trainingsdaten laden
+    training_data = load_data()
 
-        # Trainingsdaten laden und erweitern
-        training_data = load_data(language=lang)
-        training_data = expand_with_synonyms(training_data, german_synonyms_dict)
+    # Dataset erstellen
+    dataset = Dataset.from_dict({
+        "input": [item["input"] for item in training_data],
+        "output": [item["output"] for item in training_data],
+        "category": [item["category"] for item in training_data]  # Kategorie hinzufügen
+    })
+    tokenized_dataset = dataset.map(preprocess_function, batched=True)
 
-        # Dataset erstellen
-        dataset = Dataset.from_dict({
-            "input": [item["input"] for item in training_data],
-            "output": [item["output"] for item in training_data]
+    # Konfigurationsparameter laden
+    config = load_config()
+
+    # Trainingsargumente festlegen
+    training_args = TrainingArguments(
+        output_dir=output_dir,
+        eval_strategy="no",
+        learning_rate=2e-5,
+        per_device_train_batch_size=4,
+        num_train_epochs=6,
+        weight_decay=0.01
+    )
+
+    # Fortschritt des Trainings laden und aktualisieren
+    progress = load_progress()
+    num_train_epochs = training_args.num_train_epochs
+    progress["total_epochs"] += num_train_epochs
+    save_progress(progress)
+
+    # Gerätespezifikationen abrufen
+    device_spec = get_device_spec()
+
+    # Trainer einrichten und Training starten
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_dataset
+    )
+
+    epoch_logs = []
+    start_time = datetime.now()
+    for epoch in range(num_train_epochs):
+        epoch_start_time = datetime.now()
+        loss = trainer.train().training_loss
+        epoch_training_time = (datetime.now() - epoch_start_time).total_seconds()
+
+        # Informationen zu jeder Epoche speichern
+        epoch_logs.append({
+            "epoch_num": epoch + 1,
+            "loss": loss,
+            "training_time": epoch_training_time
         })
-        tokenized_dataset = dataset.map(preprocess_function, batched=True)
 
+    # Modell und Tokenizer speichern
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
 
-        # Konfigurationsparameter laden
-        config = load_config()
+    total_training_time = (datetime.now() - start_time).total_seconds()
 
-        # Trainingsargumente festlegen
-        training_args = TrainingArguments(
-            output_dir=output_dir,            # Sprachspezifischer Speicherort
-            eval_strategy="no",               # Kein Evaluation-Schritt
-            learning_rate=2e-5,               # Feinabstimmungs-Lernrate
-            per_device_train_batch_size=4,    # Batch-Größe
-            num_train_epochs=2,               # Anzahl der Trainings-Epochen
-            weight_decay=0.01                 # Vermeidung von Overfitting
-        )
+    # Trainingsdetails loggen
+    log_training_details(training_args, progress["total_epochs"], device_spec, epoch_logs, total_training_time)
 
-        # Fortschritt des Trainings laden und aktualisieren
-        progress = load_progress()
-        num_train_epochs = training_args.num_train_epochs
-        progress["total_epochs"] += num_train_epochs
-        save_progress(progress)
+    print(f"Training abgeschlossen.")
+    print(f"Das feingetunte Modell wurde unter {output_dir} gespeichert.")
+    print(f"Total Training Time: {total_training_time:.2f} seconds\n")
 
-        # Gerätespezifikationen abrufen
-        device_spec = get_device_spec()
-
-        # Trainer einrichten und Training starten
-        trainer = Trainer(
-            model=model,
-            args=training_args,
-            train_dataset=tokenized_dataset
-        )
-
-        epoch_logs = []  # Logs für jedes Training
-        start_time = datetime.now()
-        for epoch in range(num_train_epochs):
-            epoch_start_time = datetime.now()
-            loss = trainer.train().training_loss
-            epoch_training_time = (datetime.now() - epoch_start_time).total_seconds()
-
-            # Informationen zu jeder Epoche speichern
-            epoch_logs.append({
-                "epoch_num": epoch + 1,
-                "loss": loss,
-                "training_time": epoch_training_time
-            })
-
-        # Modell und Tokenizer für die Sprache speichern
-        model.save_pretrained(output_dir)
-        tokenizer.save_pretrained(output_dir)
-
-        total_training_time = (datetime.now() - start_time).total_seconds()
-
-        # Trainingsdetails loggen
-        log_training_details(training_args, progress["total_epochs"], device_spec, epoch_logs, total_training_time)
-
-        print(f"Training für {lang} abgeschlossen.")
-        print(f"Das feingetunte Modell für {lang} wurde unter {output_dir} gespeichert.")
-        print(f"Total Training Time for {lang}: {total_training_time:.2f} seconds\n")
 
 if __name__ == "__main__":
     main()

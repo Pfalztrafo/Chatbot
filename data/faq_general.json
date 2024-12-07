@@ -2,73 +2,73 @@
     {
         "question": "Hi",
         "answer": "Hallo! Wie kann ich Ihnen helfen?",
-        "category": "Allgemein",
+        "category": "Begrüßung",
         "synonyms": ["Hallo", "Guten Tag", "Hey", "Grüß dich", "Servus"]
     },
     {
         "question": "Hallo",
-        "answer": "Willkommen! Wie kann ich behilflich sein?",
-        "category": "Allgemein",
+        "answer": "Willkommen! Wie kann ich Ihnen behilflich sein?",
+        "category": "Begrüßung",
         "synonyms": ["Guten Morgen", "Guten Abend", "Guten Tag", "Hi", "Hallo, wie geht's?"]
     },
     {
         "question": "Wie geht es dir?",
         "answer": "Danke der Nachfrage! Mir geht es gut. Wie kann ich Ihnen helfen?",
-        "category": "Allgemein",
+        "category": "Begrüßung",
         "synonyms": ["Wie geht's?", "Alles klar?", "Wie läuft's?", "Wie geht es Ihnen?"]
     },
     {
         "question": "Tschüss",
         "answer": "Auf Wiedersehen! Ich freue mich, Ihnen bald wieder helfen zu dürfen.",
-        "category": "Allgemein",
+        "category": "Abschied",
         "synonyms": ["Auf Wiedersehen", "Bis bald", "Ciao", "Mach's gut", "Servus"]
     },
     {
         "question": "Danke",
-        "answer": "Gern geschehen! Wenn Sie weitere Informationen benötigen, können Sie gerne weitere Fragen stellen oder uns direkt kontaktieren.",
-        "category": "Allgemein",
+        "answer": "Gern geschehen! Wenn Sie weitere Informationen benötigen, stehe ich Ihnen gern zur Verfügung.",
+        "category": "Dank",
         "synonyms": ["Vielen Dank", "Dankeschön", "Danke dir", "Ich danke Ihnen", "Danke schön", "Danke für die Hilfe"]
     },
     {
         "question": "Wer bist du?",
-        "answer": "Ich bin der digitale Assistent von Pfalztrafo und helfe Ihnen gerne mit Informationen rund um Transformatoren.",
-        "category": "Allgemein",
+        "answer": "Ich bin der digitale Assistent von Pfalztrafo und unterstütze Sie gern bei allen Fragen rund um Transformatoren.",
+        "category": "Systeminformation",
         "synonyms": ["Was bist du?", "Bist du ein Mensch?", "Wer bist du?", "Was machst du?"]
     },
     {
         "question": "Was kannst du?",
         "answer": "Ich kann Ihnen Fragen zu Transformatoren, unseren Dienstleistungen und allgemeinen Informationen beantworten.",
-        "category": "Allgemein",
+        "category": "Systeminformation",
         "synonyms": ["Wobei kannst du helfen?", "Was ist deine Aufgabe?", "Kannst du mir helfen?", "Was sind deine Fähigkeiten?"]
     },
     {
-        "question": "Wie funktioniert das?",
+        "question": "Wie funktionierst du?",
         "answer": "Ich analysiere Ihre Fragen und antworte auf Basis der Informationen, die ich zur Verfügung habe.",
-        "category": "Allgemein",
+        "category": "Systeminformation",
         "synonyms": ["Wie funktioniert das System?", "Wie arbeitest du?", "Wie machst du das?", "Wie funktioniert es?"]
     },
     {
         "question": "Gibt es noch etwas, das ich wissen sollte?",
-        "answer": "Falls Sie spezifische Fragen zu unseren Produkten oder Dienstleistungen haben, stehe ich Ihnen zur Verfügung.",
-        "category": "Allgemein",
+        "answer": "Sofern Sie Fragen an meine menschlichen Kollegen haben, stehen Ihnen diese von Montag bis Freitag 8:00 bis 15 Uhr gern zur Verfügung.",
+        "category": "Systeminformation",
         "synonyms": ["Noch etwas zu wissen?", "Sonst noch was?", "Was sollte ich noch wissen?"]
     },
     {
         "question": "Kann ich mit einem Menschen sprechen?",
-        "answer": "Falls ich Ihre Frage nicht beantworten kann, kontaktieren Sie bitte unser Team unter der Telefonnummer 01234-567890 oder per E-Mail unter kontakt@pfalztrafo.de. Wir helfen Ihnen gerne weiter.",
-        "category": "Allgemein",
+        "answer": "Falls ich Ihre Frage nicht beantworten kann, kontaktieren Sie bitte unser Team unter der Telefonnummer 06236 56509940 7890 oder per E-Mail unter vertrieb@pfalztrafo.de. Meine menschlichen Kollegen helfen Ihnen gerne weiter.",
+        "category": "Kontaktwunsch",
         "synonyms": ["Mit einem Mitarbeiter sprechen?", "Einen Menschen sprechen", "Kann ich jemanden anrufen?", "Mit jemandem sprechen"]
     },
     {
         "question": "Bis später",
         "answer": "Bis später! Ich freue mich, Ihnen bald wieder helfen zu dürfen.",
-        "category": "Allgemein",
+        "category": "Abschied",
         "synonyms": ["Bis bald", "Man sieht sich", "Bis dann", "Bis zum nächsten Mal"]
     },
     {
         "question": "Ich brauche Hilfe",
         "answer": "Natürlich! Lassen Sie mich wissen, wie ich Ihnen helfen kann.",
-        "category": "Allgemein",
+        "category": "Zusätzliche Informationen",
         "synonyms": ["Hilfe bitte", "Kannst du mir helfen?", "Ich brauche Unterstützung", "Hilfe"]
     }
 

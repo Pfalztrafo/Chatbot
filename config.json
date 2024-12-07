@@ -2,7 +2,8 @@
     "ip": "0.0.0.0",
     "port": 8000,
     "allow_origins": [
-        "https://alphatrafo.de", "https://api.alphatrafo.de"
+        "https://alphatrafo.de", 
+        "https://api.alphatrafo.de"
     ],
     "allow_methods": [
         "*"
@@ -10,8 +11,19 @@
     "allow_headers": [
         "*"
     ],
-    "epochs": 1,
+    "epochs": 3,
     "learning_rate": 2e-05,
     "batch_size": 4,
-    "weight_decay": 0.01
+    "weight_decay": 0.01,
+    "use_fuzzy_matching": false,
+    "use_fuzzy_step1": false,
+    "use_fuzzy_step2": false,
+    "use_embeddings": false,
+    "use_ki_generative": true,
+    "embedding_model": "sentence-transformers/all-mpnet-base-v2",
+    "fuzzy_threshold": 70,
+    "embedding_threshold": 1.2,
+    "ki_confidence_threshold": 0.0,
+    "fuzzy_score_range": [0.5, 1.0],
+    "ki_score_range": [0.0, 1.0]
 }
