@@ -10,7 +10,7 @@ import requests
 import torch
 
 from train_model import main as start_training_process  # Importiere die main-Funktion aus train_model.py
-from api_main import app                                # Importiere die FastAPI-App
+from api_main import app, load_ssl_config               # Importiere die FastAPI-App
 from chatbot_main import get_response, save_chat_to_txt # zum chatten
 
 
@@ -324,12 +324,12 @@ class ChatbotGUI:
         # Variablen für den Status
         self.api_status = tk.StringVar(value="Gestoppt")
 
-        # GUI-Elemente erstellen
-        self.create_widgets()
-
         # Log-Verzeichnis
         self.chat_logs_dir = "chat_logs"
         os.makedirs(self.chat_logs_dir, exist_ok=True)
+
+        # GUI-Elemente erstellen
+        self.create_widgets()
 
         # Starte die Systemressourcen- und Chatlog-Updates
         self.update_system_stats()
@@ -502,23 +502,55 @@ class ChatbotGUI:
 
     # --------------------------------------------------------
     # API-Server
+    # def start_api_server(self):
+    #     """Startet den FastAPI-Server in einem separaten Thread."""
+    #     def run_server():
+    #         try:
+    #             ssl_config = self.load_ssl_config()
+    #             if ssl_config:
+    #                 print(f"SSL-Zertifikate gefunden: {ssl_config['keyfile']} und {ssl_config['certfile']}")
+    #                 uvicorn.run(
+    #                     app,
+    #                     host=self.config["ip"],
+    #                     port=self.config["port"],
+    #                     ssl_keyfile=ssl_config["keyfile"],
+    #                     ssl_certfile=ssl_config["certfile"]
+    #                 )
+    #             else:
+    #                 print("Keine SSL-Zertifikate gefunden. Server läuft im HTTP-Modus.")
+    #                 uvicorn.run(app, host=self.config["ip"], port=self.config["port"])
+    #         except Exception as e:
+    #             print(f"Fehler beim Starten der API: {e}")
+    #             self.api_status = "Offline"
+
+    #     # Server in einem separaten Thread starten
+    #     api_thread = threading.Thread(target=run_server, daemon=True)
+    #     api_thread.start()
+    #     print("API-Server wurde gestartet.")
+
+
+
     def start_api_server(self):
         """Startet den FastAPI-Server in einem separaten Thread."""
         def run_server():
             try:
-                ssl_config = self.load_ssl_config()
+                ssl_config = load_ssl_config()  # Direkt aufrufen, ohne "self"
                 if ssl_config:
                     print(f"SSL-Zertifikate gefunden: {ssl_config['keyfile']} und {ssl_config['certfile']}")
                     uvicorn.run(
                         app,
-                        host=self.config["ip"],
-                        port=self.config["port"],
+                        host=self.config_manager.get_param("API", "ip", "0.0.0.0"),
+                        port=self.config_manager.get_param("API", "port", 8000),
                         ssl_keyfile=ssl_config["keyfile"],
                         ssl_certfile=ssl_config["certfile"]
                     )
                 else:
                     print("Keine SSL-Zertifikate gefunden. Server läuft im HTTP-Modus.")
-                    uvicorn.run(app, host=self.config["ip"], port=self.config["port"])
+                    uvicorn.run(
+                        app,
+                        host=self.config_manager.get_param("API", "ip", "0.0.0.0"),
+                        port=self.config_manager.get_param("API", "port", 8000)
+                    )
             except Exception as e:
                 print(f"Fehler beim Starten der API: {e}")
                 self.api_status = "Offline"
@@ -527,7 +559,6 @@ class ChatbotGUI:
         api_thread = threading.Thread(target=run_server, daemon=True)
         api_thread.start()
         print("API-Server wurde gestartet.")
-
 
 
     # --------------------------------------------------------
