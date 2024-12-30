@@ -16,7 +16,7 @@ def load_config():
             return {
                 "ip": api_config.get("ip", "0.0.0.0"),
                 "port": api_config.get("port", 8000),
-                "allow_origins": api_config.get("allow_origins", ["*"]),
+                "allow_origins": api_config.get("allow_origins", ["https://alphatrafo.de", "https://api.alphatrafo.de"]),
                 "allow_methods": api_config.get("allow_methods", ["*"]),
                 "allow_headers": api_config.get("allow_headers", ["*"]),
             }
@@ -24,7 +24,7 @@ def load_config():
         return {  # Standardwerte
             "ip": "0.0.0.0",
             "port": 8000,
-            "allow_origins": ["*"],
+            "allow_origins": ["https://alphatrafo.de", "https://api.alphatrafo.de"],
             "allow_methods": ["*"],
             "allow_headers": ["*"],
         }
