@@ -167,11 +167,19 @@ class ChatbotAPI:
     def load_app(self):
         """Lädt die FastAPI-App aus api_main."""
         try:
-            from api_main import app
+            from api_main import app, load_ssl_config
             self.app = app
+
+            # Überprüfen, ob SSL-Zertifikate gefunden werden
+            ssl_config = load_ssl_config()
+            if ssl_config:
+                print(f"SSL-Zertifikate gefunden: {ssl_config['keyfile']} und {ssl_config['certfile']}")
+            else:
+                print("Keine SSL-Zertifikate gefunden. Server läuft im HTTP-Modus.")
         except ImportError as e:
             print(f"Fehler beim Laden der FastAPI-App: {e}")
             self.app = None
+
 
     def start(self):
         """Startet den FastAPI-Server in einem separaten Thread."""
