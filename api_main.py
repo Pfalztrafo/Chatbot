@@ -7,7 +7,7 @@ import uvicorn
 import time
 import json
 
-# Lade Konfiguration aus config.json
+# Lade Konfiguration aus config.json-
 def load_config():
     try:
         with open("config.json", "r", encoding="utf-8") as f:
