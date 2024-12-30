@@ -287,7 +287,7 @@ def evaluate_response(reference, hypothesis):
 
 #------------------------------------------------------------------------------------
 # Chat-Logs speichern
-def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, generated_text=None, user_ip="user", folder="chat_logs"):
+def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, generated_text=None, user_ip="user", folder="chat_logs", username=None):
     os.makedirs(folder, exist_ok=True)
     date_str = datetime.now().strftime("%Y-%m-%d")
     filename = os.path.join(folder, f"{date_str}_chat_log.txt")
