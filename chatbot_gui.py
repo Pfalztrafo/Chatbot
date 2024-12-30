@@ -199,10 +199,15 @@ class ChatbotAPI:
         def run_server():
             ip = self.config_manager.get_param("API", "ip", "0.0.0.0")
             port = self.config_manager.get_param("API", "port", 8000)
-            try:
+            from api_main import load_ssl_config
+            ssl_conf = load_ssl_config()
+            if ssl_conf:
+                uvicorn.run(self.app, host=ip, port=port,
+                            ssl_keyfile=ssl_conf["keyfile"],
+                            ssl_certfile=ssl_conf["certfile"],
+                            log_level="info")
+            else:
                 uvicorn.run(self.app, host=ip, port=port, log_level="info")
-            except Exception as e:
-                print(f"Fehler beim Starten des Servers: {e}")
 
         self.server_thread = threading.Thread(target=run_server, daemon=True)
         self.server_thread.start()
