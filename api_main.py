@@ -6,6 +6,7 @@ import os
 import uvicorn
 import time
 import json
+from chatbot_main import get_response
 
 # Lade Konfiguration aus config.json-
 def load_config():
@@ -95,7 +96,7 @@ async def chat_with_bot(query: Query, request: Request):
     anonymized_ip = anonymize_ip(client_ip)
 
     # Chatbot-Logik anwenden
-    response = get_faq_answer(question)
+    response = get_response(question)
 
     # Chatverlauf speichern
     save_chat_to_txt(question, response, user_ip=anonymized_ip, username="Unbekannt")
