@@ -152,32 +152,6 @@ class ConfigManager:
         return self.config.get("CHAT", {})
 #---------------------------------------------
 
-def start_api_server(self):
-    """Startet den FastAPI-Server in einem separaten Thread."""
-    def run_server():
-        try:
-            ssl_config = self.load_ssl_config()
-            if ssl_config:
-                print(f"SSL-Zertifikate gefunden: {ssl_config['keyfile']} und {ssl_config['certfile']}")
-                uvicorn.run(
-                    app,
-                    host=self.config["ip"],
-                    port=self.config["port"],
-                    ssl_keyfile=ssl_config["keyfile"],
-                    ssl_certfile=ssl_config["certfile"]
-                )
-            else:
-                print("Keine SSL-Zertifikate gefunden. Server läuft im HTTP-Modus.")
-                uvicorn.run(app, host=self.config["ip"], port=self.config["port"])
-        except Exception as e:
-            print(f"Fehler beim Starten der API: {e}")
-            self.api_status = "Offline"
-
-    # Server in einem separaten Thread starten
-    api_thread = threading.Thread(target=run_server, daemon=True)
-    api_thread.start()
-    time.sleep(2)  # Kurze Pause, um sicherzustellen, dass der Server startet
-    print("API-Server-Thread wurde gestartet.")
 
 
 # API-Verwaltung
@@ -356,6 +330,9 @@ class ChatbotGUI:
         self.update_system_stats()
         self.update_chat_logs()
 
+        # API starten
+        self.start_api_server()
+
         # API-Status initial aktualisieren
         self.update_api_status_label()
 
@@ -511,14 +488,42 @@ class ChatbotGUI:
 
         return cpu_label, ram_label, gpu_label
 
-
-
     # Modelwechsel
     def handle_model_switch(self):
         """Handhabt den Wechsel des Modells."""
         new_model = self.model_var.get()
         message = self.model_manager.switch_model(new_model)
         messagebox.showinfo("Modellwechsel", message)
+
+    # --------------------------------------------------------
+    # API-Server
+    def start_api_server(self):
+        """Startet den FastAPI-Server in einem separaten Thread."""
+        def run_server():
+            try:
+                ssl_config = self.load_ssl_config()
+                if ssl_config:
+                    print(f"SSL-Zertifikate gefunden: {ssl_config['keyfile']} und {ssl_config['certfile']}")
+                    uvicorn.run(
+                        app,
+                        host=self.config["ip"],
+                        port=self.config["port"],
+                        ssl_keyfile=ssl_config["keyfile"],
+                        ssl_certfile=ssl_config["certfile"]
+                    )
+                else:
+                    print("Keine SSL-Zertifikate gefunden. Server läuft im HTTP-Modus.")
+                    uvicorn.run(app, host=self.config["ip"], port=self.config["port"])
+            except Exception as e:
+                print(f"Fehler beim Starten der API: {e}")
+                self.api_status = "Offline"
+
+        # Server in einem separaten Thread starten
+        api_thread = threading.Thread(target=run_server, daemon=True)
+        api_thread.start()
+        print("API-Server wurde gestartet.")
+
+
 
     # --------------------------------------------------------
     # Callbacks und Interaktionen
