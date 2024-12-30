@@ -1,15 +1,9 @@
 [
     {
         "question": "Hi",
-        "answer": "Hallo! Wie kann ich Ihnen helfen?",
+        "answer": "Willkommen! Wie kann ich Ihnen helfen?",
         "category": "Begrüßung",
-        "synonyms": ["Hallo", "Guten Tag", "Hey", "Grüß dich", "Servus"]
-    },
-    {
-        "question": "Hallo",
-        "answer": "Willkommen! Wie kann ich Ihnen behilflich sein?",
-        "category": "Begrüßung",
-        "synonyms": ["Guten Morgen", "Guten Abend", "Guten Tag", "Hi", "Hallo, wie geht's?"]
+        "synonyms": ["Hallo", "Guten Tag", "Hey", "Grüß dich", "Servus, Guten Morgen", "Guten Abend", "Guten Tag", "Hallo, wie geht's?, Grüß Gott"]
     },
     {
         "question": "Wie geht es dir?",
@@ -48,12 +42,6 @@
         "synonyms": ["Wie funktioniert das System?", "Wie arbeitest du?", "Wie machst du das?", "Wie funktioniert es?"]
     },
     {
-        "question": "Gibt es noch etwas, das ich wissen sollte?",
-        "answer": "Sofern Sie Fragen an meine menschlichen Kollegen haben, stehen Ihnen diese von Montag bis Freitag 8:00 bis 15 Uhr gern zur Verfügung.",
-        "category": "Systeminformation",
-        "synonyms": ["Noch etwas zu wissen?", "Sonst noch was?", "Was sollte ich noch wissen?"]
-    },
-    {
         "question": "Kann ich mit einem Menschen sprechen?",
         "answer": "Falls ich Ihre Frage nicht beantworten kann, kontaktieren Sie bitte unser Team unter der Telefonnummer 06236 56509940 7890 oder per E-Mail unter vertrieb@pfalztrafo.de. Meine menschlichen Kollegen helfen Ihnen gerne weiter.",
         "category": "Kontaktwunsch",
@@ -70,6 +58,155 @@
         "answer": "Natürlich! Lassen Sie mich wissen, wie ich Ihnen helfen kann.",
         "category": "Zusätzliche Informationen",
         "synonyms": ["Hilfe bitte", "Kannst du mir helfen?", "Ich brauche Unterstützung", "Hilfe"]
+    },
+    {
+        "question": "Wie kann ich Feedback geben?",
+        "answer": "Sie können Ihr Feedback oder Ihre Vorschläge über unser Kontaktformular auf der Webseite einreichen oder uns direkt per E-Mail kontaktieren.",
+        "synonyms": ["Wie kann ich eine Rückmeldung geben?", "Feedback senden", "Kann ich Vorschläge einreichen?", "Wo kann ich Feedback hinterlassen?", "Rückmeldung geben"],
+        "category": "Kontakt"
+    },
+    {
+        "question": "Wie erreiche ich den technischen Support?",
+        "answer": "Unser technischer Support steht Ihnen telefonisch unter 06236 56509940 zur Verfügung. Alternativ können Sie uns per E-Mail kontaktieren.",
+        "synonyms": ["Wie kontaktiere ich den Support?", "Technischer Service", "Support kontaktieren", "Wie erreiche ich Hilfe?", "Probleme melden"],
+        "category": "Support"
+    },
+    {
+        "question": "Wie werden meine Daten geschützt?",
+        "answer": "Wir legen großen Wert auf den Schutz Ihrer Daten. Weitere Informationen finden Sie in unserer Datenschutzrichtlinie auf der Webseite.",
+        "synonyms": ["Datensicherheit", "Werden meine Daten geschützt?", "Wie sicher sind meine Informationen?", "Datenschutzinformationen", "Datenrichtlinien"],
+        "category": "Datenschutz"
+    },
+    {
+        "question": "Wann sind Sie erreichbar?",
+        "answer": "Unser Team ist von Montag bis Freitag zwischen 8:00 und 16:00 Uhr unter dieser Nummer 06236 56509940 für Sie erreichbar.",
+        "synonyms": ["Öffnungszeiten", "Wann ist der Support verfügbar?", "Betriebszeiten", "Wann kann ich anrufen?", "Erreichbarkeitszeiten"],
+        "category": "Kontakt"
+    },
+    {
+        "question": "Kann ich die Sprache ändern?",
+        "answer": "Derzeit ist der Chatbot nur auf Deutsch verfügbar. Wir arbeiten daran, weitere Sprachen zu unterstützen.",
+        "synonyms": ["Sprache ändern", "Ist der Chatbot mehrsprachig?", "Andere Sprachen verfügbar?", "Kann ich Englisch einstellen?", "In welcher Sprache ist der Chatbot verfügbar?"],
+        "category": "Einstellungen"
+    },
+    {
+        "question": "Ich habe ein dringendes Problem",
+        "answer": "Es tut mir leid zu hören, dass es ein Problem gibt. Bitte kontaktieren Sie unser Team direkt unter 06236 56509940, damit wir Ihnen schnellstmöglich helfen können.",
+        "synonyms": ["Notfall", "Dringend", "Es funktioniert nicht", "Ich brauche sofort Hilfe", "Schnelle Unterstützung"],
+        "category": "Support"
+    },
+    {
+        "question": "Wie kontaktiere ich den technischen Support?",
+        "answer": "Unser technischer Support steht Ihnen telefonisch unter 06236 56509940 zur Verfügung. Alternativ können Sie uns per E-Mail kontaktieren: support@pfalztrafo.de.",
+        "synonyms": ["Technischer Support", "Problem melden", "Hilfe bei technischen Problemen", "Support kontaktieren", "Probleme melden"],
+        "category": "Support"
+    },
+    {
+        "question": "Erzähl mir einen Witz",
+        "answer": "Ich bin kein Comedian, aber wie wäre es mit diesem: Warum hat der Transformator den Strom gemieden? Weil er 'unter Spannung' stand!",
+        "synonyms": ["Mach einen Witz", "Sag was Lustiges", "Unterhalte mich", "Hast du Humor?"],
+        "category": "Unterhaltung"
+    },
+    {
+        "question": "Bist du intelligent?",
+        "answer": "Ich bin schlau genug, um Ihnen bei Transformatoren zu helfen – aber nicht schlau genug, um Schach gegen Sie zu gewinnen!",
+        "synonyms": ["Wie klug bist du?", "Bist du ein Mensch?", "Wer hat dich programmiert?", "Was machst du hier?", "Was bist du?", "Bist du real?", "Was ist dein Ziel?"],
+        "category": "Allgemein"
+    },
+    {
+        "question": "Ich bin frustriert",
+        "answer": "Es tut mir leid, dass Sie frustriert sind. Ich bin hier, um zu helfen. Lassen Sie mich wissen, wie ich Ihnen weiterhelfen kann.",
+        "synonyms": ["Das nervt mich", "Ich bin genervt", "Das ist schlecht", "Ich bin sauer", "Das ist ärgerlich"],
+        "category": "Emotionen"
+    },
+    {
+        "question": "Danke, das hat geholfen",
+        "answer": "Das freut mich zu hören! Wenn Sie weitere Fragen haben, stehe ich Ihnen gern zur Verfügung.",
+        "synonyms": ["Das war hilfreich", "Super, danke", "Das war toll", "Vielen Dank für die Hilfe", "Ich bin zufrieden"],
+        "category": "Allgemein"
+    },
+    {
+        "question": "Kann ich die Sprache ändern?",
+        "answer": "Derzeit ist der Chatbot nur auf Deutsch verfügbar. Wir arbeiten daran, weitere Sprachen zu unterstützen.",
+        "synonyms": ["Sprache ändern", "Ist der Chatbot mehrsprachig?", "Andere Sprachen verfügbar?", "Kann ich Englisch einstellen?", "In welcher Sprache ist der Chatbot verfügbar?", "Sprachen wechseln"],
+        "category": "Einstellungen"
+    },
+    {
+        "question": "Can I change the language?",
+        "answer": "I currently only support German. We are working on adding more languages.",
+        "synonyms": ["Is the chatbot multilingual?", "hello", "Are other languages available?", "Can I use English?", "Which languages does the chatbot support?", "Change language", "English support available?", "Can I talk to you in English?", "Does the bot speak English?", "What languages can I use?", "Multilingual bot available?", "How to change language?", "English language option?"],
+        "category": "Einstellungen"
+    },
+    {
+        "question": "Allgemeinwissen",
+        "answer": "Ich bin darauf spezialisiert, Fragen zu Transformatoren und verwandten Themen zu beantworten. Für andere Wissensfragen empfehle ich Suchmaschinen.",
+        "synonyms": ["Was ist die Hauptstadt von Frankreich?", "Wie hoch ist der Mount Everest?", "Wer ist der Präsident von Deutschland?", "Wann war der Zweite Weltkrieg?", "Wie viele Länder gibt es?", "Was ist der längste Fluss?", "Allgemeinwissen", "Quizfrage", "Weißt du das?", "Kannst du mir sagen, wann der Mond landet?"],
+        "category": "Allgemein"
+    },
+    {
+        "question": "Komplexe technische Fragen",
+        "answer": "Das ist eine sehr spezifische technische Frage. Ich empfehle Ihnen, sich an unser Expertenteam unter vertrieb@pfalztrafo.de zu wenden.",
+        "synonyms": ["Wie funktionieren dreiphasige Transformatoren?", "Welche Materialien sind die besten für Isolierung?", "Wie wird der Kernverlust in einem Transformator berechnet?", "Was ist der Unterschied zwischen Öl- und Trockentransformatoren?", "Technische Frage", "Erkläre mir eine komplexe Technik", "Gib mir Details zu technischen Transformatoren", "Technikdetails zu Trafo"],
+        "category": "Technik"
+    },
+    {
+        "question": "Wie kann ich etwas zurücksenden?",
+        "answer": "Für Rücksendungen oder Beschwerden wenden Sie sich bitte an unseren Kundenservice unter vertrieb@pfalztrafo.de.",
+        "synonyms": ["Beschwerde einreichen", "Service anfragen", "Wie geht eine Reklamation?", "Kundenservice kontaktieren", "Kann ich eine Rückgabe machen?", "Wie funktioniert die Rücksendung?", "Wie melde ich einen Defekt?"],
+        "category": "Kundenservice"
+    },
+    {
+        "question": "Wo werden Transformatoren genutzt?",
+        "answer": "Transformatoren werden in verschiedenen Bereichen eingesetzt, z. B. in der Energieverteilung, Industrie oder für erneuerbare Energien. Haben Sie einen spezifischen Anwendungsfall im Sinn?",
+        "synonyms": ["Anwendungsbeispiele für Trafos", "In welchen Bereichen sind Transformatoren sinnvoll?", "Wofür ist ein Transformator geeignet?", "Kann ein Trafo bei mir zu Hause genutzt werden?", "Was sind Beispiele für Trafos?", "Wofür braucht man einen Transformator?"],
+        "category": "Technik"
+    },
+    {
+        "question": "Bist du ein Mensch?",
+        "answer": "Ich bin ein digitaler Assistent und habe keine Gefühle. Aber ich bin hier, um Ihre Fragen zu beantworten.",
+        "synonyms": ["Hast du Gefühle?", "Wie alt bist du?", "Was ist dein Lieblingsessen?", "Kannst du lieben?", "Wie bist du programmiert?", "Hast du eine Familie?", "Was machst du in deiner Freizeit?", "Hast du eine Meinung?"],
+        "category": "Allgemein"
+    },
+    {
+        "question": "Kannst du Matheaufgaben berechnen?",
+        "answer": "Ich bin auf Transformatoren spezialisiert und keine Rechenmaschine. Aber für einfache Aufgaben könnten Sie Taschenrechner-Apps nutzen.",
+        "synonyms": ["Was ist 2+2?", "1+1?", "Wie viel ist 15 mal 12?", "Kannst du mir eine Gleichung lösen?", "Rechne 100 geteilt durch 25.", "Was ergibt 9 hoch 2?", "Matheaufgabe", "Mathematik", "Kannst du rechnen?", "Hilf mir bei einer Gleichung", "Wie rechne ich Prozent aus?"],
+        "category": "Allgemein"
+    },
+    {
+        "question": "Plötzlicher Themenwechsel",
+        "answer": "Ich bemerke, dass Sie das Thema gewechselt haben. Möchten Sie weiterhin über Transformatoren sprechen, oder soll ich Ihnen bei etwas anderem helfen?",
+        "synonyms": ["Was kostet ein Transformator? Wie ist das Wetter morgen?", "Kann ich mit einem Menschen sprechen? Wie teuer ist ein Trafo?", "Sind Transformatoren energieeffizient? Kennst du gute Filme?", "Was ist die Garantie für Transformatoren? Was ist der nächste Feiertag?", "Kann ich einen Transformator für PV kaufen? Was kostet ein Kinoticket?", "Wie funktioniert ein Transformator? Wie kann ich reisen?", "Was sind die Spezifikationen dieses Trafos? Ist es heute sonnig?", "Welche Spannung hat ein Trafo? Kannst du mir ein Rezept empfehlen?", "Was ist der Preis eines Transformators? Wie programmiert man Python?", "Sind Transformatoren nachhaltig? Welche Bücher empfiehlst du?"],
+        "category": "Allgemein"
+    },
+    {
+        "question": "Unsinnige Eingabe",
+        "answer": "Interessant, was Sie da eingegeben haben! Haben Sie vielleicht eine konkrete Frage zu Transformatoren oder etwas anderem?",
+        "synonyms": ["asdfghjkl", "blablabla", "12345", "!@#$%", "qwertzuiop", "lalalala", "irgendwas"],
+        "category": "Allgemein"
+    },
+    {
+        "question": "Schreibe mir ein Gedicht",
+        "answer": "Ich bin kein Dichter, aber ich kann es versuchen: 'Ein Transformator, voller Spannung, so rein. Helfen kann er, groß und klein!' Kann ich sonst noch helfen?",
+        "synonyms": ["Schreib mir ein Gedicht", "Mach ein Haiku", "Kannst du programmieren?", "Schreibe Python-Code", "Hilf mir beim Programmieren", "Erstell mir ein Rezept", "Zeig mir einen Zaubertrick"],
+        "category": "Unterhaltung"
+    },
+    {
+        "question": "Was würdest du tun, wenn die Welt untergeht?",
+        "answer": "Wahrscheinlich weiterarbeiten – ich bin ein Bot und arbeite unter allen Bedingungen. Möchten Sie über Transformatoren sprechen?",
+        "synonyms": ["Was passiert beim Weltuntergang?", "Wie überlebe ich eine Zombie-Apokalypse?", "Was ist der Sinn des Lebens?", "Kannst du die Zeit zurückdrehen?", "Was würdest du tun, wenn du ein Mensch wärst?", "Was ist deine größte Angst?"],
+        "category": "Allgemein"
+    },
+    {
+        "question": "Kannst du tanzen?",
+        "answer": "Ich kann keine Tanzbewegungen machen, aber ich kann Ihnen zeigen, wie ein Transformator funktioniert. Ist das hilfreich?",
+        "synonyms": ["Mach einen Handstand", "Zeig mir deine Skills", "Kannst du tanzen?", "Tanz für mich", "Mach einen Tanzmove", "Hast du Tanzmoves?", "Kannst du eine Pirouette machen?", "Bist du ein Tänzer?", "Kannst du Breakdance?", "Mach den Robot-Tanz", "Zeig mir einen Tanzschritt", "Bist du gut im Tanzen?", "Tanz wie ein Roboter"],
+        "category": "Unterhaltung"
+    },
+    {
+        "question": "Was ist der Sinn des Lebens?",
+        "answer": "42! Oder vielleicht Transformatoren? Lassen Sie uns über etwas Praktisches sprechen!",
+        "synonyms": ["Warum sind wir hier?", "Was bedeutet das Universum?", "Erzähl mir etwas Tiefgründiges", "Woher kommen wir?", "Was ist die Wahrheit?"],
+        "category": "Allgemein"
     }
-
 ]

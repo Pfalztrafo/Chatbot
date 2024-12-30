@@ -1,29 +1,89 @@
 {
-    "ip": "0.0.0.0",
-    "port": 8000,
-    "allow_origins": [
-        "https://alphatrafo.de", 
-        "https://api.alphatrafo.de"
-    ],
-    "allow_methods": [
-        "*"
-    ],
-    "allow_headers": [
-        "*"
-    ],
-    "epochs": 3,
-    "learning_rate": 2e-05,
-    "batch_size": 4,
-    "weight_decay": 0.01,
-    "use_fuzzy_matching": false,
-    "use_fuzzy_step1": false,
-    "use_fuzzy_step2": false,
-    "use_embeddings": false,
-    "use_ki_generative": true,
-    "embedding_model": "sentence-transformers/all-mpnet-base-v2",
-    "fuzzy_threshold": 70,
-    "embedding_threshold": 1.2,
-    "ki_confidence_threshold": 0.0,
-    "fuzzy_score_range": [0.5, 1.0],
-    "ki_score_range": [0.0, 1.0]
+    "API": {
+        "ip": "0.0.0.0",
+        "port": 8000,
+        "allow_origins": [
+            "https://alphatrafo.de",
+            "https://api.alphatrafo.de"
+        ],
+        "allow_methods": [
+            "*"
+        ],
+        "allow_headers": [
+            "*"
+        ]
+    },
+    "MODEL": {
+        "MODEL_PATH": "./fine_tuned_model",
+        "MODEL_NAME": "google/flan-t5-small",
+        "available_models": [
+            "google/flan-t5-small",
+            "google/flan-t5-base",
+            "google/flan-t5-large",
+            "google/flan-t5-xl"
+        ],
+        "dynamic_model_paths": {
+            "google/flan-t5-small": "./fine_tuned_model/google_flan-t5-small",
+            "google/flan-t5-base": "./fine_tuned_model/google_flan-t5-base",
+            "google/flan-t5-large": "./fine_tuned_model/google_flan-t5-large",
+            "google/flan-t5-xl": "./fine_tuned_model/google_flan-t5-xl"
+        }
+    },
+    "TRAINING": {
+        "epochs": 1,
+        "learning_rate": 2e-05,
+        "batch_size": 1,
+        "weight_decay": 0.01,
+        "train_ratio": 0.8,
+        "negative_sample_rate": 0.5,
+        "data_sources": [
+            "data/faq_general.json",
+            "data/faq_sales.json"
+        ],
+        "data_total": [
+            "data/faq_general.json",
+            "data/faq_sales.json",
+            "data/GermanDPR_train_filtered.json",
+            "data/GermanQuAD_train_filtered.json"
+        ],
+        "training_args": {
+            "eval_strategy": "epoch",
+            "save_strategy": "epoch",
+            "save_total_limit": 5,
+            "logging_steps": 10,
+            "load_best_model_at_end": true,
+            "early_stopping_patience": 3
+        }
+    },
+    "CHAT": {
+        "use_fuzzy_matching": false,
+        "use_ki_generative": true,
+        "use_pipeline": false,
+        "internal_prompt": "As a technical advisor for transformer purchases, respond in German with a clear and detailed answer to the following question:",
+        "fuzzy_threshold": 60,
+        "fuzzy_score_range": [
+            0.0,
+            1.0
+        ],
+        "bleu_score_range": [
+            0.0,
+            1.0
+        ],
+        "rougeL_score_range": [
+            0.0,
+            1.0
+        ],
+        "log_score_threshold": -100.0,
+        "do_sample": false,
+        "temperature": 0.7,
+        "top_k": 50,
+        "top_p": 0.9,
+        "num_beams": 5,
+        "repetition_penalty": 1.2,
+        "max_length": 100,
+        "min_length": 10,
+        "no_repeat_ngram_size": 3,
+        "length_penalty": 1.0,
+        "early_stopping": true
+    }
 }

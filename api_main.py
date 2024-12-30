@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
-from chatbot_main import get_faq_answer_fuzzy, save_chat_to_txt  # Importiere die benötigten Funktionen
+from chatbot_main import get_faq_answer, save_chat_to_txt  # Importiere die benötigten Funktionen
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import uvicorn
@@ -11,25 +11,24 @@ import json
 def load_config():
     try:
         with open("config.json", "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        print("Konfigurationsdatei nicht gefunden. Standardwerte werden verwendet.")
-        return {
+            config = json.load(f)
+            api_config = config.get("API", {})
+            return {
+                "ip": api_config.get("ip", "0.0.0.0"),
+                "port": api_config.get("port", 8000),
+                "allow_origins": api_config.get("allow_origins", ["*"]),
+                "allow_methods": api_config.get("allow_methods", ["*"]),
+                "allow_headers": api_config.get("allow_headers", ["*"]),
+            }
+    except:
+        return {  # Standardwerte
             "ip": "0.0.0.0",
             "port": 8000,
             "allow_origins": ["*"],
             "allow_methods": ["*"],
             "allow_headers": ["*"],
         }
-    except json.JSONDecodeError as e:
-        print(f"Fehler beim Laden der Konfigurationsdatei: {e}")
-        return {
-            "ip": "0.0.0.0",
-            "port": 8000,
-            "allow_origins": ["*"],
-            "allow_methods": ["*"],
-            "allow_headers": ["*"],
-        }
+
 
 config = load_config()
 
@@ -96,7 +95,7 @@ async def chat_with_bot(query: Query, request: Request):
     anonymized_ip = anonymize_ip(client_ip)
 
     # Chatbot-Logik anwenden
-    response = get_faq_answer_fuzzy(question)
+    response = get_faq_answer(question)
 
     # Chatverlauf speichern
     save_chat_to_txt(question, response, user_ip=anonymized_ip, username="Unbekannt")

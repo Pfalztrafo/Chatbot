@@ -526,5 +526,122 @@
             "Trafo für Meereseinsatz",
             "Spezialtransformatoren für Offshore"
         ]
+    },
+    {
+        "question": "Welche Dienstleistungen bietet Pfalztrafo an?",
+        "answer": "Pfalztrafo bietet ein breites Spektrum an Dienstleistungen rund um Transformatoren und Trafostationen, darunter die Wartung und Instandhaltung von Öl- und Gießharztransformatoren, Ölprobenentnahme und Analyse im hauseigenen Labor, die Zustandsdiagnose von Transformatoren sowie die Installation von Schutz- und Überwachungseinrichtungen. Zudem sind wir ein zuverlässiger Partner, um Transformatoren umweltgerecht zu entsorgen und die enthaltenen Komponenten wiederzuverwerten. Als nach WHG geprüftes Unternehmen bieten wir speziell auf Sie zugeschnittene Lösungen für Ölauffangwannen und Gebäudesanierungen.",
+        "category": "Service",
+        "synonyms": [
+            "Welche Services hat Pfalztrafo?",
+            "Was bietet Pfalztrafo an?",
+            "Welche Pfalztrafo-Dienstleistungen gibt es?",
+            "Dienstleistungen von Pfalztrafo",
+            "Welche Leistungen bietet Pfalztrafo an?",
+            "Welche Trafo-Dienstleistungen bietet Pfalztrafo an?",
+            "Welche Services hat Pfalztrafo für Trafos?",
+            "Was bietet ihr an?"
+        ]
+    },
+    {
+        "question": "Können Transformatoren repariert werden?",
+        "answer": "Die Pfalztrafo GmbH hat sich darauf spezialisiert, Verteilnetztransformatoren auch vor Ort beim Kunden instandzusetzen. Für eine genaue Planung benötigen wir detaillierte Informationen. Bitte nutzen Sie unser Kontaktformular oder kontaktieren Sie uns telefonisch.",
+        "category": "Service",
+        "synonyms": [
+            "Transformator reparieren",
+            "Reparaturservice für Trafo",
+            "Kann man einen Trafo reparieren?",
+            "Transformator Wartung und Reparatur",
+            "Reparieren Sie Trafos?"
+        ]
+    },
+    {
+        "question": "Wir planen, Transformatoren auszutauschen.",
+        "answer": "Gern unterstützen wir Sie bei allen Themen rund um den Austausch von Transformatoren. Folgende Leistungen können von uns bezogen werden: PCB-Untersuchung und Entsorgung, Verkauf von Neutransformatoren sowie das Ein- und Ausbringen der Transformatoren in die Trafozelle mittels hauseigenem Kran-LKW. Bitte senden Sie uns Bilder des Typenschilds und Details zur aktuellen Installation. Wir helfen Ihnen gerne bei der Planung.",
+        "category": "Service",
+        "synonyms": [
+            "Trafo ersetzen",
+            "Transformator wechseln",
+            "Alten Transformator austauschen"
+        ]
+    },
+    {
+        "question": "Können Sie eine PCB-Analyse durchführen?",
+        "answer": "Ja, wir bieten PCB-Analysen an. Bitte senden Sie uns eine Ölprobe sowie ein Foto des Typenschildes Ihres Transformators. Weitere Informationen erhalten Sie auf der Website oder direkt von unseren Kollegen unter der angegebenen Telefonnummer.",
+        "category": "Service",
+        "synonyms": [
+            "Ölprobe Analyse",
+            "PCB-Test",
+            "Analyse des Trafo-Öls"
+        ]
+    },
+    {
+        "question": "Wir möchten einen Transformator verlagern.",
+        "answer": "Sehr gern steht Ihnen unser erfahrenes Team zur Seite. Bitte teilen Sie uns detailliert, am besten inkl. Bilder, mit, welche Arbeiten bei Ihnen geplant sind. Sehr gern erstellen wir Ihnen im Anschluss ein Angebot für die Umsetzung. Bitte teilen Sie uns auch mit, ob es spezielle Anforderungen wie Brandschutz gibt und ob der Transformator im Innen- oder Außenbereich installiert werden soll.",
+        "category": "Service",
+        "synonyms": [
+            "Trafo verlagern",
+            "Transformator Standort ändern",
+            "Trafo umbauen"
+        ]
+    },
+    {
+        "question": "Bieten Sie Ersatzteile für Transformatoren an?",
+        "answer": "In unserem Lager halten wir eine große Auswahl von Ersatzteilen für Transformatoren bereit. Gern senden wir Ihnen das passende Ersatzteil zu. Bitte senden Sie uns ein Bild des benötigten Ersatzteils sowie ein Bild des Typenschildes des Transformators.",
+        "category": "Service",
+        "synonyms": [
+            "Trafo-Ersatzteile",
+            "Ersatzteile für Transformatoren",
+            "Kann ich Ersatzteile kaufen?",
+            "Verfügbarkeit von Trafo-Komponenten",
+            "Transformator-Zubehör"
+        ]
+    },
+    {
+        "question": "Bieten Sie technische Unterstützung bei der Installation von Transformatoren?",
+        "answer": "Gern unterstützen unsere Trafoexperten Sie bei der Installation Ihres Transformators. Unser Team steht Ihnen gerne zur Verfügung.",
+        "category": "Service",
+        "synonyms": [
+            "Technische Hilfe bei Trafo-Installation",
+            "Unterstützung bei Transformatoren-Inbetriebnahme",
+            "Trafo-Installation",
+            "Hilfe bei Trafo-Montage",
+            "Technische Beratung bei Transformatoren"
+        ]
+    },
+    {
+        "question": "Können Sie alte Transformatoren recyceln?",
+        "answer": "Wir bieten fachgerechte Recycling- und Entsorgungsservices für ausrangierte Transformatoren an. Voraussetzung für die fachgerechte Umsetzung ist die Ermittlung des vorherrschenden PCB-Gehaltes.",
+        "category": "Service",
+        "synonyms": [
+            "Recycling von Transformatoren",
+            "Alte Trafos entsorgen",
+            "Transformator-Recycling",
+            "Wohin mit alten Trafos?",
+            "Trafos nachhaltig entsorgen"
+        ]
+    },
+    {
+        "question": "Bieten Sie Wartungsverträge für Transformatoren an?",
+        "answer": "In einem Umkreis von 200 km bieten wir Ihnen sehr gern einen 4-jährigen Wartungsvertrag für Ihren Transformator an. Dies garantiert ein hohes Maß an Versorgungssicherheit zu fairen Konditionen.",
+        "category": "Service",
+        "synonyms": [
+            "Trafo Wartungsverträge",
+            "Regelmäßige Wartung von Transformatoren",
+            "Transformatorwartung",
+            "Serviceverträge für Trafos",
+            "Wartung für Transformatoren buchen"
+        ]
+    },
+    {
+        "question": "Wie lange hält ein Transformator?",
+        "answer": "Die Lebensdauer eines Transformators ist stark abhängig von der Belastung und der Wartung. Passend ausgelegte und gut gewartete Transformatoren können eine Lebenszeit von ca. 40 Jahren erreichen. Gern unterstützen wir Sie dabei, dieses Ziel zu erreichen.",
+        "category": "Service",
+        "synonyms": [
+            "Lebensdauer eines Trafos",
+            "Wie lange lebt ein Transformator?",
+            "Trafo Lebensspanne",
+            "Haltbarkeit eines Transformatoren",
+            "Wie langlebig sind Transformatoren?"
+        ]
     }
 ]

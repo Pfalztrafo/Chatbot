@@ -80,6 +80,7 @@ pip install py-cpuinfo
 pip install psutil
 pip install rouge-score
 pip install pyspellchecker
+pip install tensorboard
 
 ```
 

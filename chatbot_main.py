@@ -1,57 +1,137 @@
 import json
 import os
 from datetime import datetime
+from fuzzywuzzy import fuzz
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
-from modules.dialogue_manager import get_faq_answer, save_unanswered_question, get_related_faq
-from modules.recommendation import get_advanced_recommendation
-from utils import format_output, preprocess_text, MODEL_NAME
-from langchain.chains import RetrievalQA
-from langchain_huggingface import HuggingFacePipeline, HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain.schema import Document
-import torch
 from nltk.translate.bleu_score import sentence_bleu
 from rouge_score import rouge_scorer
-from nltk.translate.meteor_score import single_meteor_score
-from spellchecker import SpellChecker
+import torch
+from nltk.translate.bleu_score import SmoothingFunction
+import sys
 
 # Globale Variablen
-faq_data = None  # Initialisierung außerhalb der Funktion
-config = None  # Konfiguration wird später geladen
+faq_data = []
+config = None
 
+# Konfiguration laden und validieren
+def load_config():
+    """
+    Lädt die Konfigurationsdatei und setzt Standardwerte dynamisch, falls notwendig.
+    Validiert wichtige Parameter und gibt Debugging-Informationen aus.
+    """
+    global config
+    try:
+        # Laden der Konfigurationsdatei
+        with open("config.json", "r", encoding="utf-8") as f:
+            config = json.load(f)
 
-# Dynamische Pfade für JSON-Dateien
+        # Validierung von MODEL_NAME
+        if config["MODEL"]["MODEL_NAME"] not in config["MODEL"].get("available_models", []):
+            raise ValueError(f"Ungültiges MODEL_NAME: {config['MODEL']['MODEL_NAME']}")
+
+        # Dynamische Standardwertsetzung und Grenzwerte validieren
+        config["CHAT"]["use_fuzzy_matching"] = bool(config["CHAT"].get("use_fuzzy_matching", False))
+        config["CHAT"]["use_ki_generative"] = bool(config["CHAT"].get("use_ki_generative", True))
+        config["CHAT"]["use_pipeline"] = bool(config["CHAT"].get("use_pipeline", True))
+        config["CHAT"]["fuzzy_threshold"] = max(0, min(100, config["CHAT"].get("fuzzy_threshold", 70)))
+        config["CHAT"]["fuzzy_score_range"] = config["CHAT"].get("fuzzy_score_range", [0.5, 1.0])
+        config["CHAT"]["bleu_score_range"] = config["CHAT"].get("bleu_score_range", [0.3, 0.5])
+        config["CHAT"]["rougeL_score_range"] = config["CHAT"].get("rougeL_score_range", [0.4, 0.6])
+        config["CHAT"]["do_sample"] = bool(config["CHAT"].get("do_sample", False))
+        config["CHAT"]["temperature"] = max(0.0, min(1.0, config["CHAT"].get("temperature", 0.7)))
+        config["CHAT"]["top_k"] = max(1, config["CHAT"].get("top_k", 50))
+        config["CHAT"]["top_p"] = max(0.0, min(1.0, config["CHAT"].get("top_p", 0.9)))
+        config["CHAT"]["num_beams"] = max(1, config["CHAT"].get("num_beams", 5))
+        config["CHAT"]["repetition_penalty"] = max(1.0, config["CHAT"].get("repetition_penalty", 1.2))
+        config["CHAT"]["max_length"] = max(1, config["CHAT"].get("max_length", 50))
+        config["CHAT"]["min_length"] = max(0, min(config["CHAT"]["max_length"], config["CHAT"].get("min_length", 10)))
+        config["CHAT"]["no_repeat_ngram_size"] = max(0, config["CHAT"].get("no_repeat_ngram_size", 3))
+        config["CHAT"]["length_penalty"] = max(0.0, config["CHAT"].get("length_penalty", 1.0))
+        config["CHAT"]["early_stopping"] = bool(config["CHAT"].get("early_stopping", True))
+        config["CHAT"]["internal_prompt"] = config["CHAT"].get(
+            "internal_prompt", "Bitte beantworte Fragen"
+        )
+
+        # Debugging wichtiger Parameter
+        print(f"[DEBUG] Konfiguration erfolgreich geladen.")
+        print(f"[DEBUG] Wichtige Parameter: {', '.join([f'{key}: {value}' for key, value in config['CHAT'].items()])}")
+        if not config["CHAT"].get("use_fuzzy_matching", True):
+            print("[DEBUG] Fuzzy-Matching ist deaktiviert.")
+
+    except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError) as e:
+        # Beenden des Programms bei Fehlern in der Konfiguration
+        print(f"[FEHLER] Fehler beim Laden der config.json: {e}")
+        sys.exit(1)  # Programm beenden
+        
+# ----------------------------------------------------------------------------------
+# FAQs laden für Fuzzy Matching
+# Dynamische Pfade für JSON-Dateien - Fuzyy Matching
 def get_file_path(file_type):
     file_mapping = {
         "faq_general": "data/faq_general.json",
         "faq_sales": "data/faq_sales.json",
-        "fallback_responses": "data/fallback_responses.json"
     }
     return file_mapping.get(file_type)
 
-# Konfiguration laden
-def load_config():
-    global config
-    try:
-        with open("config.json", "r", encoding="utf-8") as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        print("Konfigurationsdatei nicht gefunden. Standardwerte werden verwendet.")
-        config = {
-            "use_fuzzy_matching": True,
-            "use_embeddings": True,
-            "use_ki_generative": True,
-            "embedding_model": "sentence-transformers/all-mpnet-base-v2"
-        }
-    except json.JSONDecodeError as e:
-        print(f"Fehler beim Laden der Konfigurationsdatei: {e}")
-        config = {
-            "use_fuzzy_matching": True,
-            "use_embeddings": True,
-            "use_ki_generative": True,
-            "embedding_model": "sentence-transformers/all-mpnet-base-v2"
-        }
+def load_faq_data():
+    global faq_data
+    faq_data = []
+    for file_key in ["faq_general", "faq_sales"]:
+        file_path = get_file_path(file_key)
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                raw_data = json.load(file)
+                # Überprüfen der Datenstruktur
+                for entry in raw_data:
+                    faq_data.append({
+                        "question": entry.get("question", ""),
+                        "answer": entry.get("answer", ""),
+                        "synonyms": entry.get("synonyms", [])
+                    })
+        except FileNotFoundError:
+            print(f"[ERROR] FAQ-Datei nicht gefunden: {file_path}")
+        except json.JSONDecodeError as e:
+            print(f"[ERROR] Fehler beim Lesen der FAQ-Datei: {e}")
 
+    print(f"[DEBUG] {len(faq_data)} FAQs für Fuzzy Matching erfolgreich geladen.")
+
+
+# Antwort auf eine FAQ-Frage basierend auf Fuzzy-Matching
+def get_faq_answer(user_input, category=None, threshold=80):
+    """ Findet die beste FAQ-Antwort basierend auf Fuzzy-Matching.
+        Berücksichtigt sowohl `question` als auch `synonyms` in den FAQs.  """
+    if not config["CHAT"].get("use_fuzzy_matching", True):
+       #print("[DEBUG] Fuzzy-Matching ist deaktiviert.")
+       return None, 0.0
+
+    best_match = None
+    best_score = 0
+    for item in faq_data:
+        # Fuzzy-Matching auf `question`
+        question_score = fuzz.ratio(user_input.lower(), item["question"].lower()) / 100
+        if question_score > best_score and question_score >= threshold / 100:
+            best_match = item["answer"]
+            best_score = question_score
+
+        # Fuzzy-Matching auf `synonyms`
+        for synonym in item.get("synonyms", []):
+            synonym_score = fuzz.ratio(user_input.lower(), synonym.lower()) / 100
+            if synonym_score > best_score and synonym_score >= threshold / 100:
+                best_match = item["answer"]
+                best_score = synonym_score
+
+    return best_match, best_score
+
+# Überprüfung der Score-Bereiche
+def validate_scores(fuzzy_score):
+    fuzzy_min, fuzzy_max = config["fuzzy_score_range"]
+    if fuzzy_score < fuzzy_min or fuzzy_score > fuzzy_max:
+        print("[DEBUG] Fuzzy-Score außerhalb des zulässigen Bereichs.")
+        return False
+    return True
+
+#------------------------------------------------------------------------------------
+# Modell laden
 # Modell und Tokenizer laden
 def load_model_and_tokenizer():
     if os.path.exists(MODEL_PATH):
@@ -64,301 +144,221 @@ def load_model_and_tokenizer():
         print("Kein feingetuntes Modell gefunden. Verwende das Standardmodell.")
     return model, tokenizer
 
-# Wissensbasis für RAG vorbereiten
-def setup_retriever(knowledge_base, embeddings):
-    faiss_index = FAISS.from_documents(knowledge_base, embeddings)
-    return faiss_index
+# Konfiguration laden
+load_config()  # Lädt die Konfiguration aus config.json
+MODEL_NAME = config["MODEL"]["MODEL_NAME"]
+MODEL_PATH = os.path.join(config["MODEL"]["MODEL_PATH"], MODEL_NAME.replace("/", "_"))
 
-# Wissensdatenbank laden
-def load_knowledge_base():
-    knowledge_base = []
-    for file_key in ["faq_general", "faq_sales"]:
-        file_path = get_file_path(file_key)
-        try:
-            with open(file_path, "r", encoding="utf-8") as file:
-                raw_data = json.load(file)
-            for item in raw_data:
-                knowledge_base.append(Document(page_content=item["question"], metadata={"answer": item["answer"], "category": item.get("category", "Allgemein")}))
-        except FileNotFoundError:
-            print(f"[ERROR] FAQ-Datei nicht gefunden: {file_path}")
-        except json.JSONDecodeError as e:
-            print(f"[ERROR] Fehler beim Lesen der FAQ-Datei: {e}")
-    print(f"[DEBUG] FAQ-Daten geladen: {len(knowledge_base)} Einträge")
-    return knowledge_base
+if os.path.exists(MODEL_PATH):
+    print(f"[DEBUG] Modellpfad existiert: {MODEL_PATH}")
+else:
+    print(f"[ERROR] Modellpfad nicht gefunden: {MODEL_PATH}")
 
-# Globale Initialisierung
-MODEL_PATH = "./fine_tuned_model"
-load_config()
+load_faq_data()
 device = 0 if torch.cuda.is_available() else -1
 model, tokenizer = load_model_and_tokenizer()
 hf_pipeline = pipeline("text2text-generation", model=model, tokenizer=tokenizer, device=device)
-llm = HuggingFacePipeline(pipeline=hf_pipeline)
 
-embeddings = HuggingFaceEmbeddings(model_name=config.get("embedding_model", "sentence-transformers/all-mpnet-base-v2"))
-knowledge_base = load_knowledge_base()
-faiss_index = setup_retriever(knowledge_base, embeddings)
-qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=faiss_index.as_retriever(), chain_type="stuff")
+#------------------------------------------------------------------------------------
+# KI
+# Referenzantwort für BLEU/ROUGE evaluieren
+def get_faq_reference_for_evaluation(user_input, threshold=80):
+    best_match = None
+    best_score = 0
 
-# Synonym- und Rechtschreibkorrektur
-def normalize_and_correct_input(user_input, synonym_dict):
-    """
-    Normalisiert die Eingabe basierend auf OpenThesaurus-Synonymen und korrigiert Rechtschreibfehler.
-    """
-    spell = SpellChecker(language="de")  # PySpellChecker für Deutsch
-    words = user_input.split()
-    processed_words = []
+    for item in faq_data:
+        # Falls du denselben Fuzzy-Ansatz willst:
+        question_score = fuzz.ratio(user_input.lower(), item["question"].lower()) / 100
+        if question_score > best_score and question_score >= threshold/100:
+            best_match = item["answer"]
+            best_score = question_score
 
-    for word in words:
-        # Synonym prüfen und ersetzen
-        if word.lower() in synonym_dict:
-            processed_words.append(synonym_dict[word.lower()])
-        else:
-            # Rechtschreibkorrektur, wenn kein Synonym gefunden wird
-            corrected_word = spell.correction(word)
-            processed_words.append(corrected_word if corrected_word else word)
+        for synonym in item.get("synonyms", []):
+            synonym_score = fuzz.ratio(user_input.lower(), synonym.lower()) / 100
+            if synonym_score > best_score and synonym_score >= threshold/100:
+                best_match = item["answer"]
+                best_score = synonym_score
 
-    return " ".join(processed_words)
+    return best_match  # Kann None sein, wenn nichts passt
 
-# OpenThesaurus-Daten laden
-def load_openthesaurus_data(file_path):
-    """
-    Lädt die OpenThesaurus-Daten aus einer Textdatei und erstellt ein Synonym-Wörterbuch.
-    """
-    synonym_dict = {}
+# Globale Fallback-Antwort
+FALLBACK_ANSWER = "Entschuldigung, ich konnte keine passende Antwort finden. Bitte kontaktieren Sie unseren Support."
+
+
+# Generative KI-Antwort mit Log-Score und Bewertung
+def generate_ki_response(query):    
+    # Konfiguration für die interne Prompt-Nutzung
+    internal_prompt = config["CHAT"].get("internal_prompt", "Beantworte Frage.")
+    #input_text = f"{internal_prompt}\nFrage: {query}\nAntwort:"
+    input_text = f"{internal_prompt}\nQuestion: {query}\nAnswer:"
+
+    """ Kann entweder `hf_pipeline` oder den normalen Ansatz verwenden. """
     try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            for line in file:
-                synonyms = line.strip().split("|")
-                for synonym in synonyms:
-                    synonym_dict[synonym.lower()] = synonyms[0]  # Erster Begriff als Hauptbegriff
-    except FileNotFoundError:
-        print(f"[ERROR] OpenThesaurus-Datei nicht gefunden: {file_path}")
-    return synonym_dict
+        # 1) Referenzantwort für BLEU/ROUGE evaluieren
+        # Finde die passende Referenzantwort aus den FAQs für Metriken
+        best_faq_ref = get_faq_reference_for_evaluation(query, threshold=80)
+        if not best_faq_ref:
+            best_faq_ref = FALLBACK_ANSWER  # Falls keine Referenz gefunden, nutze Fallback
 
-# Globale Initialisierung für OpenThesaurus
-synonym_dict = load_openthesaurus_data("data/openthesaurus.txt")  # Pfad anpassen
+        # 2) Prüfen, ob hf_pipeline oder der normale Ansatz genutzt wird
+        if config["CHAT"].get("use_pipeline", True):
+            # Nutzung von hf_pipeline
+            try:
+                result = hf_pipeline(input_text, max_length=100, num_return_sequences=1)[0]
+                #result = hf_pipeline(query, max_length=100, num_return_sequences=1)[0]
+                generated_text = result["generated_text"]
+                log_score = None  # hf_pipeline liefert keinen Log-Score
+                if log_score is None:
+                    log_score = -float("inf")  # Standardwert setzen
 
-
-
-# Fuzzy und Embeddings: zentrale Logik
-def get_best_faq_response(user_input):
-    """
-    Mehrstufige Verarbeitung von Benutzeranfragen:
-    - Kategorieerkennung
-    - Fuzzy Matching
-    - Embedding-basierte Suche (Kategorie / Global)
-    - Generative Antwort
-    - Fallback
-    """
-    scores = {"fuzzy": 0.0, "embedding": 0.0, "ki": 0.0}
-    response = None
-    category_detected = detect_category(user_input)
-    print(f"[DEBUG] Erkannte Kategorie: {category_detected}")
-
-    # Konfigurationsoptionen
-    use_fuzzy_matching = config.get("use_fuzzy_matching", True)
-    use_embeddings = config.get("use_embeddings", True)
-    use_ki_generative = config.get("use_ki_generative", True)
-
-    fuzzy_threshold = config.get("fuzzy_threshold", 70)
-    embedding_threshold = config.get("embedding_threshold", 0.7)
-    ki_confidence_threshold = config.get("ki_confidence_threshold", 0.5)
-
-    # Schritt 1: Fuzzy Matching (kategoriebasiert)
-    if use_fuzzy_matching:
-        print("[DEBUG] Direktes Fuzzy Matching aktiv...")
-        fuzzy_response, fuzzy_score = get_faq_answer(user_input, threshold=fuzzy_threshold, category=category_detected)
-        scores["fuzzy"] = fuzzy_score / 100
-        if fuzzy_response:
-            print(f"[DEBUG] Fuzzy Score: {scores['fuzzy']:.2f}")
-            response = fuzzy_response
-            return response, scores, category_detected
-
-    # Schritt 2: Embedding-basierte Suche (kategoriebasiert)
-    if use_embeddings:
-        print("[DEBUG] Embeddings-basierte Suche innerhalb der Kategorie aktiv...")
-        embedding_response, embedding_score, doc = search_faq_with_embeddings(user_input, category=category_detected, return_score=True)
-        scores["embedding"] = embedding_score
-        if embedding_response and embedding_score >= embedding_threshold:
-            print(f"[DEBUG] Embedding Score (Kategorie): {scores['embedding']:.2f}")
-            response = embedding_response
-            category_detected = doc.metadata.get("category", "Allgemein")
-            return response, scores, category_detected
-
-    # Schritt 3: Embedding-basierte Suche (global, ohne Kategorie)
-    if use_embeddings:
-        print("[DEBUG] Embeddings-basierte Suche ohne Kategorie aktiv...")
-        embedding_response, embedding_score, doc = search_faq_with_embeddings(user_input, category=None, return_score=True)
-        scores["embedding"] = embedding_score
-
-        # Nur Embedding-Antwort nutzen, wenn der Score den Schwellenwert erfüllt
-        if embedding_response and embedding_score >= embedding_threshold:
-            print(f"[DEBUG] Embedding Score (global): {scores['embedding']:.2f}")
-            response = embedding_response
-            category_detected = doc.metadata.get("category", "Allgemein")
-            return response, scores, category_detected
+            except Exception as e:
+                print(f"[ERROR] Fehler bei der Generierung mit hf_pipeline: {e}")
+                return "", FALLBACK_ANSWER, -float("inf"), {"bleu": 0.0, "rougeL": 0.0}
         else:
-            print(f"[DEBUG] Embedding Score ({embedding_score:.2f}) ist unter dem Schwellenwert ({embedding_threshold}). Generative KI wird verwendet...")
+            # Nutzung des normalen Ansatzes
+            generate_kwargs = {
+                "input_ids": tokenizer(input_text, return_tensors="pt").input_ids.to(device),
+                "max_length": config["CHAT"]["max_length"],
+                "min_length": config["CHAT"]["min_length"],
+                "num_beams": config["CHAT"]["num_beams"],
+                "repetition_penalty": config["CHAT"]["repetition_penalty"],
+                "no_repeat_ngram_size": config["CHAT"]["no_repeat_ngram_size"],
+                "length_penalty": config["CHAT"]["length_penalty"],
+                "early_stopping": config["CHAT"]["early_stopping"],
+                "return_dict_in_generate": True,
+                "output_scores": True
+            }
 
+            # Optional: Sampling-Parameter hinzufügen, falls aktiviert
+            if config["CHAT"].get("do_sample", False):
+                generate_kwargs.update({
+                    "do_sample": True,
+                    "temperature": config["CHAT"]["temperature"],
+                    "top_k": config["CHAT"]["top_k"],
+                    "top_p": config["CHAT"]["top_p"]
+                })
 
+            outputs = model.generate(**generate_kwargs)
+            generated_ids = outputs.sequences
+            generated_text = tokenizer.decode(generated_ids[0], skip_special_tokens=True).strip()
 
-    # Schritt 4: Generative KI-Antwort
-    if use_ki_generative:
-        print("[DEBUG] Generative KI-Antwort aktiv...")
-        response, ki_confidence = generate_ki_response(user_input)
-        scores["ki"] = ki_confidence
-        print(f"[DEBUG] KI Score: {scores['ki']:.2f}")
-        if response and ki_confidence >= ki_confidence_threshold:
-            category_detected = "Generative KI"
-            return response, scores, category_detected
+            # Log-Score berechnen
+            scores = outputs.scores
+            probs = [torch.softmax(score, dim=-1) for score in scores]
+            log_probs = [torch.log(prob) for prob in probs]
+            log_score = sum(
+                log_prob[0, token_id].item()
+                for log_prob, token_id in zip(log_probs, generated_ids[0][1:])
+            )
 
-    # Schritt 5: Fallback
-    print("[DEBUG] Keine passende Antwort gefunden. Fallback wird genutzt...")
-    response = get_related_faq(user_input)
-    save_unanswered_question(user_input)
-    print(f"[DEBUG] Fallback-Antwort genutzt: {response}")
+        # 3) BLEU & ROUGE evaluieren
+        evaluation = evaluate_response(best_faq_ref, generated_text)
 
-    return response, scores, category_detected
+        # Debugging: Ausgabe von Bewertungen und generierter Antwort
+        print(f"Log-Score: {log_score:.2f}, BLEU: {evaluation['bleu']:.2f}, ROUGE-L: {evaluation['rougeL']:.2f}")
 
+        # 4) Fallback-Logik prüfen
+        if log_score is not None and log_score < config["CHAT"]["log_score_threshold"]:
+            return generated_text, FALLBACK_ANSWER, log_score, evaluation
 
+        bleu_min, _ = config["CHAT"]["bleu_score_range"]
+        rouge_min, _ = config["CHAT"]["rougeL_score_range"]
 
-# Kategorie erkennen
-def detect_category(user_input):
-    """
-    Erkennt die Kategorie basierend auf Schlüsselwörtern im Benutzerinput.
-    """
-    user_input = user_input.lower()
+        if evaluation['bleu'] < bleu_min or evaluation['rougeL'] < rouge_min:
+            return generated_text, FALLBACK_ANSWER, log_score, evaluation
 
-    # Kategorien definieren
-    categories = {
-        "Begrüßung": ["hi", "hallo", "hey", "guten tag", "servus", "grüß dich"],
-        "Abschied": ["tschüss", "bis bald", "auf wiedersehen", "ciao", "mach's gut"],
-        "Dank": ["danke", "vielen dank", "dankeschön", "danke dir", "danke schön"],
-        "Systeminformation": ["wer bist du", "was kannst du", "wie funktioniert das", "bist du ein mensch"],
-        "Zusätzliche Informationen": ["ich brauche hilfe", "hilfe bitte", "unterstützung", "ich benötige hilfe"],
-        "Kauf": ["kaufen", "angebot", "preis", "bestellen", "verfügbarkeit"],
-        "Lieferung": ["lieferung", "versand", "lieferzeit", "transport"],
-        "Beratung": ["empfehlung", "entscheidung", "geeignet", "passend"],
-        "Produktinformationen": ["informationen", "produkt", "details", "spezifikationen"],
-        "Technik": ["spannung", "leistung", "anschluss", "technisch"],
-        "Nachhaltigkeit & Qualität": ["nachhaltig", "energieeffizient", "qualität", "ökodesign"],
-        "Vertrieb": ["verkaufen", "vertrieb", "angebot anfordern", "verkauf", "kundenservice"]
+        # Generierte Antwort verwenden
+        return generated_text, generated_text, log_score, evaluation
+
+    except Exception as e:
+        print(f"[ERROR] Fehler bei der Generierung: {e}")
+        return "", FALLBACK_ANSWER, -float("inf"), {"bleu": 0.0, "rougeL": 0.0}
+
+# Bewertung von BLEU und RougeL
+def evaluate_response(reference, hypothesis):
+    smoothing_function = SmoothingFunction().method1  # Glättungsfunktion
+    bleu_score = sentence_bleu([reference.split()], hypothesis.split(), smoothing_function=smoothing_function)
+    rouge = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
+    rouge_scores = rouge.score(reference, hypothesis)
+    return {
+        "bleu": bleu_score,
+        "rougeL": rouge_scores["rougeL"].fmeasure
     }
 
-    # Kategorie basierend auf Schlüsselwörtern erkennen
-    for category, keywords in categories.items():
-        if any(keyword in user_input for keyword in keywords):
-            print(f"[DEBUG] Erkannte Kategorie: {category}")  # Debug-Ausgabe
-            return category
-
-    #print("[DEBUG] Erkannte Kategorie: Allgemein")  # Debug-Ausgabe
-    return "Allgemein"
-
-
-
-
-# Embeddings-Suche
-def search_faq_with_embeddings(query, category=None, return_score=False):
-    """
-    Durchsucht die FAQs basierend auf Embeddings und berücksichtigt optional eine Kategorie.
-    """
-    embedding_vector = embeddings.embed_query(query)
-    filtered_documents = knowledge_base
-
-    # Filter nach Kategorie
-    if category:
-        filtered_documents = [doc for doc in knowledge_base if doc.metadata.get("category") == category]
-        print(f"[DEBUG] Gefilterte Dokumente für Kategorie '{category}': {len(filtered_documents)}")
-
-    # Fallback: Wenn keine Dokumente für die Kategorie gefunden werden
-    if not filtered_documents:
-        print("[DEBUG] Keine Dokumente für die Kategorie gefunden. Verwende gesamte Wissensbasis.")
-        filtered_documents = knowledge_base
-
-    # Suche mit Embeddings
-    try:
-        faiss_index = FAISS.from_documents(filtered_documents, embeddings)
-        results = faiss_index.similarity_search_with_score_by_vector(embedding_vector, k=1)
-
-        if results:
-            best_result, raw_score = results[0]
-
-            # FAISS-Rohscore direkt verwenden
-            print(f"[DEBUG] FAISS-Roh-Score: {raw_score:.2f}")
-
-            answer = best_result.metadata.get("answer", "")
-            return (answer, raw_score, best_result) if return_score else answer
-    except Exception as e:
-        print(f"[DEBUG] Fehler bei der Embeddings-Suche: {e}")
-    return (None, float('inf'), None) if return_score else None
-
-
-
-
-# Generative KI-Antwort
-def generate_ki_response(query):
-    try:
-        generated = hf_pipeline(query, max_length=100, num_return_sequences=1)[0]
-        return generated["generated_text"], generated.get("score", 0.0)
-    except Exception as e:
-        print(f"[DEBUG] Fehler bei der KI-Generierung: {e}")
-        return None, 0.0
-
-# Berechnung von BLEU, ROUGE, METEOR
-def calculate_bleu(reference, hypothesis):
-    reference_tokens = [reference.split()]
-    hypothesis_tokens = hypothesis.split()
-    return sentence_bleu(reference_tokens, hypothesis_tokens)
-
-def calculate_rouge(reference, hypothesis):
-    scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
-    scores = scorer.score(reference, hypothesis)
-    return scores['rougeL'].fmeasure
-
-def calculate_meteor(reference, hypothesis):
-    reference_tokens = reference.split()
-    hypothesis_tokens = hypothesis.split()
-    return single_meteor_score(reference_tokens, hypothesis_tokens)
-
+#------------------------------------------------------------------------------------
 # Chat-Logs speichern
-def save_chat_to_txt(user_message, bot_response, scores, user_ip="Unbekannt", folder="chat_logs"):
-    """
-    Speichert den Chat-Verlauf in einer Textdatei mit Datum und Zeitstempel.
-    """
+def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, generated_text=None, user_ip="user", folder="chat_logs"):
     os.makedirs(folder, exist_ok=True)
     date_str = datetime.now().strftime("%Y-%m-%d")
     filename = os.path.join(folder, f"{date_str}_chat_log.txt")
+
+    # Standardwerte für Evaluation und Scores
+    if evaluation is None:
+        evaluation = {"bleu": 0.0, "rougeL": 0.0}
+    if scores is None:
+        scores = {}
+
+    # Hole die relevanten Werte – wenn nichts da, nimm 0.0
+    fuzzy_score = scores.get("fuzzy", 0.0)
+    log_score = scores.get("ki", -float("inf"))  # Fallback auf 0.0, falls nicht vorhanden
+
+     # Fallback für log_score, falls None
+    if log_score is None:
+        log_score = -float("inf")  # Setze Standardwert für nicht vorhandene Log-Scores
+
+    # Schreibe BLEU/ROUGE als Text
+    eval_text = f"BLEU: {evaluation['bleu']:.2f}, ROUGE-L: {evaluation['rougeL']:.2f}"
+    score_text = f"Fuzzy: {fuzzy_score:.2f}, Log-Score: {log_score:.2f}"
+
+    # Schreibe in die Datei
     with open(filename, "a", encoding="utf-8") as file:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # Scores mit zwei Nachkommastellen formatieren
-        score_text = (f"Fuzzy: {scores['fuzzy']:.2f}, "
-                      f"Emb.: {scores['embedding']:.2f}, "
-                      f"KI: {scores['ki']:.2f}")
         file.write(f"[{timestamp}] [IP: {user_ip}] {user_message}\n")
-        file.write(f"[{timestamp}] [Server] [Bot ({score_text})]: {bot_response}\n")
+        file.write(f"[{timestamp}] [Server] [Bot ({score_text})]: {bot_response} [{eval_text}]\n")
+        if generated_text:
+            file.write(f"[{timestamp}] [Generated Text]: {generated_text}\n")
+
+    # Debugging-Ausgabe im Terminal
+    if fuzzy_score > 0.0:
+        print(f"[DEBUG] FAQ-Matching: Fuzzy Score: {fuzzy_score:.2f}")
+    #if log_score is not None:
+        #print(f"[DEBUG] Log-Score: {log_score:.2f}")
+    if generated_text:
+        print(f"Bot: {generated_text}")
+
+#------------------------------------------------------------------------------------
+# Hauptantwortlogik
+def get_response(user_input):
+    # Schritt 1: Suche in den FAQs
+    response, fuzzy_score = get_faq_answer(user_input, threshold=config["CHAT"]["fuzzy_threshold"])
+    if response:
+        save_chat_to_txt(user_input, response, None, {"fuzzy": fuzzy_score})
+        return response
+
+    # Schritt 2: Generative KI
+    if config["CHAT"]["use_ki_generative"]:
+        # Vier Werte von generate_ki_response zurückgeben
+        generated_text, final_response, log_score, evaluation = generate_ki_response(user_input)
+        
+        # Speichern Sie sowohl die generierte als auch die finale Antwort
+        save_chat_to_txt(user_input, final_response, evaluation, {"fuzzy": 0.0, "ki": log_score}, generated_text)
+        return final_response
+
+    # Schritt 3: Fallback
+    save_chat_to_txt(user_input, FALLBACK_ANSWER, {"bleu": 0.0, "rougeL": 0.0}, {"fuzzy": 0.0, "ki": 0.0})
+    return FALLBACK_ANSWER
+
 
 # Haupt-Chat-Funktion
 def chat():
     print("Starte den Chat (zum Beenden 'exit' eingeben)")
-    user_ip = "192.168.1.10"
-
     while True:
         user_input = input("Du: ").strip()
-        if not user_input:
-            print("[DEBUG] Leere Eingabe erkannt. Bitte geben Sie eine Frage ein.")
-            continue
         if user_input.lower() == "exit":
             print("Chat beendet.")
             break
-
-        response, scores, category_detected = get_best_faq_response(user_input)
-
-        # Unbeantwortete Frage speichern
-        if response == "Entschuldigung, ich konnte Ihre Anfrage nicht verstehen.":
-            save_unanswered_question(user_input)
-
-        print(format_output(response))
-        save_chat_to_txt(user_input, response, scores, user_ip=user_ip)
+        response = get_response(user_input)
+        print(f"Bot: {response}")
 
 if __name__ == "__main__":
     chat()

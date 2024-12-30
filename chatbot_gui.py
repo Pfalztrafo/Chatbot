@@ -1,249 +1,572 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from train_model import main as start_training_process  # Importiere die main-Funktion aus train_model.py
-from api_main import app  # Importiere die FastAPI-App
-from chatbot_main import get_faq_answer_fuzzy  # Importiere die benötigten Funktionen
-from utils import preprocess_text
 import os
-import threading
-import uvicorn
-import json
+import threading    # für die API, Trainer
+import uvicorn      # für die API
+import time         # für die API
+import json         # für die Konfiguration
 import psutil
 import requests
-import time
-from chatbot_main import load_faq_data
+import torch
+
+from train_model import main as start_training_process  # Importiere die main-Funktion aus train_model.py
+from api_main import app                                # Importiere die FastAPI-App
+from chatbot_main import get_response, save_chat_to_txt # zum chatten
+
+
+# Systemressourcen-Manager
+class SystemResourceManager:
+    @staticmethod
+    def get_cpu_usage():
+        """Gibt die aktuelle CPU-Auslastung in Prozent zurück."""
+        return psutil.cpu_percent(interval=0.1)
+
+    @staticmethod
+    def get_ram_usage():
+        """Gibt die aktuelle RAM-Nutzung und den Gesamtspeicher zurück."""
+        ram = psutil.virtual_memory()
+        return ram.used / (1024**3), ram.total / (1024**3)
+    
+    @staticmethod
+    def get_gpu_info():
+        """Gibt die GPU-Speichernutzung und Gesamtspeicher zurück."""
+        try:
+            if not torch.cuda.is_available():
+                return "GPU: Nicht verfügbar"
+            
+            # Name der GPU
+            gpu_properties = torch.cuda.get_device_properties(0)
+            total_memory = gpu_properties.total_memory / (1024**3)  # Gesamtspeicher in GB
+            used_memory = torch.cuda.memory_allocated(0) / (1024**3)  # Genutzter Speicher in GB
+
+            return f"GPU: {used_memory:.1f} GB von {total_memory:.1f} GB"
+        except Exception as e:
+            return f"Fehler beim Abrufen der GPU-Daten: {e}"
 
 
 
-class ChatbotGUI:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Chatbot Management Dashboard")
-        self.root.geometry("800x600")
+# Manager-Klassen
+class ModelManager:
+    def __init__(self, config_manager):
+        self.config_manager = config_manager
+        self.current_model = self.config_manager.get_param("MODEL", "MODEL_NAME", "google/flan-t5-base")
+        self.available_models = self.config_manager.get_param("MODEL", "available_models", [])
 
-        # Konfiguration laden
+    def get_current_model(self):
+        """Gibt das aktuell geladene Modell zurück."""
+        return self.current_model
+
+    def get_available_models(self):
+        """Gibt die Liste der verfügbaren Modelle zurück."""
+        return self.available_models
+
+    def switch_model(self, new_model, load_callback=None):
+        """
+        Wechselt das aktuelle Modell.
+        :param new_model: Der Name des neuen Modells.
+        :param load_callback: Optionale Funktion, die während des Ladens aufgerufen wird.
+        """
+        if new_model == self.current_model:
+            return "Das ausgewählte Modell ist bereits geladen."
+
+        # Neues Modell laden
+        try:
+            self.current_model = new_model
+            self.config_manager.set_param("MODEL", "MODEL_NAME", new_model)
+            if load_callback:
+                load_callback(new_model)  # Ladelogik von außen
+            return f"Modell '{new_model}' wurde erfolgreich geladen."
+        except Exception as e:
+            return f"Fehler beim Laden des Modells: {e}"
+
+
+
+# Konfigurationsmanager
+class ConfigManager:
+    def __init__(self, config_path="config.json"):
+        self.config_path = config_path
         self.config = self.load_config()
 
-        # Statistik
-        #self.update_statistics()
-
-        # Globale Variable für Logs definieren
-        self.chat_logs_dir = "chat_logs"
-        os.makedirs(self.chat_logs_dir, exist_ok=True)
-
-        # FAQ-Daten initial laden
-        load_faq_data(language=self.config.get("language", "de"))
-
-        # API-Status
-        self.api_status = "Offline"
-
-        # API starten
-        self.start_api_server()
-
-        # Widgets erstellen
-        self.create_widgets()
-
-        # Systemstatistiken starten (nach dem Erstellen der Widgets)
-        self.update_system_stats()
-
     def load_config(self):
-        """Lädt Konfigurationsparameter aus config.json."""
+        """Lädt die Konfiguration aus der Datei."""
         try:
-            with open("config.json", "r", encoding="utf-8") as f:
+            with open(self.config_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except FileNotFoundError:
-            return {
+            print(f"Warnung: {self.config_path} nicht gefunden. Standardwerte werden verwendet.")
+            return self.default_config()
+        except json.JSONDecodeError as e:
+            print(f"Fehler beim Parsen der Konfigurationsdatei: {e}. Standardwerte werden verwendet.")
+            return self.default_config()
+
+    def default_config(self):
+        """Definiert Standardwerte, falls die Konfigurationsdatei fehlt."""
+        return {
+            "API": {
                 "ip": "0.0.0.0",
                 "port": 8000,
                 "allow_origins": ["*"],
                 "allow_methods": ["*"],
-                "allow_headers": ["*"],
+                "allow_headers": ["*"]
+            },
+            "TRAINING": {
                 "epochs": 1,
-                "learning_rate": 0.00002,
-                "batch_size": 4
+                "learning_rate": 0.0001,
+                "batch_size": 1
+            },
+            "CHAT": {
+                "temperature": 0.7,
+                "use_fuzzy_matching": False
             }
-        except json.JSONDecodeError as e:
-            messagebox.showerror("Fehler", f"Ungültiges JSON-Format: {e}")
-            self.root.quit()
+        }
 
+    def save_config(self):
+        """Speichert die aktuelle Konfiguration in die Datei."""
+        try:
+            with open(self.config_path, "w", encoding="utf-8") as f:
+                json.dump(self.config, f, indent=4)
+        except Exception as e:
+            print(f"Fehler beim Speichern der Konfigurationsdatei: {e}")
 
-    def start_api_server(self):
+    def get_param(self, section, key, default=None):
+        """Holt einen Parameter aus einer bestimmten Sektion."""
+        return self.config.get(section, {}).get(key, default)
+
+    def set_param(self, section, key, value):
+        """Setzt einen Parameter und speichert die Konfiguration."""
+        if section not in self.config:
+            self.config[section] = {}
+        self.config[section][key] = value
+        self.save_config()
+
+    def get_api_config(self):
+        """Gibt die API-Konfiguration zurück."""
+        return self.config.get("API", {})
+
+    def get_training_config(self):
+        """Gibt die Trainingskonfiguration zurück."""
+        return self.config.get("TRAINING", {})
+
+    def get_chat_config(self):
+        """Gibt die Chat-Konfiguration zurück."""
+        return self.config.get("CHAT", {})
+#---------------------------------------------
+
+# API-Verwaltung
+class ChatbotAPI:
+    def __init__(self, config_manager):
+        """
+        Initialisiert die ChatbotAPI-Klasse.
+        :param config_manager: Instanz von ConfigManager zum Verwalten der Konfiguration.
+        """
+        self.config_manager = config_manager
+        self.app = None  # Hier wird die FastAPI-App aus api_main importiert
+        self.server_thread = None
+        self.is_running = False
+
+    def load_app(self):
+        """Lädt die FastAPI-App aus api_main."""
+        try:
+            from api_main import app
+            self.app = app
+        except ImportError as e:
+            print(f"Fehler beim Laden der FastAPI-App: {e}")
+            self.app = None
+
+    def start(self):
         """Startet den FastAPI-Server in einem separaten Thread."""
+        if self.is_running:
+            print("API läuft bereits.")
+            return
+
+        if not self.app:
+            self.load_app()
+
+        if not self.app:
+            print("FastAPI-App konnte nicht geladen werden. Serverstart abgebrochen.")
+            return
+
         def run_server():
+            ip = self.config_manager.get_param("API", "ip", "0.0.0.0")
+            port = self.config_manager.get_param("API", "port", 8000)
             try:
-                ssl_config = self.load_ssl_config()
-                if ssl_config:
-                    uvicorn.run(
-                        app,
-                        host=self.config["ip"],
-                        port=self.config["port"],
-                        ssl_keyfile=ssl_config["keyfile"],
-                        ssl_certfile=ssl_config["certfile"]
-                    )
-                else:
-                    uvicorn.run(app, host=self.config["ip"], port=self.config["port"])
+                uvicorn.run(self.app, host=ip, port=port, log_level="info")
             except Exception as e:
-                print(f"Fehler beim Starten der API: {e}")
-                self.api_status = "Offline"
+                print(f"Fehler beim Starten des Servers: {e}")
 
-        # Server in einem separaten Thread starten
-        api_thread = threading.Thread(target=run_server, daemon=True)
-        api_thread.start()
+        self.server_thread = threading.Thread(target=run_server, daemon=True)
+        self.server_thread.start()
+        self.is_running = True
+        print("API wurde gestartet.")
 
-        # Kurze Pause, um sicherzustellen, dass der Server startet
-        time.sleep(2)
+    def stop(self):
+        """Beendet den FastAPI-Server."""
+        if not self.is_running or not self.server_thread:
+            print("API ist bereits gestoppt.")
+            return
 
+        print("API wird gestoppt...")
+        self.is_running = False
+        # FastAPI bietet keine eingebaute Methode, um den Server zu stoppen.
+        # Sie können stattdessen zusätzliche Logik verwenden, um Prozesse zu beenden.
+        self.server_thread = None
+        print("API wurde gestoppt.")
 
-    def load_ssl_config(self):
-        """Prüft, ob SSL-Zertifikate verfügbar sind, und gibt die Pfade zurück."""
-        ssl_keyfile = "/home/ismail/Chatbot/SSL/privkey.pem"
-        ssl_certfile = "/home/ismail/Chatbot/SSL/fullchain.pem"
+    def get_status(self):
+        """Gibt den aktuellen Status der API zurück."""
+        return "Läuft" if self.is_running else "Gestoppt"
+#---------------------------------------------
 
-        if os.path.exists(ssl_keyfile) and os.path.exists(ssl_certfile):
-            return {"keyfile": ssl_keyfile, "certfile": ssl_certfile}
-        return None
+# Trainer-Klasse
+class Trainer:
+    def __init__(self, config_manager):
+        """
+        Initialisiert die Trainer-Klasse.
+        :param config_manager: Instanz von ConfigManager, um Trainingsparameter zu verwalten.
+        """
+        self.config_manager = config_manager
+        self.training_thread = None
+        self.is_training = False
+        self.logs = []
 
+    def get_training_config(self):
+        """Lädt die aktuellen Trainingsparameter."""
+        return self.config_manager.get_training_config()
 
+    def start_training(self, update_logs_callback=None):
+        """
+        Startet den Trainingsprozess in einem separaten Thread.
+        :param update_logs_callback: Optionaler Callback, um Logs während des Trainings zu aktualisieren.
+        """
+        if self.is_training:
+            print("Training läuft bereits.")
+            return
 
+        def training_task():
+            try:
+                self.is_training = True
+                training_config = self.get_training_config()
+                print(f"Training gestartet mit Parametern: {training_config}")
 
-    def update_system_stats(self):
-        """Aktualisiert die CPU- und RAM-Auslastung in der Übersicht."""
-        # CPU-Auslastung abrufen
-        cpu_usage = psutil.cpu_percent(interval=0.1)
-        self.cpu_label.config(text=f"CPU: {cpu_usage}%")
+                # Beispiel: Dummy-Trainingsprozess
+                for epoch in range(training_config.get("epochs", 1)):
+                    if not self.is_training:
+                        break
+                    time.sleep(1)  # Simuliert die Trainingszeit
+                    log_message = f"Epoch {epoch + 1}/{training_config['epochs']} abgeschlossen."
+                    self.logs.append(log_message)
+                    print(log_message)
+                    if update_logs_callback:
+                        update_logs_callback(log_message)
 
-        # RAM-Auslastung abrufen
-        ram = psutil.virtual_memory()
-        total_ram = ram.total / (1024**3)  # Gesamt-RAM in GB
-        used_ram = ram.used / (1024**3)   # Verwendeter RAM in GB
-        self.ram_label.config(text=f"RAM: {used_ram:.1f} GB von {total_ram:.1f} GB")
+                self.logs.append("Training abgeschlossen.")
+                print("Training abgeschlossen.")
+                if update_logs_callback:
+                    update_logs_callback("Training abgeschlossen.")
 
-        # Wiederholtes Aktualisieren der Werte
-        self.root.after(1000, self.update_system_stats)  # Alle 1 Sekunde aktualisieren
+            except Exception as e:
+                error_message = f"Fehler während des Trainings: {e}"
+                self.logs.append(error_message)
+                print(error_message)
+                if update_logs_callback:
+                    update_logs_callback(error_message)
 
+            finally:
+                self.is_training = False
+
+        self.training_thread = threading.Thread(target=training_task, daemon=True)
+        self.training_thread.start()
+
+    def stop_training(self):
+        """Stoppt das Training."""
+        if not self.is_training:
+            print("Kein Training läuft.")
+            return
+        print("Training wird gestoppt...")
+        self.is_training = False
+        if self.training_thread and self.training_thread.is_alive():
+            self.training_thread.join()
+        print("Training wurde gestoppt.")
+
+    def get_logs(self):
+        """Gibt die Trainingslogs zurück."""
+        return self.logs
+#---------------------------------------------
+
+# GUI-Klasse
+class ChatbotGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Chatbot Management Dashboard")
+        self.root.geometry("1000x700")
+
+        # Instanzen der Manager-Klassen
+        self.config_manager = ConfigManager()
+        self.api_manager = ChatbotAPI(self.config_manager)
+        self.trainer = Trainer(self.config_manager)
+        self.model_manager = ModelManager(self.config_manager)
+
+        # Variablen für den Status
+        self.api_status = tk.StringVar(value="Gestoppt")
+
+        # GUI-Elemente erstellen
+        self.create_widgets()
+
+        # Log-Verzeichnis
+        self.chat_logs_dir = "chat_logs"
+        os.makedirs(self.chat_logs_dir, exist_ok=True)
+
+        # Starte die Systemressourcen- und Chatlog-Updates
+        self.update_system_stats()
+        self.update_chat_logs()
+
+        # API-Status initial aktualisieren
+        self.update_api_status_label()
+
+    # --------------------------------------------------------
+    # GUI-Tabs und Widgets
+    
     def create_widgets(self):
-        # Tabs erstellen
-        tab_control = ttk.Notebook(self.root)
+        """Erstellt die GUI-Tabs und Widgets."""
+        # Breite der Tabs nur horizontal anpassen
+        style = ttk.Style()
+        style.configure('TNotebook.Tab', padding=[60, 5])  # Breite: 60, Höhe: 5 bleibt gleich
 
+        # Notebook erstellen
+        tab_control = ttk.Notebook(self.root, style='TNotebook')
+
+        # Tabs hinzufügen
         self.overview_tab = ttk.Frame(tab_control)
+        self.chat_tab = ttk.Frame(tab_control)
         self.training_tab = ttk.Frame(tab_control)
-        self.logs_tab = ttk.Frame(tab_control)
-        self.test_tab = ttk.Frame(tab_control)
-        self.settings_tab = ttk.Frame(tab_control)
 
         tab_control.add(self.overview_tab, text="Übersicht")
+        tab_control.add(self.chat_tab, text="Chatbot-Einstellungen")
         tab_control.add(self.training_tab, text="Training")
-        tab_control.add(self.logs_tab, text="Logs")
-        tab_control.add(self.test_tab, text="Testen")
-        tab_control.add(self.settings_tab, text="Einstellung")
-        tab_control.pack(expand=1, fill="both")
+
+        tab_control.pack(expand=1, fill="both")  # Tabs horizontal strecken
 
         # Inhalte der Tabs erstellen
         self.create_overview_tab()
+        self.create_chat_tab()
         self.create_training_tab()
-        self.create_logs_tab()
-        self.create_test_tab()
-        self.create_settings_tab()
+
+
 
     def create_overview_tab(self):
-        ttk.Label(self.overview_tab, text="CPU- und RAM-Auslastung", font=("Arial", 16)).pack(pady=10)
-        self.cpu_label = ttk.Label(self.overview_tab, text="CPU: 0%", font=("Arial", 12))
-        self.cpu_label.pack(pady=5)
-        self.ram_label = ttk.Label(self.overview_tab, text="RAM: 0 GB von 0 GB", font=("Arial", 12))
-        self.ram_label.pack(pady=5)
+        """Erstellt den Überblick-Tab."""
 
-        # Nach Erstellung der Labels die Systemstatistiken starten
-        ttk.Label(self.overview_tab, text="Statistiken", font=("Arial", 16)).pack(pady=10)
-        #self.response_time_label = ttk.Label(self.overview_tab, text="Durchschnittliche Antwortzeit: 0 ms", font=("Arial", 12))
-        #self.response_time_label.pack(pady=5)
-        #self.total_requests_label = ttk.Label(self.overview_tab, text="Gesamtanzahl der Anfragen: 0", font=("Arial", 12))
-        #self.total_requests_label.pack(pady=5)
-        #self.active_chats_label = ttk.Label(self.overview_tab, text="Aktive Chats: 0", font=("Arial", 12))
-        #self.active_chats_label.pack(pady=5)
+        # API-Status
+        ttk.Label(self.overview_tab, text="API-Status", font=("Arial", 16)).pack(pady=10)
+        self.api_status_label = ttk.Label(self.overview_tab, text="API-Status: Gestoppt", font=("Arial", 12))
+        self.api_status_label.pack(pady=5)
+        ttk.Button(self.overview_tab, text="API Starten/Stoppen", command=self.toggle_api).pack(pady=10)
 
+        # Chat Logs
+        ttk.Label(self.overview_tab, text="Chat Logs", font=("Arial", 16)).pack(pady=10)
+        self.chat_logs_text = tk.Text(self.overview_tab, height=15, width=80, state="disabled")
+        self.chat_logs_text.pack(pady=10)
 
-        ttk.Label(self.overview_tab, text="Version", font=("Arial", 16)).pack(pady=10)
-        self.version_label = ttk.Label(self.overview_tab, text="Version: 1.3.1", font=("Arial", 12))
-        self.version_label.pack(pady=5)
+        # Starte die Aktualisierung der Chatlogs
+        self.update_chat_logs()
 
-        self.quit_button = ttk.Button(self.overview_tab, text="Beenden", command=self.root.quit)
-        self.quit_button.pack(pady=10)
-
-        # Nach Erstellung der Labels die Statistiken und Systemauslastung starten
-        self.update_system_stats()
-        #self.update_statistics()
+        # Horizontale Darstellung der Systemressourcen
+        self.cpu_label_overview, self.ram_label_overview, self.gpu_label_overview = self.create_system_resource_labels(self.overview_tab)
 
 
-    def update_statistics(self):
-        """Holt echte Statistiken von der API und aktualisiert die Labels."""
-        try:
-            # API-Endpunkt für Statistiken
-            response = requests.get(f"https://localhost:{self.config['port']}/stats", verify="/home/ismail/Chatbot/SSL/fullchain.pem")
+    def create_chat_tab(self):
+        """Erstellt den Chatbot-Einstellungen-Tab."""
+        ttk.Label(self.chat_tab, text="Live-Chat mit dem Bot", font=("Arial", 16)).pack(pady=10)
 
+        # Modellauswahl
+        ttk.Label(self.chat_tab, text="Modell auswählen:", font=("Arial", 12)).pack(pady=5)
+        self.model_var = tk.StringVar(value=self.model_manager.get_current_model())
+        self.model_dropdown = ttk.Combobox(self.chat_tab, textvariable=self.model_var, state="readonly")
+        self.model_dropdown['values'] = self.model_manager.get_available_models()
+        self.model_dropdown.pack(pady=5)
+        ttk.Button(self.chat_tab, text="Modell wechseln", command=self.handle_model_switch).pack(pady=10)
 
-            if response.status_code == 200:
-                stats = response.json()
-                avg_response_time = stats.get("avg_response_time", 0)
-                total_requests = stats.get("total_requests", 0)
-                active_chats = stats.get("active_chats", 0)
+        # Chat-Anzeige
+        self.chat_history = tk.Text(self.chat_tab, height=20, width=80, state="disabled")
+        self.chat_history.pack(pady=10)
 
-                # Labels aktualisieren
-                self.response_time_label.config(text=f"Durchschnittliche Antwortzeit: {avg_response_time} ms")
-                self.total_requests_label.config(text=f"Gesamtanzahl der Anfragen: {total_requests}")
-                self.active_chats_label.config(text=f"Aktive Chats: {active_chats}")
-            else:
-                raise ValueError("Fehler beim Abrufen der Statistiken von der API.")
-        except Exception as e:
-            print(f"Fehler beim Aktualisieren der Statistiken: {e}")
+        # Eingabefeld für den Benutzer
+        self.chat_input = ttk.Entry(self.chat_tab, width=70)
+        self.chat_input.pack(pady=5)
+        self.chat_input.bind("<Return>", self.handle_chat_input)
 
-        # Wiederholtes Aktualisieren der Werte
-        self.root.after(30000, self.update_statistics)  # Aktualisierung alle 30 Sekunden
+        # Parameter anpassen
+        ttk.Label(self.chat_tab, text="Chat-Einstellungen", font=("Arial", 14)).pack(pady=10)
+        self.temperature_entry = ttk.Entry(self.chat_tab)
+        self.temperature_entry.insert(0, self.config_manager.get_param("CHAT", "temperature", 0.7))
+        self.temperature_entry.pack(pady=5)
+
+        ttk.Button(self.chat_tab, text="Einstellungen Übernehmen", command=self.apply_chat_settings).pack(pady=10)
+        
+        # Horizontale Darstellung der Systemressourcen
+        self.cpu_label_chat, self.ram_label_chat, self.gpu_label_chat = self.create_system_resource_labels(self.chat_tab)
+    
 
 
     def create_training_tab(self):
-        """Erstellt den Training-Tab."""
+        """Erstellt den Trainings-Tab."""
         ttk.Label(self.training_tab, text="Training Parameter", font=("Arial", 16)).pack(pady=10)
 
-        # Eingabefelder für Trainingsparameter
-        ttk.Label(self.training_tab, text="Epochen:").pack(pady=5)
+        # Modellauswahl
+        ttk.Label(self.training_tab, text="Modell für Training auswählen:", font=("Arial", 12)).pack(pady=5)
+        self.training_model_var = tk.StringVar(value=self.model_manager.get_current_model())
+        self.training_model_dropdown = ttk.Combobox(self.training_tab, textvariable=self.training_model_var, state="readonly")
+        self.training_model_dropdown['values'] = self.model_manager.get_available_models()
+        self.training_model_dropdown.pack(pady=5)
+
+        # Parameterfelder
         self.epochs_entry = ttk.Entry(self.training_tab)
-        self.epochs_entry.insert(0, self.config["epochs"])  # Initialwert aus config.json
+        self.epochs_entry.insert(0, self.config_manager.get_param("TRAINING", "epochs", 1))
         self.epochs_entry.pack(pady=5)
 
-        ttk.Label(self.training_tab, text="Lernrate:").pack(pady=5)
         self.lr_entry = ttk.Entry(self.training_tab)
-        self.lr_entry.insert(0, self.config["learning_rate"])  # Initialwert aus config.json
+        self.lr_entry.insert(0, self.config_manager.get_param("TRAINING", "learning_rate", 0.0001))
         self.lr_entry.pack(pady=5)
 
-        ttk.Label(self.training_tab, text="Batchgröße:").pack(pady=5)
-        self.batch_entry = ttk.Entry(self.training_tab)
-        self.batch_entry.insert(0, self.config["batch_size"])  # Initialwert aus config.json
-        self.batch_entry.pack(pady=5)
+        self.batch_size_entry = ttk.Entry(self.training_tab)
+        self.batch_size_entry.insert(0, self.config_manager.get_param("TRAINING", "batch_size", 32))
+        self.batch_size_entry.pack(pady=5)
 
-        # Fortschrittsanzeige
-        ttk.Label(self.training_tab, text="Trainingsfortschritt:", font=("Arial", 12)).pack(pady=10)
-        self.progress_bar = ttk.Progressbar(self.training_tab, orient="horizontal", length=300, mode="determinate")
-        self.progress_bar.pack(pady=10)
+        # Logs und Fortschrittsanzeige
+        ttk.Label(self.training_tab, text="Trainingslogs", font=("Arial", 14)).pack(pady=10)
+        self.training_logs_text = tk.Text(self.training_tab, height=15, width=80, state="disabled")
+        self.training_logs_text.pack(pady=10)
 
-        # Trainingslogs
-        ttk.Label(self.training_tab, text="Trainingslogs:", font=("Arial", 12)).pack(pady=10)
-        self.training_logs_text = tk.Text(self.training_tab, height=10, width=80, state="disabled")
-        self.training_logs_text.pack(pady=5)
+        # Trainingsbuttons
+        ttk.Button(self.training_tab, text="Training Starten", command=self.start_training).pack(pady=5)
+        ttk.Button(self.training_tab, text="Training Stoppen", command=self.stop_training).pack(pady=5)
 
-        # Trainingsbutton
-        self.train_button = ttk.Button(self.training_tab, text="Training starten", command=self.start_training)
-        self.train_button.pack(pady=10)
+        # Horizontale Darstellung der Systemressourcen
+        self.cpu_label_training, self.ram_label_training, self.gpu_label_training = self.create_system_resource_labels(self.training_tab)
 
-    def create_logs_tab(self):
-        """Erstellt den Tab für Chat-Logs und startet die dynamische Aktualisierung."""
-        ttk.Label(self.logs_tab, text="Chat Logs", font=("Arial", 16)).pack(pady=10)
-        self.logs_text = tk.Text(self.logs_tab, height=20, width=80, state="disabled")
-        self.logs_text.pack(pady=10)
-        self.update_logs()
+    # --------------------------------------------------------
+    # Funktionen
+    # Systemressourcen-Labels
+    def create_system_resource_labels(self, parent):
+        """Erstellt die Labels für CPU, RAM und GPU horizontal in einem Parent-Widget."""
+        # Erstelle einen Container-Frame
+        resource_frame = ttk.Frame(parent)
+        resource_frame.pack(side="bottom", pady=10, fill="x")  # Unten platzieren, horizontal strecken
 
-    def update_logs(self):
-        """Prüft regelmäßig auf neue Einträge und aktualisiert die Anzeige der Chat-Logs."""
+        # Systemressourcen-Titel
+        title_label = ttk.Label(resource_frame, text="Systemressourcen:", font=("Arial", 12, "bold"), anchor="w")
+        title_label.pack(side="left", padx=10)  # Linksbündig
+
+        # CPU-Label
+        cpu_label = ttk.Label(resource_frame, text="CPU: 0%", font=("Arial", 12))
+        cpu_label.pack(side="left", padx=10)
+
+        # RAM-Label
+        ram_label = ttk.Label(resource_frame, text="RAM: 0 GB von 0 GB", font=("Arial", 12))
+        ram_label.pack(side="left", padx=10)
+
+        # GPU-Label
+        gpu_label = ttk.Label(resource_frame, text="GPU: Nicht verfügbar", font=("Arial", 12))
+        gpu_label.pack(side="left", padx=10)
+
+        # Version
+        title_label = ttk.Label(resource_frame, text="Version 1.0.0", font=("Arial", 12, "italic"), anchor="w")
+        title_label.pack(side="right", padx=10)  # Rechtsbündig
+
+        return cpu_label, ram_label, gpu_label
+
+
+
+    # Modelwechsel
+    def handle_model_switch(self):
+        """Handhabt den Wechsel des Modells."""
+        new_model = self.model_var.get()
+        message = self.model_manager.switch_model(new_model)
+        messagebox.showinfo("Modellwechsel", message)
+
+    # --------------------------------------------------------
+    # Callbacks und Interaktionen
+    def toggle_api(self):
+        """Startet oder stoppt die API."""
+        if self.api_manager.is_running:
+            self.api_manager.stop()
+        else:
+            self.api_manager.start()
+        self.update_api_status_label()
+
+    def update_api_status_label(self):
+        """Aktualisiert den API-Status in der Übersicht."""
+        status = self.api_manager.get_status()
+        self.api_status_label.config(text=f"API-Status: {status}")
+
+    def apply_chat_settings(self):
+        """Speichert und übernimmt die Chat-Einstellungen."""
+        temperature = float(self.temperature_entry.get())
+        self.config_manager.set_param("CHAT", "temperature", temperature)
+        messagebox.showinfo("Einstellungen", "Chat-Einstellungen gespeichert.")
+
+    def handle_chat_input(self, event):
+        """Verarbeitet die Eingabe des Benutzers und gibt eine Antwort des Chatbots zurück."""
+        user_input = self.chat_input.get().strip()
+        if not user_input:
+            return
+        self.chat_input.delete(0, tk.END)
+        self.append_to_chat("Du", user_input)
+
+        # Antwort abrufen
+        from chatbot_main import get_response
+        response = get_response(user_input)
+        self.append_to_chat("Bot", response)
+
+    def append_to_chat(self, sender, message):
+        """Fügt eine Nachricht zum Chat-Verlauf hinzu."""
+        self.chat_history.config(state="normal")
+        self.chat_history.insert("end", f"{sender}: {message}\n")
+        self.chat_history.config(state="disabled")
+        self.chat_history.see("end")
+
+    def start_training(self):
+        """Startet das Training."""
+        self.trainer.start_training(update_logs_callback=self.update_training_logs)
+
+    def stop_training(self):
+        """Stoppt das Training."""
+        self.trainer.stop_training()
+
+    def update_training_logs(self, log_message):
+        """Aktualisiert die Trainingslogs in der GUI."""
+        self.training_logs_text.config(state="normal")
+        self.training_logs_text.insert("end", f"{log_message}\n")
+        self.training_logs_text.config(state="disabled")
+        self.training_logs_text.see("end")
+
+    def update_system_stats(self):
+        """Aktualisiert die Systemressourcenanzeige."""
+        cpu_usage = SystemResourceManager.get_cpu_usage()
+        used_ram, total_ram = SystemResourceManager.get_ram_usage()
+        gpu_info = SystemResourceManager.get_gpu_info()
+
+        # CPU, RAM und GPU in allen Tabs aktualisieren
+        self.cpu_label_overview.config(text=f"CPU: {cpu_usage:.1f}%")
+        self.ram_label_overview.config(text=f"RAM: {used_ram:.1f} GB von {total_ram:.1f} GB")
+        self.gpu_label_overview.config(text=gpu_info)
+
+        self.cpu_label_chat.config(text=f"CPU: {cpu_usage:.1f}%")
+        self.ram_label_chat.config(text=f"RAM: {used_ram:.1f} GB von {total_ram:.1f} GB")
+        self.gpu_label_chat.config(text=gpu_info)
+
+        self.cpu_label_training.config(text=f"CPU: {cpu_usage:.1f}%")
+        self.ram_label_training.config(text=f"RAM: {used_ram:.1f} GB von {total_ram:.1f} GB")
+        self.gpu_label_training.config(text=gpu_info)
+
+        # Wiederhole die Aktualisierung alle 1 Sekunde
+        self.root.after(1000, self.update_system_stats)
+
+    # Chatlogs aktualisieren
+    def update_chat_logs(self):
+        """Prüft regelmäßig auf neue Chatlogs und aktualisiert die Anzeige im Übersicht-Tab."""
         try:
+            # Lade die neuesten Logs aus dem Verzeichnis
             log_files = sorted(
                 [f for f in os.listdir(self.chat_logs_dir) if f.endswith(".txt")],
                 key=lambda x: os.path.getctime(os.path.join(self.chat_logs_dir, x)),
@@ -257,173 +580,28 @@ class ChatbotGUI:
                 except UnicodeDecodeError:
                     with open(log_path, "r", encoding="latin-1") as file:
                         logs = file.read()
-                self.logs_text.config(state="normal")
-                self.logs_text.delete("1.0", tk.END)
-                self.logs_text.insert(tk.END, logs)
-                self.logs_text.see(tk.END)  # Scrollt automatisch ans Ende
-                self.logs_text.config(state="disabled")
+                self.chat_logs_text.config(state="normal")
+                self.chat_logs_text.delete("1.0", tk.END)
+                self.chat_logs_text.insert(tk.END, logs)
+                self.chat_logs_text.see(tk.END)  # Automatisch ans Ende scrollen
+                self.chat_logs_text.config(state="disabled")
             else:
-                self.logs_text.config(state="normal")
-                self.logs_text.delete("1.0", tk.END)
-                self.logs_text.insert(tk.END, "Keine Logs verfügbar.")
-                self.logs_text.see(tk.END)  # Falls keine Logs vorhanden sind, auch ans Ende scrollen
-                self.logs_text.config(state="disabled")
+                self.chat_logs_text.config(state="normal")
+                self.chat_logs_text.delete("1.0", tk.END)
+                self.chat_logs_text.insert(tk.END, "Keine Logs verfügbar.")
+                self.chat_logs_text.see(tk.END)
+                self.chat_logs_text.config(state="disabled")
         except Exception as e:
             print(f"Fehler beim Aktualisieren der Logs: {e}")
 
-        # Logs alle 2 Sekunden aktualisieren
-        self.root.after(10000, self.update_logs)
+        # Logs alle 5 Sekunden aktualisieren
+        self.root.after(5000, self.update_chat_logs)
 
 
 
-    def display_logs(self):
-        log_files = sorted(
-            [f for f in os.listdir(self.chat_logs_dir) if f.endswith(".txt")],
-            key=lambda x: os.path.getctime(os.path.join(self.chat_logs_dir, x)),
-            reverse=True
-        )
-        if log_files:
-            log_path = os.path.join(self.chat_logs_dir, log_files[0])
-            try:
-                with open(log_path, "r", encoding="utf-8") as file:
-                    logs = file.read()
-            except UnicodeDecodeError:
-                with open(log_path, "r", encoding="latin-1") as file:
-                    logs = file.read()
-            self.logs_text.insert(tk.END, logs)
-        else:
-            self.logs_text.insert(tk.END, "Keine Logs verfügbar.")
-
-    def create_test_tab(self):
-        ttk.Label(self.test_tab, text="Chat Terminal", font=("Arial", 16)).pack(pady=10)
-        self.chat_history = tk.Text(self.test_tab, height=20, width=80, state="disabled")
-        self.chat_history.pack(pady=10)
-
-        self.test_input = ttk.Entry(self.test_tab, width=70)
-        self.test_input.pack(pady=10)
-        self.test_input.bind("<Return>", self.handle_test_input)
-
-    def handle_test_input(self, event):
-        user_input = self.test_input.get()
-        if not user_input:
-            return
-        self.test_input.delete(0, tk.END)
-        self.append_to_chat("Du", user_input)
-
-        response = get_faq_answer_fuzzy(preprocess_text(user_input))
-        self.append_to_chat("Bot", response)
-
-    def append_to_chat(self, sender, message):
-        self.chat_history.config(state="normal")
-        self.chat_history.insert(tk.END, f"{sender}: {message}\n")
-        self.chat_history.config(state="disabled")
-        self.chat_history.see(tk.END)
-
-    def apply_settings(self):
-        """Speichert die geänderten API-Einstellungen in config.json."""
-        try:
-            # Werte aus den Eingabefeldern lesen
-            self.config["ip"] = self.ip_entry.get()
-            self.config["port"] = int(self.port_entry.get())
-            self.config["allow_origins"] = self.origins_entry.get().split(", ")
-            self.config["allow_methods"] = self.methods_entry.get().split(", ")
-            self.config["allow_headers"] = self.headers_entry.get().split(", ")
-
-            # Änderungen in der Konfigurationsdatei speichern
-            self.save_config()
-
-            # Erfolgsmeldung
-            messagebox.showinfo("Erfolg", "Einstellungen wurden erfolgreich gespeichert.")
-        except ValueError:
-            # Fehler abfangen, falls ungültige Eingaben gemacht wurden
-            messagebox.showerror("Fehler", "Ungültiger Wert für Port oder andere Felder.")
-        except Exception as e:
-            # Allgemeine Fehlerbehandlung
-            messagebox.showerror("Fehler", f"Ein Fehler ist aufgetreten: {e}")
-
-    def create_settings_tab(self):
-        """Erstellt den Einstellungen-Tab."""
-        ttk.Label(self.settings_tab, text="API Einstellungen", font=("Arial", 16)).pack(pady=10)
-
-        # IP-Adresse
-        ttk.Label(self.settings_tab, text="IP-Adresse:").pack(pady=5)
-        self.ip_entry = ttk.Entry(self.settings_tab)
-        self.ip_entry.insert(0, self.config["ip"])  # Initialwert aus config.json
-        self.ip_entry.pack(pady=5)
-
-        # Port
-        ttk.Label(self.settings_tab, text="Port:").pack(pady=5)
-        self.port_entry = ttk.Entry(self.settings_tab)
-        self.port_entry.insert(0, self.config["port"])  # Initialwert aus config.json
-        self.port_entry.pack(pady=5)
-
-        # Erlaubte Domains
-        ttk.Label(self.settings_tab, text="Erlaubte Domains (allow_origins):").pack(pady=5)
-        self.origins_entry = ttk.Entry(self.settings_tab)
-        self.origins_entry.insert(0, ", ".join(self.config["allow_origins"]))  # Initialwert aus config.json
-        self.origins_entry.pack(pady=5)
-
-        # Erlaubte Methoden
-        ttk.Label(self.settings_tab, text="Erlaubte Methoden (allow_methods):").pack(pady=5)
-        self.methods_entry = ttk.Entry(self.settings_tab)
-        self.methods_entry.insert(0, ", ".join(self.config["allow_methods"]))  # Initialwert aus config.json
-        self.methods_entry.pack(pady=5)
-
-        # Erlaubte Header
-        ttk.Label(self.settings_tab, text="Erlaubte Header (allow_headers):").pack(pady=5)
-        self.headers_entry = ttk.Entry(self.settings_tab)
-        self.headers_entry.insert(0, ", ".join(self.config["allow_headers"]))  # Initialwert aus config.json
-        self.headers_entry.pack(pady=5)
-
-        # Übernehmen-Schaltfläche
-        self.save_button = ttk.Button(self.settings_tab, text="Einstellungen speichern", command=self.apply_settings)
-        self.save_button.pack(pady=20)
-
-    def update_training_logs(self):
-        log_path = "./training_logs/training_logs.txt"
-        if os.path.exists(log_path):
-            with open(log_path, "r", encoding="utf-8") as f:
-                logs = f.read()
-            self.training_logs_text.config(state="normal")
-            self.training_logs_text.delete("1.0", tk.END)
-            self.training_logs_text.insert(tk.END, logs)
-            self.training_logs_text.config(state="disabled")
-        else:
-            self.training_logs_text.config(state="normal")
-            self.training_logs_text.delete("1.0", tk.END)
-            self.training_logs_text.insert(tk.END, "Keine Logs verfügbar.")
-            self.training_logs_text.config(state="disabled")
-
-    def start_training(self):
-        def training_task():
-            try:
-                # Beispiel: Parameter von Eingabefeldern lesen
-                epochs = int(self.epochs_entry.get())
-                lr = float(self.lr_entry.get())
-                batch_size = int(self.batch_entry.get())
-
-                # Dummy-Training (ersetze mit echter Training-Logik)
-                from tqdm import tqdm
-                for i in tqdm(range(epochs), desc="Training läuft"):
-                    self.progress_bar["value"] = (i + 1) * (100 / epochs)
-                    self.root.update_idletasks()
-
-                self.update_training_logs()  # Logs anzeigen
-                messagebox.showinfo("Erfolg", "Training abgeschlossen!")
-                self.config["epochs"] = int(self.epochs_entry.get())
-                self.config["learning_rate"] = float(self.lr_entry.get())
-                self.config["batch_size"] = int(self.batch_entry.get())
-                self.save_config()
-
-            except Exception as e:
-                messagebox.showerror("Fehler", f"Training fehlgeschlagen: {e}")
-
-        threading.Thread(target=training_task, daemon=True).start()
-
+# --------------------------------------------------------
 # Anwendung starten
 if __name__ == "__main__":
-    # FAQ-Daten laden
-    load_faq_data(language="de")
     root = tk.Tk()
     app = ChatbotGUI(root)
     root.mainloop()
