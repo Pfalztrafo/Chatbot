@@ -14,6 +14,22 @@ from api_main import app, load_ssl_config               # Importiere die FastAPI
 from chatbot_main import init_chatbot, get_response  # Ganz oben
 
 import subprocess
+import sys
+import shutil
+
+def get_gpu_info_global():
+    try:
+        if not torch.cuda.is_available():
+            return "GPU: Nicht verfügbar"
+        result = subprocess.check_output(["nvidia-smi", "--query-gpu=memory.used,memory.total", "--format=csv,noheader,nounits"], text=True)
+        used, total = result.strip().split(',')
+        used = float(used)
+        total = float(total)
+        return f"GPU: {used:.1f} MB von {total:.1f} MB"
+    except Exception as e:
+        return f"Fehler beim Abrufen GPU: {e}"
+
+
 
 # Systemressourcen-Manager
 class SystemResourceManager:
@@ -28,22 +44,55 @@ class SystemResourceManager:
         ram = psutil.virtual_memory()
         return ram.used / (1024**3), ram.total / (1024**3)
     
+    # @staticmethod
+    # def get_gpu_info():
+    #     """Gibt die GPU-Speichernutzung und Gesamtspeicher zurück."""
+    #     try:
+    #         if not torch.cuda.is_available():
+    #             return "GPU: Nicht verfügbar"
+            
+    #         # Name der GPU
+    #         gpu_properties = torch.cuda.get_device_properties(0)
+    #         total_memory = gpu_properties.total_memory / (1024**3)  # Gesamtspeicher in GB
+    #         used_memory = torch.cuda.memory_allocated(0) / (1024**3)  # Genutzter Speicher in GB
+
+    #         return f"GPU: {used_memory:.1f} GB von {total_memory:.1f} GB"
+    #     except Exception as e:
+    #         return f"Fehler beim Abrufen der GPU-Daten: {e}"
+        
     @staticmethod
     def get_gpu_info():
-        """Gibt die GPU-Speichernutzung und Gesamtspeicher zurück."""
-        try:
-            if not torch.cuda.is_available():
-                return "GPU: Nicht verfügbar"
-            
-            # Name der GPU
-            gpu_properties = torch.cuda.get_device_properties(0)
-            total_memory = gpu_properties.total_memory / (1024**3)  # Gesamtspeicher in GB
-            used_memory = torch.cuda.memory_allocated(0) / (1024**3)  # Genutzter Speicher in GB
+        """
+        Liest die globale GPU-Speichernutzung für GPU 0 via nvidia-smi aus
+        und gibt sie in GB an.
+        """
+        # 1) Prüfen, ob nvidia-smi überhaupt vorhanden ist
+        if shutil.which("nvidia-smi") is None:
+            return "GPU: nvidia-smi nicht verfügbar"
 
-            return f"GPU: {used_memory:.1f} GB von {total_memory:.1f} GB"
+        try:
+            # 2) Mit --query-gpu=memory.used,memory.total holen wir used und total in MB
+            #    und --format=csv,noheader,nounits macht es einfach zu parsen
+            result = subprocess.check_output(
+                [
+                    "nvidia-smi",
+                    "--query-gpu=memory.used,memory.total",
+                    "--format=csv,noheader,nounits",
+                    "-i", "0"   # GPU 0 abfragen, ggf. anpassen bei mehreren GPUs
+                ],
+                text=True
+            )
+            used_mb, total_mb = result.strip().split(',')
+            used_mb = float(used_mb)
+            total_mb = float(total_mb)
+
+            # 3) Umrechnung MB -> GB
+            used_gb = used_mb / 1024.0
+            total_gb = total_mb / 1024.0
+
+            return f"GPU: {used_gb:.1f} GB von {total_gb:.1f} GB"
         except Exception as e:
             return f"Fehler beim Abrufen der GPU-Daten: {e}"
-
 
 
 # Manager-Klassen
@@ -234,25 +283,28 @@ class ChatbotAPI:
 #---------------------------------------------
 
 # Trainer-Klasse
+import subprocess
+import threading
+
 class Trainer:
     def __init__(self, config_manager):
         """
-        Initialisiert die Trainer-Klasse.
-        :param config_manager: Instanz von ConfigManager, um Trainingsparameter zu verwalten.
+        Trainer-Klasse zum Aufrufen von train_model.py in einem separaten Thread.
+        Mit is_training = False/True kannst du in der GUI abfragen,
+        ob das Training läuft.
         """
         self.config_manager = config_manager
-        self.training_thread = None
         self.is_training = False
         self.logs = []
 
-    def get_training_config(self):
-        """Lädt die aktuellen Trainingsparameter."""
-        return self.config_manager.get_training_config()
-
     def start_training(self, update_logs_callback=None):
         """
-        Startet den Trainingsprozess in einem separaten Thread.
-        :param update_logs_callback: Optionaler Callback, um Logs während des Trainings zu aktualisieren.
+        Startet den Trainingsprozess in einem separaten Thread,
+        indem train_model.py als Subprozess ausgeführt wird.
+
+        :param update_logs_callback: (optional) Eine Funktion, die aufgerufen wird,
+                                     wenn das Training abgeschlossen ist oder ein Fehler auftritt.
+                                     Kann z.B. ein GUI-Callback sein, um Statuslabel zu aktualisieren.
         """
         if self.is_training:
             print("Training läuft bereits.")
@@ -261,52 +313,53 @@ class Trainer:
         def training_task():
             try:
                 self.is_training = True
-                training_config = self.get_training_config()
-                print(f"Training gestartet mit Parametern: {training_config}")
 
-                # Beispiel: Dummy-Trainingsprozess
-                for epoch in range(training_config.get("epochs", 1)):
-                    if not self.is_training:
-                        break
-                    time.sleep(1)  # Simuliert die Trainingszeit
-                    log_message = f"Epoch {epoch + 1}/{training_config['epochs']} abgeschlossen."
-                    self.logs.append(log_message)
-                    print(log_message)
+                # Starte Subprozess unbuffered (-u), ohne stdout-Pipe => Output landet direkt im Terminal.
+                process = subprocess.Popen(
+                    ["python", "-u", "train_model.py"],
+                    stdout=None,     # so wird alles direkt ins Terminal ausgegeben (inkl. TQDM)
+                    stderr=None,
+                    text=True
+                )
+
+                # Warte, bis der Subprozess beendet ist
+                process.wait()
+
+                if process.returncode == 0:
+                    # Training erfolgreich abgeschlossen
+                    self.logs.append("Training abgeschlossen.")
+                    print("Training abgeschlossen.")
                     if update_logs_callback:
-                        update_logs_callback(log_message)
-
-                self.logs.append("Training abgeschlossen.")
-                print("Training abgeschlossen.")
-                if update_logs_callback:
-                    update_logs_callback("Training abgeschlossen.")
-
+                        update_logs_callback()  # z.B. callback("done")
+                else:
+                    # Fehlerhafter Exit-Code
+                    error_msg = f"Fehler: train_model.py gab Returncode {process.returncode}"
+                    self.logs.append(error_msg)
+                    print(error_msg)
+                    if update_logs_callback:
+                        update_logs_callback()  # z.B. callback("error")
             except Exception as e:
+                # Unerwarteter Fehler beim Starten oder Ausführen
                 error_message = f"Fehler während des Trainings: {e}"
                 self.logs.append(error_message)
                 print(error_message)
                 if update_logs_callback:
-                    update_logs_callback(error_message)
-
+                    update_logs_callback()  # z.B. callback("error")
             finally:
                 self.is_training = False
 
-        self.training_thread = threading.Thread(target=training_task, daemon=True)
-        self.training_thread.start()
-
-    def stop_training(self):
-        """Stoppt das Training."""
-        if not self.is_training:
-            print("Kein Training läuft.")
-            return
-        print("Training wird gestoppt...")
-        self.is_training = False
-        if self.training_thread and self.training_thread.is_alive():
-            self.training_thread.join()
-        print("Training wurde gestoppt.")
+        # Thread starten (daemon=True, damit er beim Schließen des Hauptprogramms endet)
+        training_thread = threading.Thread(target=training_task, daemon=True)
+        training_thread.start()
 
     def get_logs(self):
-        """Gibt die Trainingslogs zurück."""
+        """
+        Gibt die bisher gesammelten Logs zurück (z.B. Fehlermeldungen).
+        """
         return self.logs
+
+
+
 #---------------------------------------------
 
 # GUI-Klasse
@@ -429,6 +482,10 @@ class ChatbotGUI:
             command=self.toggle_chatbot
         ).grid(row=11, column=0, pady=10)
 
+        self.chatbot_status_label = ttk.Label(api_status_frame, text="Chatbot: Aus", foreground="red")
+        self.chatbot_status_label.grid(row=12, column=0, pady=5, sticky="w")
+
+
 
         # Rechte Spalte: Chat Logs (3/4)
         chatlog_frame = ttk.Frame(main_frame)
@@ -485,6 +542,7 @@ class ChatbotGUI:
         # 1) Linke Spalte (Parameter) mit Scrollbar
         left_frame = ttk.Frame(main_frame)
         left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        
 
         canvas = tk.Canvas(left_frame)
         scrollbar_left = ttk.Scrollbar(left_frame, orient="vertical", command=canvas.yview)
@@ -604,6 +662,12 @@ class ChatbotGUI:
 
         row += 1
 
+        # Chatbot-Status label
+        self.chatbot_status_label = ttk.Label(scrollable_frame, text="Chatbot: Aus", foreground="red")
+        self.chatbot_status_label.grid(row=row, column=0, pady=5, sticky="w")
+
+        row += 1
+
 
         # ------------------------------------------------------------
         # 2) Rechte Spalte (Chat-Verlauf)
@@ -681,6 +745,10 @@ class ChatbotGUI:
                 # Wert in die config schreiben
                 self.config_manager.set_param("CHAT", param, value)
 
+                # In save_chat_settings() oder am Ende von create_chat_tab():
+                selected_model = self.chat_model_var.get()
+                self.config_manager.set_param("MODEL", "MODEL_NAME", selected_model)
+
             messagebox.showinfo("Erfolg", "Chat-Parameter erfolgreich gespeichert.")
         except ValueError as e:
             messagebox.showerror("Fehler", f"Fehler beim Speichern der Chat-Parameter: {e}")
@@ -705,6 +773,9 @@ class ChatbotGUI:
         # Linke Spalte: Modellauswahl und Parameter
         left_frame = ttk.Frame(main_frame)
         left_frame.grid(row=0, column=0, sticky="ns", padx=10, pady=10)
+
+
+
 
         ttk.Label(left_frame, text="Modell für Training auswählen:", font=("Arial", 12)).grid(row=0, column=0, columnspan=2, pady=5, sticky="w")
         self.training_model_var = tk.StringVar(value=self.model_manager.get_current_model())
@@ -731,16 +802,49 @@ class ChatbotGUI:
             self.entries[param] = entry
 
         # Mehrfachauswahl für JSON-Dateien
-        ttk.Label(left_frame, text="Datenquellen auswählen:", font=("Arial", 12)).grid(row=8, column=0, columnspan=2, pady=5, sticky="w")
+        ttk.Label(left_frame, text="Datenquellen auswählen:", font=("Arial", 12))\
+            .grid(row=8, column=0, columnspan=2, pady=5, sticky="w")
+        
+        # Listbox für data_total:
         self.data_sources_listbox = tk.Listbox(left_frame, selectmode="multiple", height=5)
-        for source in self.config_manager.get_param("TRAINING", "data_total", []):
-            self.data_sources_listbox.insert(tk.END, source)
         self.data_sources_listbox.grid(row=9, column=0, columnspan=2, pady=5, sticky="ew")
 
+        # Lade alle möglichen Quellen (data_total) in die Liste
+        data_total = self.config_manager.get_param("TRAINING", "data_total", [])
+        for idx, source in enumerate(data_total):
+            self.data_sources_listbox.insert(tk.END, source)
+
+        # --> Jetzt die bereits ausgewählten data_sources markieren:
+        already_selected = self.config_manager.get_param("TRAINING", "data_sources", [])
+        for idx, source in enumerate(data_total):
+            if source in already_selected:
+                self.data_sources_listbox.selection_set(idx)
+                # optional auch self.data_sources_listbox.activate(idx)
+
         # Buttons für Einstellungen und Training
-        ttk.Button(left_frame, text="Einstellungen Übernehmen", command=self.save_training_settings).grid(row=10, column=0, columnspan=2, pady=10, sticky="ew")
-        ttk.Button(left_frame, text="Training Starten", command=self.start_training).grid(row=11, column=0, columnspan=2, pady=10, sticky="ew")
-        ttk.Button(left_frame, text="Training Stoppen", command=self.stop_training).grid(row=12, column=0, columnspan=2, pady=5, sticky="ew")
+        ttk.Button(left_frame, text="Einstellungen Übernehmen", command=self.save_training_settings)\
+            .grid(row=10, column=0, columnspan=2, pady=10, sticky="ew")
+        ttk.Button(left_frame, text="Training Starten", command=self.start_training)\
+            .grid(row=11, column=0, columnspan=2, pady=10, sticky="ew")
+        #ttk.Button(left_frame, text="Training Stoppen", command=self.stop_training).grid(row=12, column=0, columnspan=2, pady=5, sticky="ew")
+
+        # Training-Status-Label (unten im left_frame)
+        self.training_status_label = ttk.Label(left_frame, text="Training: Inaktiv", foreground="red")
+        self.training_status_label.grid(row=12, column=0, columnspan=2, pady=5, sticky="w")
+
+        # Chatbot An/Aus-Button
+        ttk.Button(
+            left_frame, 
+            text="Chatbot An/Aus", 
+            command=self.toggle_chatbot
+        ).grid(row=13, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # Chatbot-Status label
+        self.chatbot_status_label = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red")
+        self.chatbot_status_label.grid(row=14, column=0, pady=5, sticky="w")
+
+
+
 
         # Rechte Spalte: Trainingslogs
         right_frame = ttk.Frame(main_frame)
@@ -760,12 +864,20 @@ class ChatbotGUI:
         # Horizontale Darstellung der Systemressourcen
         self.cpu_label_training, self.ram_label_training, self.gpu_label_training = self.create_system_resource_labels(self.training_tab)
 
-        # Chatbot An/Aus-Button
-        ttk.Button(
-            left_frame, 
-            text="Chatbot An/Aus", 
-            command=self.toggle_chatbot
-        ).grid(row=13, column=0, columnspan=2, pady=10, sticky="ew")
+
+
+    def training_finished(self, status=None):
+        """
+        Wird vom Trainer aufgerufen, sobald das Training abgeschlossen ist 
+        oder ein Fehler auftrat.
+        """
+        # Optional Logs aus Datei lesen, oder ...
+        if status == "done":
+            self.training_status_label.config(text="Training: Abgeschlossen", foreground="blue")
+        elif status == "error":
+            self.training_status_label.config(text="Training: Fehler", foreground="red")
+        else:
+            self.training_status_label.config(text="Training: Abgeschlossen", foreground="blue")
 
 
        # Trainingseinstellungen
@@ -781,6 +893,11 @@ class ChatbotGUI:
             selected_indices = self.data_sources_listbox.curselection()
             selected_sources = [self.data_sources_listbox.get(i) for i in selected_indices]
             self.config_manager.set_param("TRAINING", "data_sources", selected_sources)
+            
+            # In save_chat_settings() oder am Ende von create_chat_tab():
+            selected_train_model = self.training_model_var.get()
+            self.config_manager.set_param("MODEL", "MODEL_NAME", selected_train_model)
+
 
             print("Trainingsparameter erfolgreich gespeichert.")
         except ValueError as e:
@@ -832,12 +949,15 @@ class ChatbotGUI:
         if self.chatbot_status_var.get() == "Gestartet":
             # Bot aus
             self.chatbot_status_var.set("Gestoppt")
-            # Du könntest z.B. hier eine globale Variable 'bot_active=False' setzen
+            # Setze Label rot
+            self.chatbot_status_label.config(text="Chatbot: Aus", foreground="red")
         else:
-            # Bot an
-            # Lies config.json neu (falls Parameter geändert)
+            # Bot an (init_chatbot())
             init_chatbot()
             self.chatbot_status_var.set("Gestartet")
+            # Setze Label grün
+            self.chatbot_status_label.config(text="Chatbot: An", foreground="green")
+
 
 
     # --------------------------------------------------------
@@ -898,57 +1018,23 @@ class ChatbotGUI:
         messagebox.showinfo("Einstellungen", "Chat-Einstellungen gespeichert.")
 
     def handle_chat_input(self, event=None):
-        """Verarbeitet die Eingabe des Benutzers und gibt eine Antwort des Chatbots zurück."""
+        if self.chatbot_status_var.get() != "Gestartet":
+            messagebox.showwarning("Chatbot inaktiv", "Der Chatbot ist ausgeschaltet!")
+            return
+
         user_input = self.chat_input.get().strip()
         if not user_input:
             return
-        # Eingabe löschen und im Verlauf anzeigen
+
         self.chat_input.delete(0, tk.END)
         self.append_to_chat("Du", user_input)
-        # Chatbot-Antwort abrufen
-        response = get_response(user_input)  # Direkt aus chatbot_main importiert
+
+        # Chatbot-Antwort abrufen (hier -> config != None, da Bot an)
+        response = get_response(user_input)
         self.append_to_chat("Bot", response)
 
-    # --------------------------------------------------------
-
-    # def start_chatbot_process(self):
-    #     """Startet den Chatbot-Prozess als separaten Prozess."""
-    #     if self.chatbot_process is not None and self.chatbot_process.poll() is None:
-    #         print("Chatbot läuft bereits.")
-    #         return
-    #     try:
-    #         self.chatbot_process = subprocess.Popen(
-    #             ["python", "chatbot_main.py"],
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE
-    #         )
-    #         self.chatbot_status_var.set("Gestartet")
-    #         print("Chatbot wurde gestartet.")
-    #     except Exception as e:
-    #         print(f"Fehler beim Starten des Chatbot-Prozesses: {e}")
-    #         self.chatbot_status_var.set("Fehler")
 
 
-    # def stop_chatbot_process(self):
-    #     """Stoppt den Chatbot-Prozess."""
-    #     # Prüfen, ob überhaupt ein Prozess existiert und noch läuft
-    #     if self.chatbot_process is None or self.chatbot_process.poll() is not None:
-    #         print("Chatbot ist bereits gestoppt.")
-    #         return
-
-    #     try:
-    #         self.chatbot_process.terminate()  # Sende SIGTERM
-    #         self.chatbot_process.wait()       # Warte, bis er fertig ist
-    #         self.chatbot_process = None       # Auf None setzen
-    #         self.chatbot_status_var.set("Gestoppt")
-    #         print("Chatbot wurde gestoppt.")
-    #     except Exception as e:
-    #         print(f"Fehler beim Stoppen des Chatbot-Prozesses: {e}")
-    #         self.chatbot_status_var.set("Fehler")
-
-
-        
-    # --------------------------------------------------------
 
     def append_to_chat(self, sender, message):
         """Fügt eine Nachricht zum Chat-Verlauf hinzu."""
@@ -959,7 +1045,8 @@ class ChatbotGUI:
 
     def start_training(self):
         """Startet das Training."""
-        self.trainer.start_training(update_logs_callback=self.update_training_logs)
+        self.training_status_label.config(text="Training: Läuft...", foreground="green")
+        self.trainer.start_training(update_logs_callback=self.training_finished)
 
     def stop_training(self):
         """Stoppt das Training."""
@@ -984,6 +1071,8 @@ class ChatbotGUI:
         self.training_logs_text.see("end")             # Automatisch ans Ende scrollen
         self.training_logs_text.config(state="disabled")  # Schreibschutz aktivieren
 
+        #if not self.trainer.is_training:  # Falls das Training nun durch ist
+            #self.training_status_label.config(text="Training: Abgeschlossen", foreground="blue")
         # Wiederhole die Aktualisierung alle 5 Sekunden
         #self.root.after(5000, self.update_training_logs)
 

@@ -20,7 +20,7 @@ FALLBACK_ANSWER = "Entschuldigung, ich konnte keine passende Antwort finden. Bit
 #Wechseln zwischen GPU und Server
 if torch.cuda.is_available():
     device = 0
-    print("→ CUDA ist verfügbar, verwende GPU!")
+    #print("→ CUDA ist verfügbar, verwende GPU!")
 else:
     device = None
     print("→ Keine GPU gefunden, verwende CPU.")
@@ -88,7 +88,7 @@ def load_model_and_tokenizer():
 
     if torch.cuda.is_available():
         device = 0
-        print("→ CUDA ist verfügbar, verwende GPU!")
+        #print("→ CUDA ist verfügbar, verwende GPU!")
     else:
         device = None
         print("→ Keine GPU gefunden, verwende CPU.")
@@ -190,9 +190,10 @@ def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, g
     with open(filename, "a", encoding="utf-8") as file:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         file.write(f"[{timestamp}] [IP: {user_ip}] {user_message}\n")
-        file.write(f"[{timestamp}] [Server] [Bot ({score_text})]: {bot_response} [{eval_text}]\n")
-        if generated_text:
-            file.write(f"[{timestamp}] [Generated Text]: {generated_text}\n")
+        #file.write(f"[{timestamp}] [Server] [Bot ({score_text})]: {bot_response} [{eval_text}]\n")
+        file.write(f"[{timestamp}] Bot: {generated_text} [{eval_text}, {score_text}]\n")
+        #if generated_text:
+            #file.write(f"[{timestamp}] [Generated Text]: {generated_text}\n")
 
     # Debugging-Ausgabe im Terminal
     if fuzzy_score > 0.0:

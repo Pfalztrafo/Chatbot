@@ -15,7 +15,7 @@
     },
     "MODEL": {
         "MODEL_PATH": "./fine_tuned_model",
-        "MODEL_NAME": "google/flan-t5-base",
+        "MODEL_NAME": "google/flan-t5-small",
         "available_models": [
             "google/flan-t5-small",
             "google/flan-t5-base",
@@ -36,7 +36,9 @@
         "weight_decay": 0.01,
         "train_ratio": 0.8,
         "negative_sample_rate": 0.5,
-        "data_sources": [],
+        "data_sources": [
+            "data/faq_general.json"
+        ],
         "data_total": [
             "data/faq_general.json",
             "data/faq_sales.json",
@@ -53,7 +55,7 @@
         }
     },
     "CHAT": {
-        "use_fuzzy_matching": true,
+        "use_fuzzy_matching": false,
         "use_ki_generative": true,
         "use_pipeline": false,
         "internal_prompt": "As a technical advisor for transformer purchases, respond in German with a clear and detailed answer to the following question:",
@@ -81,12 +83,6 @@
         "min_length": 10,
         "no_repeat_ngram_size": 3,
         "length_penalty": 1.0,
-        "early_stopping": true,
-        "epochs": "2",
-        "learning_rate": "2e-5",
-        "batch_size": "1",
-        "weight_decay": "0.01",
-        "train_ratio": "0.8",
-        "negative_sample_rate": "0.5"
+        "early_stopping": true
     }
 }
