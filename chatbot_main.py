@@ -154,6 +154,15 @@ if os.path.exists(MODEL_PATH):
 else:
     print(f"[ERROR] Modellpfad nicht gefunden: {MODEL_PATH}")
 
+#Wechseln zwischen GPU und Server
+if torch.cuda.is_available():
+    device = 0
+    print("→ CUDA ist verfügbar, verwende GPU!")
+else:
+    device = -1
+    print("→ Keine GPU gefunden, verwende CPU.")
+
+
 load_faq_data()
 device = 0 if torch.cuda.is_available() else -1
 model, tokenizer = load_model_and_tokenizer()
