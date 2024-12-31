@@ -159,7 +159,7 @@ if torch.cuda.is_available():
     device = 0
     print("→ CUDA ist verfügbar, verwende GPU!")
 else:
-    device = -1
+    device = None
     print("→ Keine GPU gefunden, verwende CPU.")
 
 # FAQ-Daten laden
