@@ -56,7 +56,7 @@
         }
     },
     "CHAT": {
-        "use_fuzzy_matching": false,
+        "use_fuzzy_matching": true,
         "use_ki_generative": true,
         "use_pipeline": false,
         "internal_prompt": "As a technical advisor for transformer purchases, respond in German with a clear and detailed answer to the following question:",
