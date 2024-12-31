@@ -6,11 +6,9 @@ Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen 
 - [Übersicht](#übersicht)
 - [Features](#features)
 - [Verwendete Technologien](#verwendete-technologien)
-- [Projektstruktur](#projektstruktur)
 - [Installation](#installation)
 - [Training](#training)
 - [Verwendung](#verwendung)
-- [Versionshistorie](#versionshistorie)
 - [Quellen](#quellen)
 - [Lizenz und Haftungsausschluss](#lizenz-und-haftungsausschluss)
 
@@ -33,27 +31,7 @@ Der Support-Chatbot zur Kaufberatung für Transformatoren basiert auf einem fein
 - **FAISS**: Vektorsuche für die Wissensdatenbank (läuft aktuell auf der CPU).
 - **Fuzzywuzzy**: Für die Erkennung ähnlicher Anfragen (Fuzzy Matching).
 
-## Projektstruktur
-Die Projektstruktur ist in mehrere Module und Datenquellen unterteilt (Stand 04.11.2024):
 
-```plaintext
-├── chatbot_main.py              # Hauptskript zum Ausführen des Chatbots
-├── train_model.py               # Trainingsskript zum Feinabstimmen des Modells
-├── utils.py                     # Konfiguration und Hilfsfunktionen
-├── data/
-│   ├── openthesaurus.txt        # OpenThesaurus Textdatei mit deutschen Synonymen
-│   ├── dialogues.json           # Häufig gestellte Fragen und Antworten
-│   ├── trafo_info.json          # Allgemeine Infos über Transformatoren
-│   ├── pfalztrafo_services.json # Dienstleistungen von Pfalztrafo
-│   ├── rules.json               # Entscheidungsregeln für Empfehlungen
-├── modules/
-│   ├── dialogue_manager.py      # Modul zur Verwaltung von Dialogen
-│   ├── knowledge_base.py        # Modul für den Zugriff auf Transformatoren-Wissen
-│   ├── recommendation.py        # Modul für Kaufempfehlungen und Entscheidungslogik
-├── fine_tuned_model/            # Verzeichnis für das trainierte Modell
-├── .gitignore                   # Ausschließen der Git-Dateien wie fine_tuned_model wegen Speichergröße 
-└── README.md                    # Diese Dokumentation
-```
 
 ## Installation
 
@@ -137,106 +115,6 @@ Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und k
 
 
 
-### Ergebnisse
-
-#### Ergebnis v1.2.0 vom 22.11.2024 (Eigenes Laptop)
-- **Trainingseinheit**: ? Epochen = ? min
-- **Parameter-Konfiguration**:
-  - `eval_strategy="no"`: Evaluation deaktiviert, nur Training
-  - `learning_rate=2e-5`: Feinabstimmungs-Lernrate für präzise Updates
-  - `per_device_train_batch_size=4`: Batch-Größe pro Gerät (RTX 3050 mit 6 GB VRAM)
-  - `num_train_epochs=3`: Anzahl der Epochen für bessere Modellanpassung
-  - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
-
-<details>
-<summary>Beispiel-Chat-22.11.2024</summary>
-
-Du: heeyy   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-</details> ```
-
-#### Ergebnis v1.0.0 vom 04.11.2024 (Eigenes Laptop)
-- **Trainingseinheit**: 36 Epochen = 2 min
-- **Parameter-Konfiguration**:
-  - `eval_strategy="no"`: Evaluation deaktiviert, nur Training
-  - `learning_rate=2e-5`: Feinabstimmungs-Lernrate für präzise Updates
-  - `per_device_train_batch_size=4`: Batch-Größe pro Gerät (RTX 3050 mit 6 GB VRAM)
-  - `num_train_epochs=3`: Anzahl der Epochen für bessere Modellanpassung
-  - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
-
-<details>
-<summary>Beispiel-Chat-04.11.2024</summary>
-
-Du: heeyy   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: hiii   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: hii   
-Bot: Hallo! Wie kann ich Ihnen helfen?
-
-Du: Was für Arten von Trafos habt ihr?   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: Was bietet ihr an   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: Arten von Trafos   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: Welche Transformator-Typen gibt es?   
-Bot: Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.
-
-Du: Transformator-Typen   
-Bot: Es gibt verschiedene Typen, darunter Leistungstransformatoren und Verteiltransformatoren.
-
-Du: Ülprobe   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: Lebensdauer eines Transformators   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: Leistungstransformator   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: Zertifikate für Trafos   
-Bot: Ich habe leider keine Antwort auf diese Frage.
-</details> ```
-
-#### Ergebnis v1.0.0 vom 04.11.2024 (Eigenes Laptop)
-- **Trainingseinheit**: 6 Epochen = 20 Sekunden
-- **Parameter-Konfiguration**:
-  - `eval_strategy="no"`: Evaluation deaktiviert, nur Training
-  - `learning_rate=2e-5`: Feinabstimmungs-Lernrate für präzise Updates
-  - `per_device_train_batch_size=4`: Batch-Größe pro Gerät (RTX 3050 mit 6 GB VRAM)
-  - `num_train_epochs=3`: Anzahl der Epochen für bessere Modellanpassung
-  - `weight_decay=0.01`: Gewichtszerfall zur Reduzierung von Overfitting
-
-<details>
-<summary>Beispiel-Chat-04.11.2024</summary>
-
-Du: hi  
-Bot: Hallo! Wie kann ich Ihnen helfen?
-
-Du: hiii  
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: hii  
-Bot: Hallo! Wie kann ich Ihnen helfen?
-
-Du: Lieferzeit Trafo  
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: Kosten für Trafo  
-Bot: Ich habe leider keine Antwort auf diese Frage.
-
-Du: Was kostet ein Transformator?  
-Bot: Die Kosten für einen Transformator variieren je nach Typ und Anwendung. Bitte füllen Sie das Kontaktformular auf unserer Webseite aus oder rufen Sie uns direkt an.
-</details> ```
-
-
 ## Verwendung
 
 ### Mindestanforderungen für die Nutzung
@@ -261,30 +139,6 @@ Geben Sie Fragen ein, wie z. B.:
 
 3. **Beenden des Chats**:
 Geben Sie `exit` ein, um die Chat-Sitzung zu beenden.
-
-
-
-## Versionshistorie
-
-### v1.2.0 - 22.11.2024
-- **Speicherung des Chatverlaufs**: Tägliche Protokollierung von Nutzer- und Bot-Nachrichten zur Nachverfolgung von Interaktionen.
-
-### v1.1.1 - 07.11.2024
-- **Speicherung des Chatverlaufs**: Tägliche Protokollierung von Nutzer- und Bot-Nachrichten zur Nachverfolgung von Interaktionen.
-- **Speicherung der Trainingsdaten und -dauer**: Dokumentation der Trainingszeit, Verlustwerte, Epochenanzahl und Geräte-Spezifikationen für Transparenz und Wiederholbarkeit.
-- **Speicherung unbeantworteter Fragen**: Erfassung von Nutzeranfragen ohne Antwort für eine gezielte Erweiterung der Wissensbasis.
-- **Erweiterte Fallback-Strategie** für unbeantwortete Fragen: Dynamische Erkennung und Weiterleitung an relevante Kategorien oder Services.
-- **Kategorieerkennung und Fallback-Antwort**: Verbesserte Kategorisierung von Fragen zur optimierten Benutzerführung.
-- **Multilinguale Unterstützung** (Deutsch und Englisch): Erstellung separater JSON-Dateien für FAQs, Dialoge und Entscheidungstabellen in beiden Sprachen.
-- **Synonymunterstützung und Fuzzy Matching**: Einbindung von WordNet und OpenThesaurus für bessere Abdeckung ähnlicher Anfragen in Deutsch und Englisch.
-- **Struktur für nachhaltige Datenspeicherung**: Optimierte Ordnerstruktur und Versionierung zur langfristigen Wartung und Erweiterung.
-
-### v1.0.0 - 04.11.2024
-- **Erstveröffentlichung** mit Hauptfunktionen:
-  - Erstellung des Projektstrukturs
-  - Erstellung der JSON Dateien (FAQ, Dialoge und Regeln)
-  - **Synonym- und Fuzzy-Matching** für ähnliche Anfragen
-  - **Retrieval-Augmented Generation (RAG)** für dynamische Antworten
 
 
 
