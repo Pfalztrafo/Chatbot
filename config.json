@@ -15,7 +15,7 @@
     },
     "MODEL": {
         "MODEL_PATH": "./fine_tuned_model",
-        "MODEL_NAME": "google/flan-t5-small",
+        "MODEL_NAME": "google/flan-t5-base",
         "available_models": [
             "google/flan-t5-small",
             "google/flan-t5-base",
