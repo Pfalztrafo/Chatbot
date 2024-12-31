@@ -84,6 +84,27 @@ def anonymize_ip(ip_address):
     return ip_address
 
 # Chatbot-Endpunkt
+# @app.post("/chat")
+# async def chat_with_bot(query: Query, request: Request):
+#     """Verarbeitet eine Anfrage an den Chatbot und gibt die Antwort zurück."""
+#     question = query.question
+#     if not question:
+#         raise HTTPException(status_code=400, detail="Frage fehlt in der Anfrage.")
+
+#     # IP-Adresse extrahieren und anonymisieren
+#     client_ip = request.client.host
+#     anonymized_ip = anonymize_ip(client_ip)
+
+#     # Chatbot-Logik anwenden
+#     response = get_response(question)
+
+#     # Chatverlauf speichern
+#     save_chat_to_txt(question, response, user_ip=anonymized_ip, username="Unbekannt")
+
+#     # Statistiken aktualisieren
+#     statistics["total_requests"] += 1
+#     return {"response": response}
+
 @app.post("/chat")
 async def chat_with_bot(query: Query, request: Request):
     """Verarbeitet eine Anfrage an den Chatbot und gibt die Antwort zurück."""
@@ -95,15 +116,13 @@ async def chat_with_bot(query: Query, request: Request):
     client_ip = request.client.host
     anonymized_ip = anonymize_ip(client_ip)
 
-    # Chatbot-Logik anwenden
-    response = get_response(question)
-
-    # Chatverlauf speichern
-    save_chat_to_txt(question, response, user_ip=anonymized_ip, username="Unbekannt")
+    # Chatbot-Logik anwenden und speichern
+    response = get_response(question)  # `save_chat_to_txt` wird bereits in `get_response` aufgerufen
 
     # Statistiken aktualisieren
     statistics["total_requests"] += 1
     return {"response": response}
+
 
 # SSL-Konfiguration laden
 def load_ssl_config():
