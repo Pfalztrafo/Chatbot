@@ -162,10 +162,13 @@ else:
     device = -1
     print("→ Keine GPU gefunden, verwende CPU.")
 
-
+# FAQ-Daten laden
 load_faq_data()
-device = 0 if torch.cuda.is_available() else -1
+
+# Modell und Tokenizer laden
 model, tokenizer = load_model_and_tokenizer()
+
+# Hugging Face Pipeline erstellen
 hf_pipeline = pipeline("text2text-generation", model=model, tokenizer=tokenizer, device=device)
 
 #------------------------------------------------------------------------------------
