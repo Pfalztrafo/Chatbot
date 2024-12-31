@@ -663,10 +663,10 @@ class ChatbotGUI:
         row += 1
 
         # Chatbot-Status label
-        self.chatbot_status_label = ttk.Label(scrollable_frame, text="Chatbot: Aus", foreground="red")
-        self.chatbot_status_label.grid(row=row, column=0, pady=5, sticky="w")
+        #self.chatbot_status_label = ttk.Label(scrollable_frame, text="Chatbot: Aus", foreground="red")
+        #self.chatbot_status_label.grid(row=row, column=0, pady=5, sticky="w")
 
-        row += 1
+        #row += 1
 
 
         # ------------------------------------------------------------
@@ -840,8 +840,8 @@ class ChatbotGUI:
         ).grid(row=13, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Chatbot-Status label
-        self.chatbot_status_label = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red")
-        self.chatbot_status_label.grid(row=14, column=0, pady=5, sticky="w")
+        #self.chatbot_status_label = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red")
+        #self.chatbot_status_label.grid(row=14, column=0, pady=5, sticky="w")
 
 
 
