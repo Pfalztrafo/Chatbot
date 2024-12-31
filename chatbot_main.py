@@ -296,22 +296,40 @@ def generate_ki_response(query):
 
 # -----------------------------------------
 # Kern: get_response
-def get_response(user_input):
+# def get_response(user_input):
+#     # 1) FAQ
+#     response, fuzzy_score = get_faq_answer(user_input, threshold=config["CHAT"].get("fuzzy_threshold", 70))
+#     if response:
+#         save_chat_to_txt(user_input, response, None, {"fuzzy": fuzzy_score})
+#         return response
+
+#     # 2) Generative KI
+#     if config["CHAT"].get("use_ki_generative", True):
+#         generated_text, final_response, log_score, evaluation = generate_ki_response(user_input)
+#         save_chat_to_txt(user_input, final_response, evaluation, {"fuzzy": 0.0, "ki": log_score}, generated_text)
+#         return final_response
+
+#     # 3) Fallback
+#     save_chat_to_txt(user_input, FALLBACK_ANSWER)
+#     return FALLBACK_ANSWER
+
+def get_response(user_input, user_ip="user"):
     # 1) FAQ
     response, fuzzy_score = get_faq_answer(user_input, threshold=config["CHAT"].get("fuzzy_threshold", 70))
     if response:
-        save_chat_to_txt(user_input, response, None, {"fuzzy": fuzzy_score})
+        save_chat_to_txt(user_input, response, None, {"fuzzy": fuzzy_score}, user_ip=user_ip)
         return response
 
     # 2) Generative KI
     if config["CHAT"].get("use_ki_generative", True):
         generated_text, final_response, log_score, evaluation = generate_ki_response(user_input)
-        save_chat_to_txt(user_input, final_response, evaluation, {"fuzzy": 0.0, "ki": log_score}, generated_text)
+        save_chat_to_txt(user_input, final_response, evaluation, {"fuzzy": 0.0, "ki": log_score}, generated_text, user_ip=user_ip)
         return final_response
 
     # 3) Fallback
-    save_chat_to_txt(user_input, FALLBACK_ANSWER)
+    save_chat_to_txt(user_input, FALLBACK_ANSWER, user_ip=user_ip)
     return FALLBACK_ANSWER
+
 
 # -----------------------------------------
 # Interaktive Schleife
