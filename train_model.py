@@ -8,6 +8,21 @@ import platform
 from nltk.corpus import wordnet as wn
 import psutil  # Zum Abrufen der detaillierten Systeminformationen
 
+import subprocess
+import threading
+
+def start_tensorboard(logdir="./fine_tuned_model", port=6006):
+    """
+    Startet TensorBoard in einem separaten Thread.
+    :param logdir: Verzeichnis, in dem die TensorBoard-Logs gespeichert werden.
+    :param port: Port, auf dem TensorBoard läuft.
+    """
+    def run_tensorboard():
+        subprocess.Popen(["tensorboard", "--logdir", logdir, "--port", str(port)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    threading.Thread(target=run_tensorboard, daemon=True).start()
+
+
 # WordNet-Daten einmalig herunterladen
 # nltk.download('wordnet')
 # nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
@@ -278,7 +293,7 @@ def main():
         per_device_train_batch_size=config["TRAINING"]["batch_size"],
         num_train_epochs=config["TRAINING"]["epochs"],  # Anzahl der Epochen
         weight_decay=config["TRAINING"]["weight_decay"],
-        #logging_dir="./logs",  # Logs für TensorBoard
+        #logging_dir="./training_logs",  # Logs für TensorBoard
         logging_steps=10,  # Log-Schritte
         #log_level="info",  # Zeige mehr Details im Terminal                             NEU
         load_best_model_at_end=True,  # Beste Modellparameter am Ende laden             NEU
@@ -349,4 +364,7 @@ def main():
 
 
 if __name__ == "__main__":
+    print("Starte TensorBoard...")
+    start_tensorboard(logdir="./fine_tuned_model", port=6006)  # Logs-Verzeichnis und Port angeben
+    print("TensorBoard läuft auf http://localhost:6006")
     main()

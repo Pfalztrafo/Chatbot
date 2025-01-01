@@ -15,7 +15,7 @@
     },
     "MODEL": {
         "MODEL_PATH": "./fine_tuned_model",
-        "MODEL_NAME": "google/flan-t5-base",
+        "MODEL_NAME": "google/flan-t5-small",
         "available_models": [
             "google/flan-t5-small",
             "google/flan-t5-base",
@@ -55,7 +55,7 @@
         }
     },
     "CHAT": {
-        "use_fuzzy_matching": true,
+        "use_fuzzy_matching": false,
         "use_ki_generative": true,
         "use_pipeline": false,
         "internal_prompt": "As a technical advisor for transformer purchases, respond in German with a clear and detailed answer to the following question:",
@@ -72,7 +72,7 @@
             0.0,
             1.0
         ],
-        "log_score_threshold": -150.0,
+        "log_score_threshold": -1e+308,
         "do_sample": false,
         "temperature": 0.7,
         "top_k": 50,

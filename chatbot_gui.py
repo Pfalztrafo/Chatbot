@@ -9,6 +9,7 @@ import psutil
 import requests
 import torch
 
+import chatbot_main
 from train_model import main as start_training_process  # Importiere die main-Funktion aus train_model.py
 from api_main import app, load_ssl_config               # Importiere die FastAPI-App
 from chatbot_main import init_chatbot, get_response  # Ganz oben
@@ -430,77 +431,103 @@ class ChatbotGUI:
 
 
     def create_overview_tab(self):
-        """Erstellt den Überblick-Tab mit API-Status (links) und Chatlog (rechts) im grid-Layout."""
-        # Hauptcontainer für API-Status und Chatlog
+        """Erstellt den Überblick-Tab mit API-Status (links) und Chatlog (rechts) im grid-Layout
+        und sorgt für ein einheitliches Design wie in den anderen Tabs."""
+
+        # Hauptcontainer (ähnlich wie main_frame in anderen Tabs)
         main_frame = ttk.Frame(self.overview_tab)
         main_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        # Konfiguration des Grid-Layouts für Übersicht-Tab
-        self.overview_tab.grid_rowconfigure(0, weight=1)  # Inhalte vertikal strecken
-        self.overview_tab.grid_columnconfigure(0, weight=1)  # Horizontaler Container
+        # Die Übersicht-Tab soll sich ausdehnen
+        self.overview_tab.grid_rowconfigure(0, weight=1)
+        self.overview_tab.grid_columnconfigure(0, weight=1)
         main_frame.grid_rowconfigure(0, weight=1)
-        main_frame.grid_columnconfigure(0, weight=1)  # Linke Spalte (API-Status)
-        main_frame.grid_columnconfigure(1, weight=3)  # Rechte Spalte (Chatlog)
+        main_frame.grid_columnconfigure(0, weight=1)  # linke Spalte (API-Status)
+        main_frame.grid_columnconfigure(1, weight=3)  # rechte Spalte (Chatlog)
 
-        # Linker Bereich: API-Status (1/4)
-        api_status_frame = ttk.Frame(main_frame)
-        api_status_frame.grid(row=0, column=0, sticky="ns", padx=10, pady=10)
+        # -------------------------
+        # Linke Spalte (API-Status, Einstellungen, Chatbot-Schalter)
+        left_frame = ttk.Frame(main_frame)
+        left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        ttk.Label(api_status_frame, text="API-Status", font=("Arial", 16)).grid(row=0, column=0, pady=10)
-        self.api_status_label = ttk.Label(api_status_frame, text="API-Status: Gestoppt", font=("Arial", 12))
-        self.api_status_label.grid(row=1, column=0, pady=5)
-        ttk.Button(api_status_frame, text="API Starten/Stoppen", command=self.toggle_api).grid(row=2, column=0, pady=10)
+        # Überschrift
+        ttk.Label(left_frame, text="API- und Chatbot-Steuerung", font=("Arial", 16, "bold"))\
+            .grid(row=0, column=0, columnspan=2, pady=10, sticky="w")
 
-        # Einstellungsbereich für IP, Port und Domains
-        ttk.Label(api_status_frame, text="Einstellungen", font=("Arial", 14)).grid(row=3, column=0, pady=10)
+        # 1) API-Status
+        # ttk.Label(left_frame, text="", font=("Arial", 12))\
+        #     .grid(row=1, column=0, sticky="w", pady=(0, 5))
+        
+        self.api_status_label = ttk.Label(left_frame, text="Gestoppt", font=("Arial", 12))
+        self.api_status_label.grid(row=1, column=0, pady=(0, 5), sticky="w")
 
-        # IP-Adresse
-        ttk.Label(api_status_frame, text="IP-Adresse:").grid(row=4, column=0, sticky="w", pady=5)
-        self.ip_entry = ttk.Entry(api_status_frame)
-        self.ip_entry.insert(0, self.config_manager.get_param("API", "ip", "0.0.0.0"))
-        self.ip_entry.grid(row=5, column=0, pady=5)
-
-        # Port
-        ttk.Label(api_status_frame, text="Port:").grid(row=6, column=0, sticky="w", pady=5)
-        self.port_entry = ttk.Entry(api_status_frame)
-        self.port_entry.insert(0, self.config_manager.get_param("API", "port", 8000))
-        self.port_entry.grid(row=7, column=0, pady=5)
-
-        # Allow Origins (Domains)
-        ttk.Label(api_status_frame, text="Domains (allow_origins):").grid(row=8, column=0, sticky="w", pady=5)
-        self.origins_entry = ttk.Entry(api_status_frame)
-        self.origins_entry.insert(0, ", ".join(self.config_manager.get_param("API", "allow_origins", ["*"])))
-        self.origins_entry.grid(row=9, column=0, pady=5)
-
-        # Speichern-Button für Einstellungen
-        ttk.Button(api_status_frame, text="Speichern", command=self.save_api_changes).grid(row=10, column=0, pady=10)
-
-        # Chatbot An/Aus-Button
+        # 2) Button: API Starten / Stoppen
         ttk.Button(
-            api_status_frame, 
-            text="Chatbot An/Aus", 
+            left_frame,
+            text="API Starten/Stoppen",
+            command=self.toggle_api
+        ).grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # 3) IP, Port & Domains
+        ttk.Label(left_frame, text="IP-Adresse:", font=("Arial", 12))\
+            .grid(row=3, column=0, sticky="w", pady=(0, 5))
+        self.ip_entry = ttk.Entry(left_frame, font=("Arial", 12), width=18)
+        self.ip_entry.insert(0, self.config_manager.get_param("API", "ip", "0.0.0.0"))
+        self.ip_entry.grid(row=3, column=1, pady=(0, 5), sticky="w")
+
+        ttk.Label(left_frame, text="Port:", font=("Arial", 12))\
+            .grid(row=4, column=0, sticky="w", pady=(0, 5))
+        self.port_entry = ttk.Entry(left_frame, font=("Arial", 12), width=18)
+        self.port_entry.insert(0, self.config_manager.get_param("API", "port", 8000))
+        self.port_entry.grid(row=4, column=1, pady=(0, 5), sticky="w")
+
+        ttk.Label(left_frame, text="Domains:", font=("Arial", 12))\
+            .grid(row=5, column=0, sticky="w", pady=(0, 5))
+        self.origins_entry = ttk.Entry(left_frame, font=("Arial", 12), width=18)
+        self.origins_entry.insert(0, ", ".join(self.config_manager.get_param("API", "allow_origins", ["*"])))
+        self.origins_entry.grid(row=5, column=1, pady=(0, 5), sticky="w")
+
+        ttk.Button(
+            left_frame,
+            text="Einstellungen speichern",
+            command=self.save_api_changes
+        ).grid(row=6, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # 4) Chatbot An/Aus
+        ttk.Button(
+            left_frame,
+            text="Chatbot An/Aus",
             command=self.toggle_chatbot
-        ).grid(row=11, column=0, pady=10)
+        ).grid(row=7, column=0, columnspan=2, pady=10, sticky="ew")
 
-        self.chatbot_status_label = ttk.Label(api_status_frame, text="Chatbot: Aus", foreground="red")
-        self.chatbot_status_label.grid(row=12, column=0, pady=5, sticky="w")
+        # Status-Label für Chatbot
+        self.chatbot_status_label_overview = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red", font=("Arial", 12))
+        self.chatbot_status_label_overview.grid(row=8, column=0, columnspan=2, pady=(0, 10), sticky="w")
 
+        # 5) Beenden-Button
+        ttk.Button(
+            left_frame,
+            text="Beenden",
+            command=self.quit_application  # z.B. self.root.quit oder destroy
+        ).grid(row=9, column=0, columnspan=2, pady=10, sticky="ew")
 
+        # -------------------------
+        # Rechte Spalte (Chat Logs)
+        right_frame = ttk.Frame(main_frame)
+        right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
-        # Rechte Spalte: Chat Logs (3/4)
-        chatlog_frame = ttk.Frame(main_frame)
-        chatlog_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        ttk.Label(right_frame, text="Chat Logs", font=("Arial", 16, "bold"))\
+            .grid(row=0, column=0, pady=10, sticky="w")
 
-        ttk.Label(chatlog_frame, text="Chat Logs", font=("Arial", 16)).grid(row=0, column=0, pady=10, sticky="w")
-        self.chat_logs_text = tk.Text(chatlog_frame, wrap="word", state="disabled", font=("Arial", 10))
+        self.chat_logs_text = tk.Text(right_frame, wrap="word", state="disabled", font=("Arial", 10))
         self.chat_logs_text.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+        right_frame.grid_rowconfigure(1, weight=1)
+        right_frame.grid_columnconfigure(0, weight=1)
 
-        # Chatlog-Frame anpassen
-        chatlog_frame.grid_rowconfigure(1, weight=1)  # Textbereich strecken
-        chatlog_frame.grid_columnconfigure(0, weight=1)
-
-        # Horizontale Darstellung der Systemressourcen (unten)
+        # 6) Ressourcen-Anzeige unten (wie in den anderen Tabs)
         self.cpu_label_overview, self.ram_label_overview, self.gpu_label_overview = self.create_system_resource_labels(self.overview_tab)
+
+
 
     def save_api_changes(self):
         """Speichert die Änderungen an den API-Einstellungen."""
@@ -662,11 +689,11 @@ class ChatbotGUI:
 
         row += 1
 
-        # Chatbot-Status label
-        #self.chatbot_status_label = ttk.Label(scrollable_frame, text="Chatbot: Aus", foreground="red")
-        #self.chatbot_status_label.grid(row=row, column=0, pady=5, sticky="w")
+        self.chatbot_status_label_chat = ttk.Label(scrollable_frame, text="Chatbot: Aus", foreground="red")
+        self.chatbot_status_label_chat.grid(row=row, column=0, columnspan=2, pady=5, sticky="w")
 
-        #row += 1
+
+        row += 1
 
 
         # ------------------------------------------------------------
@@ -840,8 +867,9 @@ class ChatbotGUI:
         ).grid(row=13, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Chatbot-Status label
-        #self.chatbot_status_label = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red")
-        #self.chatbot_status_label.grid(row=14, column=0, pady=5, sticky="w")
+        self.chatbot_status_label_training = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red")
+        self.chatbot_status_label_training.grid(row=14, column=0, columnspan=2, pady=5, sticky="w")
+
 
 
 
@@ -933,7 +961,7 @@ class ChatbotGUI:
         resource_frame.grid_columnconfigure(4, weight=1)
 
         # Version-Titel
-        version_label = ttk.Label(resource_frame, text="Version 1.0.0", font=("Arial", 12, "italic"))
+        version_label = ttk.Label(resource_frame, text="Version 1.0.0", font=("Arial", 12))
         version_label.grid(row=0, column=5, padx=5, sticky="e")  # Ganz rechts ausrichten
 
         return cpu_label, ram_label, gpu_label
@@ -941,22 +969,67 @@ class ChatbotGUI:
 
 
     # --------------------------------------------------------
+    def quit_application(self):
+        # Entweder:
+        self.root.quit()    # Standard-Tkinter-Methode, Haupt-Loop wird verlassen
+        # oder:
+        # self.root.destroy() # Schließt das Fenster direkt
 
 
     # --------------------------------------------------------
     # Chatbot-Steuerung
     def toggle_chatbot(self):
         if self.chatbot_status_var.get() == "Gestartet":
-            # Bot aus
+            # Bot ausschalten
             self.chatbot_status_var.set("Gestoppt")
-            # Setze Label rot
-            self.chatbot_status_label.config(text="Chatbot: Aus", foreground="red")
+
+            # Setze alle Chatbot-Status-Labels auf "Aus" in Rot
+            self.chatbot_status_label_overview.config(text="Chatbot: Aus", foreground="red")
+            self.chatbot_status_label_chat.config(text="Chatbot: Aus", foreground="red")
+            self.chatbot_status_label_training.config(text="Chatbot: Aus", foreground="red")
+
+            # Hier "entladen"
+            chatbot_main.config = None
+            chatbot_main.faq_data = []
+            chatbot_main.model = None
+            chatbot_main.tokenizer = None
+            chatbot_main.hf_pipeline = None
+
         else:
-            # Bot an (init_chatbot())
-            init_chatbot()
+            # Bot einschalten und JEDES MAL neu laden
+            chatbot_main.init_chatbot()  # Laden von config, model etc.
             self.chatbot_status_var.set("Gestartet")
-            # Setze Label grün
+
+            # Setze alle Chatbot-Status-Labels auf "An" in Grün
+            self.chatbot_status_label_overview.config(text="Chatbot: An", foreground="green")
+            self.chatbot_status_label_chat.config(text="Chatbot: An", foreground="green")
+            self.chatbot_status_label_training.config(text="Chatbot: An", foreground="green")
+
+    
+    def start_chatbot(self):
+    # Falls noch nicht gestartet, init_chatbot()
+        if chatbot_main.hf_pipeline is None:
+            chatbot_main.init_chatbot()
             self.chatbot_status_label.config(text="Chatbot: An", foreground="green")
+
+    def stop_chatbot(self):
+        # Bot beenden / entladen
+        chatbot_main.config = None
+        chatbot_main.faq_data = []
+        chatbot_main.model = None
+        chatbot_main.tokenizer = None
+        chatbot_main.hf_pipeline = None
+        self.chatbot_status_label.config(text="Chatbot: Aus", foreground="red")
+
+    def reload_chatbot(self):
+        # Lädt IMMER neu
+        chatbot_main.config = None
+        chatbot_main.faq_data = []
+        chatbot_main.model = None
+        chatbot_main.tokenizer = None
+        chatbot_main.hf_pipeline = None
+        chatbot_main.init_chatbot()
+        messagebox.showinfo("Info", "Chatbot wurde neu geladen.")
 
 
 
@@ -1008,8 +1081,14 @@ class ChatbotGUI:
 
     def update_api_status_label(self):
         """Aktualisiert den API-Status in der Übersicht."""
-        status = self.api_manager.get_status()
-        self.api_status_label.config(text=f"API-Status: {status}")
+        status = self.api_manager.get_status()  # "Läuft" oder "Gestoppt"
+        
+        # Farbe nach Status wählen
+        if status == "Gestoppt":
+            self.api_status_label.config(text=f"API-Status: {status}", foreground="red")
+        else:  # Läuft
+            self.api_status_label.config(text=f"API-Status: {status}", foreground="green")
+
 
     def apply_chat_settings(self):
         """Speichert und übernimmt die Chat-Einstellungen."""
@@ -1073,8 +1152,8 @@ class ChatbotGUI:
 
         #if not self.trainer.is_training:  # Falls das Training nun durch ist
             #self.training_status_label.config(text="Training: Abgeschlossen", foreground="blue")
-        # Wiederhole die Aktualisierung alle 5 Sekunden
-        #self.root.after(5000, self.update_training_logs)
+        # Wiederhole die Aktualisierung alle 30 Sekunden
+        self.root.after(30000, self.update_training_logs)
 
 
 

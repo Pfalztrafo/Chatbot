@@ -346,17 +346,17 @@ def chat():
 # -----------------------------------------
 # NEU: init_chatbot() – hier alles laden
 def init_chatbot():
-    """Diese Funktion lädt Config, FAQ und Modell,
-       aber NUR wenn noch nicht geladen."""
     global config, faq_data, model, tokenizer, hf_pipeline
-    if config is not None and hf_pipeline is not None:
-        # Schon mal geladen
-        print("[DEBUG] Chatbot ist bereits initialisiert.")
-        return
-    load_config()
-    load_faq_data()
-    load_model_and_tokenizer()
+
+    # (Optional) Abfrage entfernen:
+    # if config is not None and hf_pipeline is not None:
+    #     return
+
+    load_config()            # config immer laden
+    load_faq_data()         # FAQ immer laden
+    load_model_and_tokenizer()  # Modell & Tokenizer immer laden
     print("[DEBUG] init_chatbot() ist abgeschlossen.")
+
 
 # -----------------------------------------
 # main() – wird NUR bei direktem Start ausgeführt
