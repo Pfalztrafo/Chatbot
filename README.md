@@ -1,167 +1,147 @@
-# Support-Chatbot zur Kaufberatung für Transformatoren
-
-Dieser Chatbot wurde entwickelt, um Kunden bei Kaufempfehlungen und allgemeinen Fragen zu Transformatoren zu unterstützen. Er bietet Informationen zu Transformator-Typen, Services vom Unternehmen Pfalztrafo und stellt Empfehlungen basierend auf spezifischen Kundenanfragen zur Verfügung.
+# Support-Chatbot zur Transformator-Kaufberatung
 
 ## Inhaltsverzeichnis
-- [Übersicht](#übersicht)
+- [Projektübersicht](#projektübersicht)
 - [Features](#features)
 - [Verwendete Technologien](#verwendete-technologien)
 - [Installation](#installation)
 - [Training](#training)
+- [Evaluierung](#evaluierung)
 - [Verwendung](#verwendung)
-- [Quellen](#quellen)
-- [Lizenz und Haftungsausschluss](#lizenz-und-haftungsausschluss)
+- [Quellen und Lizenz](#quellen-und-lizenz)
 
+---
 
-## Übersicht
-Der Support-Chatbot zur Kaufberatung für Transformatoren basiert auf einem feinabgestimmten Sprachmodell (fine-tuned LLM), das auf `google/flan-t5-base` basiert. Mithilfe von Retrieval-Augmented Generation (RAG) kann der Bot dynamisch auf Kundenfragen reagieren und gibt dabei gezielte Informationen zu Transformatoren und Dienstleistungen von Pfalztrafo.
+## Projektübersicht
+
+Dieses Projekt konzentriert sich auf die wissenschaftliche Analyse und Feinabstimmung von Large Language Models (LLMs) der FLAN-T5-Familie zur Entwicklung eines Support-Chatbots für die Transformator-Kaufberatung. Das Ziel ist es, branchenspezifische Anforderungen präzise zu bedienen und allgemeine Erkenntnisse zur Anpassung von LLMs für spezialisierte Anwendungen zu gewinnen.
+
+### Hauptziele:
+1. **Zwei-Phasen-Training:**
+   - Phase 1: Nutzung von gefilterten GermanQuAD (352 Datensätze) und GermanDPR (655 Datensätze) zur Verbesserung der allgemeinen QA-Fähigkeiten.
+   - Phase 2: Feinabstimmung mit domänenspezifischen FAQs (Sales und General).
+2. **Evaluierung:**
+   - Verwendung von BLEU und ROUGE zur Bewertung der Sprachqualität.
+   - Qualitative Tests zur thematischen Präzision.
+3. **Ergebnisse:**
+   - Vergleich von FLAN-T5-Modellen (Small bis XL).
+   - Optimierung von Modellparametern (z. B. Lernrate, Batchgröße).
+
+---
 
 ## Features
-- **FAQ-Antworten**: Beantwortet häufig gestellte Fragen zu Transformatoren und Pfalztrafo-Dienstleistungen.
-- **Kaufempfehlungen**: Gibt Empfehlungen basierend auf spezifischen Anwendungen und Anforderungen der Kunden.
-- **Synonym- und Fuzzy-Matching**: Erkennt ähnliche oder leicht abweichende Anfragen.
-- **Retrieval-Augmented Generation (RAG)**: Kombiniert Wissensdatenbanken mit Modellantworten für präzise und aktuelle Antworten.
-- **Mehrsprachige Unterstützung**: Basierend auf `google/flan-t5-base` unterstützt das Modell mehrere Sprachen.
+
+- **Zwei-Phasen-Feinabstimmung:**
+  - Kombination von gefilterten GermanQuAD, GermanDPR und domänenspezifischen FAQs.
+- **Interne Prompts:** Optimierte Fragestellungen für präzisere Antworten.
+- **Generative Modelle:** Einsatz von FLAN-T5-Small bis XL für präzise Sprachgenerierung.
+- **GUI-Integration:** Steuerung von API, Training und Logs über eine benutzerfreundliche Oberfläche.
+- **API-Schnittstelle:** Bereitstellung von Chatbot-Funktionen für externe Anwendungen.
+- **Live-Chat:** Direkte Kommunikation mit dem Chatbot.
+- **Einstellungen:** Anpassung von Parametern wie Temperatur und Modellwahl über die GUI.
+
+---
 
 ## Verwendete Technologien
-- **Visual Studio Code**: Entwicklungsumgebung für die Implementierung.
-- **Python 3.12**: Programmiersprache für die Implementierung.
-- **Hugging Face Transformers**: Für die Modellarchitektur und das Sprachverständnis.
-- **LangChain**: Zum Aufbau und zur Verwaltung der Dialogstruktur und RAG-Ketten.
-- **FAISS**: Vektorsuche für die Wissensdatenbank (läuft aktuell auf der CPU).
-- **Fuzzywuzzy**: Für die Erkennung ähnlicher Anfragen (Fuzzy Matching).
 
+- **Modelle:** FLAN-T5 (Small, Base, Large, XL).
+- **Datenquellen:**
+  - Gefiltertes GermanQuAD: 352 Frage-Antwort-Paare aus Wikipedia.
+  - Gefiltertes GermanDPR: 655 Frage-Antwort-Paare mit positiven und negativen Beispielen.
+  - Domänenspezifische FAQs (Sales, General).
+- **Bibliotheken:**
+  - `fastapi`
+  - `uvicorn`
+  - `transformers`
+  - `sentence_transformers`
+  - `torch`
+  - `nltk`
+  - `psutil`
+  - `requests`
+  - `rouge_score`
+  - `fuzzywuzzy`
+  - `datasets`
+  - `pydantic`
+- **Entwicklungsumgebung:** Python 3.12, FastAPI, Tkinter.
+- **Hardware:**
+  - GPU-Server mit NVIDIA A100 GPUs.
+  - Entwicklung auf lokalen Maschinen mit RTX 3050 (6 GB).
 
+---
 
 ## Installation
 
-**Bibliotheken installieren**:
-```plaintext
-pip install torch
-pip install langchain
-pip install langchain langchain-community
-pip install langchain-huggingface
-pip install -U langchain
-pip install datasets
-pip install transformers[torch]
-pip install faiss-gpu
-pip install faiss-cpu
-pip install fuzzywuzzy[speedup]
-pip install nltk
+### Abhängigkeiten installieren:
 
-Integration Webseite
-pip install fastapi uvicorn
-
-pip install langdetect
-pip install uvicorn
-pip install py-cpuinfo
-pip install psutil
-pip install rouge-score
-pip install pyspellchecker
-pip install tensorboard
-
+Führe den folgenden Befehl aus, um alle benötigten Bibliotheken zu installieren:
+```bash
+pip install fastapi uvicorn transformers sentence-transformers torch nltk psutil requests rouge-score fuzzywuzzy datasets pydantic
 ```
 
+### Konfigurationsdatei:
+- Passe die `config.json` an, um Modelle, Trainingseinstellungen und API-Parameter zu definieren.
+
+---
 
 ## Training
-### Mindestanforderungen für das Training
-Das Training des Modells erfordert deutlich höhere Systemressourcen als die Nutzung. Die folgenden Mindestanforderungen ermöglichen ein akzeptables Trainingstempo:
-- **Prozessor**: Intel Core i5 oder AMD Ryzen 5 (Quad-Core oder höher)
-- **RAM**: 16 GB (Mehr ist empfohlen, um Trainingsdaten effizient verarbeiten zu können)
-- **Grafikkarte**: NVIDIA GPU mit mindestens 4 GB VRAM (z. B. NVIDIA GTX 1050 oder besser); für schnelleres Training wird eine neuere GPU mit CUDA-Unterstützung (z. B. RTX-Serie) empfohlen
-- **Speicherplatz**: 10 GB oder mehr, je nach Größe der Trainingsdaten und des Modells
-- **Betriebssystem**: Windows 10 oder höher, macOS, oder eine Linux-Distribution mit Python 3.8+ und CUDA-Treiber für GPU-Beschleunigung
 
-**Hinweis**: Ohne GPU kann das Training auf der CPU durchgeführt werden, allerdings wird es deutlich langsamer sein und mehrere Stunden für einfache Datensätze und kleinere Trainingsläufe dauern.
+### Zwei-Phasen-Training
+1. **Phase 1:**
+   - Nutzung von gefiltertem GermanQuAD und GermanDPR.
+   - Ziel: Verbesserung der allgemeinen QA-Fähigkeiten.
+2. **Phase 2:**
+   - Feinabstimmung mit den domänenspezifischen FAQs (Sales, General).
+   - Ziel: Spezifische Antworten auf Transformator-Fragen.
 
-### Eigene Hardware-Spezifikationen:
-- **Prozessor**: Intel Core i5-13500H
-- **RAM**: 16 GB
-- **Grafikkarte**: NVIDIA GeForce RTX 3050 (6 GB GDDR6)
-- **Speicherplatz**: 4 GB
-- **Betriebssystem**: Windows 11
+### Trainingsparameter
+- Lernrate: 2e-5
+- Batchgröße: 1-16 (abhängig von der GPU)
+- Epochen: 3-5
+- Negative-Beispiele-Rate: 50%
 
-### Schritte zum Training
-Um das Modell anzupassen oder zu erweitern:
-1. In den JSON-Dateien werden zusätzliche Informationen hinzugefügt.
-2. Das Modell wird trainiert, indem der folgende Befehl ausgeführt wird:
+### Training starten:
 ```bash
 python train_model.py
 ```
-Der Pfad `fine_tuned_model_de` und `fine_tuned_model_en` werden erstellt und speichert das trainierte Modell.
 
-3. Trainingseinstellungen wie num_train_epochs und per_device_train_batch_size können in train_model.py angepasst werden.
+---
 
-### Trainingskonfiguration
-Die folgenden Parameter sind entscheidend für das Fein-Tuning des Modells und können je nach Hardware und gewünschtem Ergebnis angepasst werden:
+## Evaluierung
 
-- **output_dir**: Der Speicherort für das trainierte Modell und die Checkpoints.  
-  Beispiel: `output_dir="./fine_tuned_model_de" und "./fine_tuned_model_de"` legt einen Ordner an, der während des Trainings automatisch mit Modellen und Checkpoints befüllt wird.
+- **Quantitative Metriken:**
+  - BLEU: Misst die Genauigkeit der generierten Antworten.
+  - ROUGE: Bewertet die semantische Übereinstimmung.
+- **Qualitative Tests:**
+  - Präzision bei Transformator-spezifischen Fragen.
+  - Umgang mit themenfremden Anfragen.
 
-- **eval_strategy**: Legt fest, ob und wie oft eine Evaluation während des Trainings erfolgt.  
-  Wenn `eval_strategy="no"` gesetzt ist, erfolgt keine Evaluation, was Speicher spart und das Training beschleunigt. Alternativ kann `eval_strategy="steps"` oder `"epoch"` gewählt werden, um nach jeder bestimmten Schrittanzahl bzw. Epoche eine Evaluation durchzuführen. Regelmäßige Evaluationen erhöhen jedoch die GPU-Auslastung und Trainingszeit.
-
-- **learning_rate**: Die Lernrate steuert die Größe der Schritte, die das Modell bei jedem Update macht.  
-  Typische Werte liegen zwischen `1e-5` und `5e-5`. Eine kleinere Lernrate (z. B. `2e-5`) ist für präzisere Anpassungen geeignet, kann jedoch das Training verlangsamen und erfordert möglicherweise mehr Epochen. Eine höhere Lernrate führt zu schnellerem Training, birgt jedoch das Risiko von Überanpassung (Overfitting), da größere Updates vorgenommen werden.
-
-- **per_device_train_batch_size**: Die Anzahl der Trainingsbeispiele pro Batch, die pro Gerät verarbeitet wird.  
-  Kleinere Werte (z. B. `4`) reduzieren den GPU-Speicherbedarf und sind für GPUs mit weniger VRAM geeignet, während größere Werte (z. B. `16` oder `32`) bei leistungsstarken GPUs das Training beschleunigen können. Als Faustregel gilt: Verdoppelt sich die Batch-Größe, verdoppelt sich der Speicherbedarf der GPU. Zu große Batches können jedoch zu Überanpassung führen.
-
-- **num_train_epochs**: Anzahl der Epochen, die das Modell durchläuft, um die Daten zu lernen.  
-  Für kleinere Datensätze reichen oft 1-3 Epochen, während umfangreichere Datensätze mehr Epochen erfordern können. Mehr Epochen verbessern die Genauigkeit, können jedoch die Trainingszeit und den GPU-Speicherbedarf erhöhen, da das Modell mehrfach auf die Daten zugreift.
-
-- **weight_decay**: Ein Parameter zur Kontrolle der Modellkomplexität und zur Reduzierung von Überanpassung.  
-  Typische Werte liegen zwischen `0.01` und `0.1`. Ein kleinerer Wert, wie `0.01`, bewirkt einen minimalen Gewichtszerfall, der die Modellparameter leicht reguliert, während höhere Werte die Regularisierung verstärken und Overfitting weiter eindämmen können.
-
-
+---
 
 ## Verwendung
 
-### Mindestanforderungen für die Nutzung
-Um den Chatbot ohne Training zu nutzen, sind die folgenden minimalen Systemanforderungen empfohlen:
+### Mindestanforderungen
+- Prozessor: Intel i5 oder besser
+- RAM: 8 GB
+- GPU: Optional (empfohlen für größere Modelle)
 
-- **Prozessor**: Intel Core i3 oder AMD Ryzen 3 (mindestens Dual-Core)
-- **RAM**: 8 GB
-- **Speicherplatz**: Etwa 4 GB für das vortrainierte Modell und die Wissensdatenbanken
-- **Grafikkarte**: Keine dedizierte GPU erforderlich; eine integrierte GPU reicht aus
-- **Betriebssystem**: Windows 10 oder höher, macOS, oder eine Linux-Distribution mit Python 3.8+
+### Chatbot starten:
+```bash
+python chatbot_gui.py
+```
 
-Diese Konfiguration ermöglicht eine reibungslose Nutzung des Chatbots für einfache Anfragen in Echtzeit.
+### Funktionen:
+1. **Live-Chat:** Echtzeitantworten auf Benutzeranfragen.
+2. **API:** Integration in externe Anwendungen.
+3. **GUI:** Verwaltung von Modellen, Training und Logs.
+4. **Einstellungen:** Anpassung von Parametern wie Temperatur, Modellwahl und mehr.
 
-1. **Starten des Chatbots**:
-   ```bash
-   python chatbot_main.py
-    ```
-2. **Interaktive Eingabe**:
-Geben Sie Fragen ein, wie z. B.:
-"Welche Transformator-Typen gibt es?"
-"Was kostet ein Transformator?"
+---
 
-3. **Beenden des Chats**:
-Geben Sie `exit` ein, um die Chat-Sitzung zu beenden.
+## Quellen und Lizenz
 
+### Quellen:
+- [GermanQuAD](https://www.deepset.ai/germanquad)
+- [GermanDPR](https://www.deepset.ai/germanquad)
 
-
-## Quellen
-- **LLM (Large Language Model)**: Das Projekt verwendet das vortrainierte Modell `google/flan-t5-base`, [Link](https://huggingface.co/google/flan-t5-base/)
-- **LangChain**: Eine Framework zur Entwicklung von Anwendungen mit großen Sprachmodellen. [Link](https://pypi.org/project/langchain/)
-- **Hugging Face Transformers**: Eine Bibliothek für die Arbeit mit vortrainierten Transformer-Modellen. [Link](https://pypi.org/project/transformers/) [Link](https://huggingface.co/docs/transformers/main_classes/trainer)
-- **FAISS**: Eine Bibliothek für effiziente Ähnlichkeitssuche und Clustering von dichten Vektoren. [Link](https://python.langchain.com/docs/integrations/vectorstores/faiss/)
-- **FuzzyWuzzy**: Ein Python-Paket für Fuzzy-String-Matching. [Link](https://pypi.org/project/fuzzywuzzy/)
-- **LangChain Tutorial**: Ein Crash-Kurs zur Verwendung von LangChain in Python. [Link](https://www.python-engineer.com/posts/langchain-crash-course/)
-- **FAISS und Sentence-Transformers in 5 Minuten**: Ein Leitfaden zur schnellen Implementierung von FAISS mit Sentence-Transformers. [Link](https://www.stephendiehl.com/posts/faiss/)
-- **LangChain FAISS Dokumentation**: Die offizielle Dokumentation zur Integration von FAISS in LangChain. [Link](https://python.langchain.com/docs/integrations/vectorstores/faiss/)
-- **LangChain C Transformers**: Informationen zur Verwendung der C Transformers-Bibliothek innerhalb von LangChain. [Link](https://python.langchain.com/docs/integrations/providers/ctransformers/)
-
-
-
-
-## Lizenz und Haftungsausschluss
-
-Copyright (c) 2024 Anonym
-
-Dieses Projekt ist ausschließlich für die Überprüfung durch die Hochschule Kaiserslautern und zur Einsicht durch die zugewiesenen Prüfer gedacht. Die Nutzung, Kopie, Veränderung und Verbreitung ist nur mit ausdrücklicher Genehmigung des Autors gestattet. Jegliche kommerzielle Nutzung oder Verbreitung ohne Genehmigung ist untersagt.
-
-Die Software wird "wie besehen" bereitgestellt, ohne jegliche ausdrückliche oder stillschweigende Garantie, einschließlich und ohne Einschränkung der Garantien zur Gebrauchstauglichkeit, Eignung für einen bestimmten Zweck und Nichtverletzung. Der Autor übernimmt keine Haftung für direkte, indirekte, zufällige oder Folgeschäden, die aus der Nutzung oder Unfähigkeit zur Nutzung der Software entstehen.
-
-**Hinweis**: Dieses Projekt ist ein Forschungs- und Entwicklungsprojekt und nicht für die öffentliche Nutzung oder den produktiven Einsatz bestimmt. Alle Informationen wurden nach bestem Wissen erstellt, aber es wird keine Garantie für die Vollständigkeit, Richtigkeit oder Aktualität der bereitgestellten Informationen übernommen.
+### Lizenz:
+Dieses Projekt unterliegt der MIT-Lizenz. Alle verwendeten Modelle und Datensätze unterliegen den jeweiligen Lizenzen.
