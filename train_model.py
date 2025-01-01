@@ -16,7 +16,7 @@ import threading
 # nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
 
 # ---------------------------- TensorBoard ---------------------------------------------
-def start_tensorboard(logdir="./fine_tuned_model", port=6006):
+def start_tensorboard(logdir="./fine_tuned_model", port=6007):
     """
     Startet TensorBoard in einem separaten Thread.
     :param logdir: Verzeichnis, in dem die TensorBoard-Logs gespeichert werden.
@@ -367,6 +367,6 @@ def main():
 
 if __name__ == "__main__":
     print("Starte TensorBoard...")
-    start_tensorboard(logdir="./fine_tuned_model", port=6006)  # Logs-Verzeichnis und Port angeben
-    print("TensorBoard läuft auf http://localhost:6006")
+    start_tensorboard(logdir="./fine_tuned_model", port=6007)  # Logs-Verzeichnis und Port angeben
+    print("TensorBoard läuft auf http://localhost:6007")
     main()
