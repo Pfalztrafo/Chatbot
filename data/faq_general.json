@@ -43,7 +43,7 @@
     },
     {
         "question": "Kann ich mit einem Menschen sprechen?",
-        "answer": "Falls ich Ihre Frage nicht beantworten kann, kontaktieren Sie bitte unser Team unter der Telefonnummer 06236 56509940 7890 oder per E-Mail unter vertrieb@pfalztrafo.de. Meine menschlichen Kollegen helfen Ihnen gerne weiter.",
+        "answer": "Falls ich Ihre Frage nicht beantworten kann, wenden Sie sich bitte an unser Support-Team. Sie können uns über unsere Kontaktseite erreichen, wo Sie weitere Informationen finden.",
         "category": "Kontaktwunsch",
         "synonyms": ["Mit einem Mitarbeiter sprechen?", "Einen Menschen sprechen", "Kann ich jemanden anrufen?", "Mit jemandem sprechen"]
     },
@@ -91,13 +91,13 @@
     },
     {
         "question": "Ich habe ein dringendes Problem",
-        "answer": "Es tut mir leid zu hören, dass es ein Problem gibt. Bitte kontaktieren Sie unser Team direkt unter 06236 56509940, damit wir Ihnen schnellstmöglich helfen können.",
+        "answer": "Falls ich Ihre Frage nicht beantworten kann, wenden Sie sich bitte an unser Support-Team. Sie können uns über unsere Kontaktseite erreichen, wo Sie weitere Informationen finden.",
         "synonyms": ["Notfall", "Dringend", "Es funktioniert nicht", "Ich brauche sofort Hilfe", "Schnelle Unterstützung"],
         "category": "Support"
     },
     {
         "question": "Wie kontaktiere ich den technischen Support?",
-        "answer": "Unser technischer Support steht Ihnen telefonisch unter 06236 56509940 zur Verfügung. Alternativ können Sie uns per E-Mail kontaktieren: support@pfalztrafo.de.",
+        "answer": "Falls ich Ihre Frage nicht beantworten kann, wenden Sie sich bitte an unser Support-Team. Sie können uns über unsere Kontaktseite erreichen, wo Sie weitere Informationen finden.",
         "synonyms": ["Technischer Support", "Problem melden", "Hilfe bei technischen Problemen", "Support kontaktieren", "Probleme melden"],
         "category": "Support"
     },
@@ -138,30 +138,6 @@
         "category": "Einstellungen"
     },
     {
-        "question": "Allgemeinwissen",
-        "answer": "Ich bin darauf spezialisiert, Fragen zu Transformatoren und verwandten Themen zu beantworten. Für andere Wissensfragen empfehle ich Suchmaschinen.",
-        "synonyms": ["Was ist die Hauptstadt von Frankreich?", "Wie hoch ist der Mount Everest?", "Wer ist der Präsident von Deutschland?", "Wann war der Zweite Weltkrieg?", "Wie viele Länder gibt es?", "Was ist der längste Fluss?", "Allgemeinwissen", "Quizfrage", "Weißt du das?", "Kannst du mir sagen, wann der Mond landet?"],
-        "category": "Allgemein"
-    },
-    {
-        "question": "Komplexe technische Fragen",
-        "answer": "Das ist eine sehr spezifische technische Frage. Ich empfehle Ihnen, sich an unser Expertenteam unter vertrieb@pfalztrafo.de zu wenden.",
-        "synonyms": ["Wie funktionieren dreiphasige Transformatoren?", "Welche Materialien sind die besten für Isolierung?", "Wie wird der Kernverlust in einem Transformator berechnet?", "Was ist der Unterschied zwischen Öl- und Trockentransformatoren?", "Technische Frage", "Erkläre mir eine komplexe Technik", "Gib mir Details zu technischen Transformatoren", "Technikdetails zu Trafo"],
-        "category": "Technik"
-    },
-    {
-        "question": "Wie kann ich etwas zurücksenden?",
-        "answer": "Für Rücksendungen oder Beschwerden wenden Sie sich bitte an unseren Kundenservice unter vertrieb@pfalztrafo.de.",
-        "synonyms": ["Beschwerde einreichen", "Service anfragen", "Wie geht eine Reklamation?", "Kundenservice kontaktieren", "Kann ich eine Rückgabe machen?", "Wie funktioniert die Rücksendung?", "Wie melde ich einen Defekt?"],
-        "category": "Kundenservice"
-    },
-    {
-        "question": "Wo werden Transformatoren genutzt?",
-        "answer": "Transformatoren werden in verschiedenen Bereichen eingesetzt, z. B. in der Energieverteilung, Industrie oder für erneuerbare Energien. Haben Sie einen spezifischen Anwendungsfall im Sinn?",
-        "synonyms": ["Anwendungsbeispiele für Trafos", "In welchen Bereichen sind Transformatoren sinnvoll?", "Wofür ist ein Transformator geeignet?", "Kann ein Trafo bei mir zu Hause genutzt werden?", "Was sind Beispiele für Trafos?", "Wofür braucht man einen Transformator?"],
-        "category": "Technik"
-    },
-    {
         "question": "Bist du ein Mensch?",
         "answer": "Ich bin ein digitaler Assistent und habe keine Gefühle. Aber ich bin hier, um Ihre Fragen zu beantworten.",
         "synonyms": ["Hast du Gefühle?", "Wie alt bist du?", "Was ist dein Lieblingsessen?", "Kannst du lieben?", "Wie bist du programmiert?", "Hast du eine Familie?", "Was machst du in deiner Freizeit?", "Hast du eine Meinung?"],
@@ -171,18 +147,6 @@
         "question": "Kannst du Matheaufgaben berechnen?",
         "answer": "Ich bin auf Transformatoren spezialisiert und keine Rechenmaschine. Aber für einfache Aufgaben könnten Sie Taschenrechner-Apps nutzen.",
         "synonyms": ["Was ist 2+2?", "1+1?", "Wie viel ist 15 mal 12?", "Kannst du mir eine Gleichung lösen?", "Rechne 100 geteilt durch 25.", "Was ergibt 9 hoch 2?", "Matheaufgabe", "Mathematik", "Kannst du rechnen?", "Hilf mir bei einer Gleichung", "Wie rechne ich Prozent aus?"],
-        "category": "Allgemein"
-    },
-    {
-        "question": "Plötzlicher Themenwechsel",
-        "answer": "Ich bemerke, dass Sie das Thema gewechselt haben. Möchten Sie weiterhin über Transformatoren sprechen, oder soll ich Ihnen bei etwas anderem helfen?",
-        "synonyms": ["Was kostet ein Transformator? Wie ist das Wetter morgen?", "Kann ich mit einem Menschen sprechen? Wie teuer ist ein Trafo?", "Sind Transformatoren energieeffizient? Kennst du gute Filme?", "Was ist die Garantie für Transformatoren? Was ist der nächste Feiertag?", "Kann ich einen Transformator für PV kaufen? Was kostet ein Kinoticket?", "Wie funktioniert ein Transformator? Wie kann ich reisen?", "Was sind die Spezifikationen dieses Trafos? Ist es heute sonnig?", "Welche Spannung hat ein Trafo? Kannst du mir ein Rezept empfehlen?", "Was ist der Preis eines Transformators? Wie programmiert man Python?", "Sind Transformatoren nachhaltig? Welche Bücher empfiehlst du?"],
-        "category": "Allgemein"
-    },
-    {
-        "question": "Unsinnige Eingabe",
-        "answer": "Interessant, was Sie da eingegeben haben! Haben Sie vielleicht eine konkrete Frage zu Transformatoren oder etwas anderem?",
-        "synonyms": ["asdfghjkl", "blablabla", "12345", "!@#$%", "qwertzuiop", "lalalala", "irgendwas"],
         "category": "Allgemein"
     },
     {
