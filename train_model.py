@@ -5,15 +5,11 @@ from datasets import Dataset
 from datetime import datetime
 import os
 import platform
-from nltk.corpus import wordnet as wn
 import psutil  # Zum Abrufen der detaillierten Systeminformationen
+import glob  # Zum Durchsuchen von Dateien
 
 import subprocess
 import threading
-
-# WordNet-Daten einmalig herunterladen
-# nltk.download('wordnet')
-# nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
 
 # ---------------------------- TensorBoard ---------------------------------------------
 def start_tensorboard(logdir="./fine_tuned_model", port=6007):
@@ -27,8 +23,22 @@ def start_tensorboard(logdir="./fine_tuned_model", port=6007):
 
     threading.Thread(target=run_tensorboard, daemon=True).start()
 
+# ---------------------------- Checkpoints ---------------------------------------------
+def get_last_checkpoint(output_dir):
+    """
+    Findet den letzten Checkpoint im Ausgabe-Verzeichnis, der die Datei 'pytorch_model.bin' enthält.
+    :param output_dir: Verzeichnis, in dem Checkpoints gespeichert werden.
+    :return: Pfad zum letzten gültigen Checkpoint oder None, wenn keiner gefunden wurde.
+    """
+    checkpoints = glob.glob(os.path.join(output_dir, "checkpoint-*"))
+    valid_checkpoints = [ckpt for ckpt in checkpoints if os.path.exists(os.path.join(ckpt, "pytorch_model.bin"))]
+    if valid_checkpoints:
+        # Sortiere die Checkpoints nach Nummer und wähle den neuesten
+        checkpoints_sorted = sorted(valid_checkpoints, key=lambda x: int(x.split("-")[-1]))
+        return checkpoints_sorted[-1]
+    return None
+
 # ---------------------------- Konfiguration ---------------------------------------------
-# Konfigurationsparameter laden
 def load_config():
     """Lädt Konfigurationsparameter aus der Datei config.json oder verwendet Standardwerte."""
     default_config = {
@@ -40,7 +50,26 @@ def load_config():
             "epochs": 1,
             "learning_rate": 2e-5,
             "batch_size": 1,
-            "weight_decay": 0.01
+            "weight_decay": 0.01,
+            "train_ratio": 0.8,
+            "negative_sample_rate": 0.5,
+            "data_sources": [
+                "data/faq_general.json"
+            ],
+            "data_total": [
+                "data/faq_general.json",
+                "data/faq_sales.json",
+                "data/GermanDPR_train_filtered.json",
+                "data/GermanQuAD_train_filtered.json"
+            ],
+            "training_args": {
+                "eval_strategy": "epoch",
+                "save_strategy": "epoch",
+                "save_total_limit": 5,
+                "logging_steps": 10,
+                "load_best_model_at_end": True,
+                "early_stopping_patience": 3
+            }
         }
     }
 
@@ -52,7 +81,6 @@ def load_config():
         print(f"Warnung: {e}. Standardkonfiguration wird verwendet.")
         return default_config
 
-
 # Konfigurationsparameter laden
 config = load_config()
 MODEL_PATH = os.path.join(config["MODEL"]["MODEL_PATH"], config["MODEL"]["MODEL_NAME"].replace("/", "_"))
@@ -60,7 +88,6 @@ MODEL_NAME = config["MODEL"]["MODEL_NAME"]
 
 # LLM google/flan-t5 laden
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-
 
 # ---------------------------- Loggen ---------------------------------------------
 # Pfad zur Log-Datei
@@ -123,7 +150,6 @@ def log_training_details(training_args, total_epochs, device_spec, epoch_logs, t
         log_file.write(f"Total Training Time for This Run: {total_training_time:.2f} seconds\n")
         log_file.write("--- End of Training ---\n\n")
 
-
 # Systeminformationen und GPU-Verfügbarkeit
 def get_device_spec():
     device_spec = {}
@@ -148,26 +174,48 @@ def get_device_spec():
     device_spec["Platform"] = f"{platform.system()} {platform.platform()}"
 
     return device_spec
-# -----------------------------------------------------------------------
 
-# Trainingsdaten laden und erweitern
+# ---------------------------- Trainingsdaten laden und erweitern ---------------------------------------------
 def load_data():
     """
-    Dynamisches Laden von Trainingsdaten basierend auf `data_sources` in config.json.
+    Dynamisches Laden von Trainingsdaten aus verschiedenen JSON-Dateien.
     """
     data = []
-    files_to_load = config["TRAINING"].get("data_sources", [])
+    files_to_load = config["TRAINING"].get("data_sources", [])  # JSON-Dateien aus der Konfiguration
 
     for file_path in files_to_load:
         try:
             with open(file_path, "r", encoding="utf-8") as file:
-                dialogues = json.load(file)
-                for item in dialogues:
+                entries = json.load(file)
+                for item in entries:
+                    # Felder dynamisch extrahieren und standardisieren
+                    question = item.get("question", "").strip()
+                    answer = item.get("answer", "").strip()
+                    context = item.get("context", "")  # Nur in GermanDPR und GermanQuAD
+                    category = item.get("category", "General")  # Standardkategorie
+                    synonyms = item.get("synonyms", [])  # Nur in den FAQs
+
+                    # Überspringe Einträge ohne Frage
+                    if not question:
+                        print(f"Überspringe Eintrag ohne Frage: {item}")
+                        continue
+
+                    # Überspringe Einträge ohne Antwort, außer wenn sie als Negative gekennzeichnet sind
+                    if not answer and category not in ["Negative", "Hard-Negative"]:
+                        print(f"Überspringe ungültigen Eintrag ohne Antwort: {item}")
+                        continue
+
+                    # Setze eine spezielle Antwort für negative Beispiele
+                    if not answer and category in ["Negative", "Hard-Negative"]:
+                        answer = "### NO_ANSWER ###"  # Spezieller Token
+
+                    # Daten normalisieren und erweitern
                     data.append({
-                        "input": item["question"],
-                        "output": item["answer"],
-                        "context": item.get("context", ""),  # Kontext optional
-                        "category": item.get("category", "General")  # Kategorie berücksichtigen
+                        "input": question,
+                        "output": answer,
+                        "context": context,
+                        "category": category,
+                        "synonyms": synonyms
                     })
         except FileNotFoundError:
             print(f"[WARNUNG] Datei {file_path} nicht gefunden. Überspringe diese Datei.")
@@ -175,11 +223,11 @@ def load_data():
             print(f"[FEHLER] Fehler beim Lesen von {file_path}: {e}. Überspringe diese Datei.")
 
     if not data:
-        raise ValueError("Keine Trainingsdaten gefunden! Überprüfen Sie die JSON-Dateien.")
+        raise ValueError("Keine gültigen Trainingsdaten gefunden! Überprüfen Sie die JSON-Dateien.")
+    
     return data
 
-
-# Negativbeispiele filtern
+# ---------------------------- Negativbeispiele filtern ---------------------------------------------
 def filter_negatives(data, negative_sample_rate=0.5):
     """
     Filtert Negative und Hard-Negative Beispiele basierend auf der Sampling-Rate.
@@ -193,46 +241,33 @@ def filter_negatives(data, negative_sample_rate=0.5):
             filtered_data.append(item)  # Positive und Training bleiben unverändert
     return filtered_data
 
-
-
-# Daten für das Modell vorbereiten
+# ---------------------------- Daten für das Modell vorbereiten ---------------------------------------------
 def preprocess_function(examples):
     inputs = []
-    max_context_length = 350  # Maximale Länge des Kontexts
-    for category, question, context in zip(
+    targets = []
+    for category, question, context, answer in zip(
         examples["category"], 
         examples["input"], 
-        examples.get("context", [""] * len(examples["input"]))
+        examples.get("context", [""] * len(examples["input"])),  # Kontext optional
+        examples["output"]
     ):
-        # Kontext kürzen, wenn zu lang
-        if len(context) > max_context_length:
-            context = context[:max_context_length]
-        inputs.append(f"[{category}] {question} Kontext: {context}" if context else f"[{category}] {question}")
+        input_text = f"Kategorie: {category}\n"
+        if context:
+            input_text += f"Kontext: {context}\n"
+        input_text += f"Frage: {question}"
+        inputs.append(input_text)
+        
+        if answer == "### NO_ANSWER ###":
+            targets.append("Ich kann Ihnen dazu keine Antwort geben.")
+        else:
+            targets.append(answer)
 
-    targets = examples["output"]
     model_inputs = tokenizer(inputs, max_length=350, padding="max_length", truncation=True)
     labels = tokenizer(targets, max_length=350, padding="max_length", truncation=True).input_ids
     model_inputs["labels"] = labels
     return model_inputs
 
-
-
-# Synonyme für die Erweiterung der Trainingsdaten
-def expand_with_synonyms(data):
-    expanded_data = []
-    for item in data:
-        expanded_data.append(item)  # Originalfrage
-        if "synonyms" in item:
-            for synonym in item["synonyms"]:
-                expanded_data.append({
-                    "question": synonym,
-                    "answer": item["answer"],
-                    "category": item["category"]
-                })
-    return expanded_data
-
-
-# Hauptfunktion für das Training pro Sprache
+# ---------------------------- Hauptfunktion für das Training ---------------------------------------------
 def main():
     """
     Hauptfunktion für das Training des Modells.
@@ -241,23 +276,23 @@ def main():
     print("Starte das Training...")
 
     # Speicherort für das Modell
-    #output_dir = "./fine_tuned_model"
     output_dir = MODEL_PATH
-    checkpoint_path = os.path.join(output_dir, "trainer_state.json")
 
     # Fortschritt des Trainings laden und aktualisieren
     progress = load_progress(MODEL_NAME)
     total_epochs = progress.get("total_epochs", 0)
 
     # Checkpoints prüfen und laden
-    if os.path.exists(output_dir) and len(os.listdir(output_dir)) > 0 and os.path.exists(checkpoint_path):
-        print("Lade zuletzt gespeicherte Modellparameter...")
-        model = AutoModelForSeq2SeqLM.from_pretrained(output_dir)
-        resume_training = True  # Fortsetzung des Trainings
+    last_checkpoint = get_last_checkpoint(output_dir)
+    resume_training = bool(last_checkpoint)
+
+    if resume_training:
+        print(f"Lade zuletzt gespeicherten Checkpoint: {last_checkpoint}")
     else:
         print("Starte mit dem Basis-Modell...")
-        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-        resume_training = False  # Neues Training
+
+    # Modell immer aus dem Basis-Modell laden
+    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
 
     # Trainingsdaten laden
     training_data = load_data()
@@ -265,10 +300,7 @@ def main():
     # Negativbeispiele filtern
     training_data = filter_negatives(training_data, negative_sample_rate=config["TRAINING"].get("negative_sample_rate", 0.5))
 
-    # Synonyme in die Trainingsdaten erweitern (optional)
-    training_data = expand_with_synonyms(training_data)
-
-    # Dataset erstellen
+    # Dataset erstellen und preprocessen
     dataset = Dataset.from_dict({
         "input": [item["input"] for item in training_data],
         "output": [item["output"] for item in training_data],
@@ -276,31 +308,25 @@ def main():
     })
     tokenized_dataset = dataset.map(preprocess_function, batched=True)
 
-    # Konfigurationsparameter laden
-    #config = load_config()
-
-    # Daten aufteilen (80% Training, 20% Validierung)
-    train_ratio = config["TRAINING"]["train_ratio"]
-    train_size = int(train_ratio * len(tokenized_dataset))
-    train_dataset = tokenized_dataset.select(range(train_size))
-    eval_dataset = tokenized_dataset.select(range(train_size, len(tokenized_dataset)))
+    # Daten aufteilen (80% Training, 20% Validierung) mit `train_test_split`
+    split_datasets = tokenized_dataset.train_test_split(test_size=1 - config["TRAINING"]["train_ratio"])
+    train_dataset = split_datasets["train"]
+    eval_dataset = split_datasets["test"]
 
     # Trainingsargumente festlegen
     training_args = TrainingArguments(
         output_dir=output_dir,
-        evaluation_strategy="epoch",  # Evaluation nach jeder Epoche
-        save_strategy="epoch",  # Modell nach jeder Epoche speichern
-        save_total_limit=2,  # Nur die letzten 2 Checkpoints speichern
+        eval_strategy=config["TRAINING"]["training_args"]["eval_strategy"],  # Ersetze evaluation_strategy durch eval_strategy
+        save_strategy=config["TRAINING"]["training_args"]["save_strategy"],  # Dynamisch geladen
+        save_total_limit=config["TRAINING"]["training_args"]["save_total_limit"],  # Dynamisch geladen
         learning_rate=config["TRAINING"]["learning_rate"],
         per_device_train_batch_size=config["TRAINING"]["batch_size"],
         num_train_epochs=config["TRAINING"]["epochs"],  # Anzahl der Epochen
         weight_decay=config["TRAINING"]["weight_decay"],
-        #logging_dir="./training_logs",  # Logs für TensorBoard
-        logging_steps=10,  # Log-Schritte
-        #log_level="info",  # Zeige mehr Details im Terminal
-        load_best_model_at_end=True,  # Beste Modellparameter am Ende laden
-        #metric_for_best_model="eval_loss",  # Metrik zur Auswahl des besten Modells
-        #greater_is_better=False  # Kleinere Verluste sind besser
+        logging_steps=config["TRAINING"]["training_args"]["logging_steps"],  # Dynamisch geladen
+        load_best_model_at_end=config["TRAINING"]["training_args"]["load_best_model_at_end"],  # Dynamisch geladen
+        metric_for_best_model="eval_loss",  # Definiert die Metrik für das beste Modell
+        greater_is_better=False  # Kleinere Verluste sind besser
     )
 
     # Fortschritt aktualisieren
@@ -317,18 +343,18 @@ def main():
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,  # Validierungsdaten
         tokenizer=tokenizer,  # Wichtig für Seq2Seq-Modelle
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]  # Early Stopping aktivieren
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=config["TRAINING"]["training_args"].get("early_stopping_patience", 3))]  # Early Stopping aktivieren
     )
 
     # Training starten (mit Checkpoint-Fortsetzung)
     start_time = datetime.now()
     if resume_training:
         print("Setze Training vom letzten Checkpoint fort...")
-        trainer.train(resume_from_checkpoint=output_dir)
+        trainer.train(resume_from_checkpoint=last_checkpoint)
     else:
         print("Starte neues Training...")
         trainer.train()
-    
+
     # Gesamttrainingszeit berechnen
     training_time = (datetime.now() - start_time).total_seconds()
 
@@ -337,15 +363,14 @@ def main():
     tokenizer.save_pretrained(output_dir)
 
     # Fortschritt aktualisieren
-    total_epochs += training_args.num_train_epochs
     save_progress(MODEL_NAME, {"total_epochs": total_epochs})
 
     # Trainingsdetails loggen
     epoch_logs = []
-    for i, log in enumerate(trainer.state.log_history):
+    for log in trainer.state.log_history:
         if "loss" in log:
             epoch_logs.append({
-                "epoch_num": i + 1,
+                "epoch_num": trainer.state.epoch,  # Bessere Erfassung der aktuellen Epoche
                 "loss": log["loss"],
                 "grad_norm": log.get("grad_norm", None),
                 "learning_rate": log.get("learning_rate", 0.0)
@@ -354,7 +379,7 @@ def main():
     log_training_details(
         training_args,
         total_epochs,
-        get_device_spec(),
+        device_spec,
         epoch_logs,
         training_time,
         None  # Phase ist aktuell nicht vorhanden
@@ -364,7 +389,7 @@ def main():
     print(f"Das feingetunte Modell wurde unter {output_dir} gespeichert.")
     print(f"Total Training Time: {training_time:.2f} seconds\n")
 
-
+# ---------------------------- Skript starten ---------------------------------------------
 if __name__ == "__main__":
     print("Starte TensorBoard...")
     start_tensorboard(logdir="./fine_tuned_model", port=6007)  # Logs-Verzeichnis und Port angeben
