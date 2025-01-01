@@ -73,13 +73,13 @@ Dieses Projekt konzentriert sich auf die wissenschaftliche Analyse und Feinabsti
 
 ### Abhängigkeiten installieren:
 
-Führe den folgenden Befehl aus, um alle benötigten Bibliotheken zu installieren:
+Um alle benötigten Bibliotheken zu installieren:
 ```bash
 pip install fastapi uvicorn transformers sentence-transformers torch nltk psutil requests rouge-score fuzzywuzzy datasets pydantic
 ```
 
 ### Konfigurationsdatei:
-- Passe die `config.json` an, um Modelle, Trainingseinstellungen und API-Parameter zu definieren.
+- Unter `config.json` werden alle Parameter definieren wie Modelle, Chat-, Trainingseinstellungen und API-Parameter.
 
 ---
 
