@@ -30,14 +30,14 @@
         }
     },
     "TRAINING": {
-        "epochs": 1,
+        "epochs": 10,
         "learning_rate": 2e-05,
         "batch_size": 1,
         "weight_decay": 0.01,
         "train_ratio": 0.8,
         "negative_sample_rate": 0.5,
         "data_sources": [
-            "data/faq_general.json"
+            "data/faq_sales.json"
         ],
         "data_total": [
             "data/faq_general.json",

@@ -1827,3 +1827,115 @@ Average Loss for This Run: 39.6070
 Total Training Time for This Run: 7.48 seconds
 --- End of Training ---
 
+--- Training Run ---
+Start Time: 2025-01-01 20:03:27
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 39
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1.0: Loss = 38.3755, Grad Norm = 162.8107147216797, LR = 1.8181818181818183e-06
+
+Average Loss for This Run: 38.3755
+Total Training Time for This Run: 9.36 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2025-01-01 20:05:49
+Total Epochs in This Run: 10
+Cumulative Total Epochs: 49
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 10.0: Loss = 37.4303, Grad Norm = 124.05836486816406, LR = 1.8181818181818182e-05
+  Epoch 10.0: Loss = 32.1174, Grad Norm = 128.80308532714844, LR = 1.6363636363636366e-05
+  Epoch 10.0: Loss = 28.3230, Grad Norm = 79.11116027832031, LR = 1.4545454545454546e-05
+  Epoch 10.0: Loss = 25.8820, Grad Norm = 81.10289001464844, LR = 1.2727272727272728e-05
+  Epoch 10.0: Loss = 23.8993, Grad Norm = 97.89959716796875, LR = 1.0909090909090909e-05
+  Epoch 10.0: Loss = 22.5902, Grad Norm = 86.21322631835938, LR = 9.090909090909091e-06
+  Epoch 10.0: Loss = 21.1194, Grad Norm = 98.1797103881836, LR = 7.272727272727273e-06
+  Epoch 10.0: Loss = 19.9288, Grad Norm = 72.03564453125, LR = 5.4545454545454545e-06
+  Epoch 10.0: Loss = 19.4529, Grad Norm = 104.15118408203125, LR = 3.6363636363636366e-06
+  Epoch 10.0: Loss = 18.6128, Grad Norm = 73.54593658447266, LR = 1.8181818181818183e-06
+  Epoch 10.0: Loss = 18.6442, Grad Norm = 90.9149169921875, LR = 0.0
+
+Average Loss for This Run: 24.3637
+Total Training Time for This Run: 65.99 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2025-01-01 20:09:05
+Total Epochs in This Run: 10
+Cumulative Total Epochs: 59
+Learning Rate: 2e-05
+Batch Size per Device: 1
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 10.0: Loss = 39.2291, Grad Norm = 231.15066528320312, LR = 1.9534883720930235e-05
+  Epoch 10.0: Loss = 32.0742, Grad Norm = 142.74636840820312, LR = 1.9069767441860468e-05
+  Epoch 10.0: Loss = 30.2053, Grad Norm = 129.11865234375, LR = 1.86046511627907e-05
+  Epoch 10.0: Loss = 26.2923, Grad Norm = 65.24522399902344, LR = 1.813953488372093e-05
+  Epoch 10.0: Loss = 26.7824, Grad Norm = 88.72225952148438, LR = 1.7674418604651163e-05
+  Epoch 10.0: Loss = 23.6847, Grad Norm = 96.46942138671875, LR = 1.7209302325581396e-05
+  Epoch 10.0: Loss = 21.5148, Grad Norm = 82.86034393310547, LR = 1.674418604651163e-05
+  Epoch 10.0: Loss = 18.8720, Grad Norm = 59.958736419677734, LR = 1.6279069767441862e-05
+  Epoch 10.0: Loss = 18.6917, Grad Norm = 95.31814575195312, LR = 1.5813953488372095e-05
+  Epoch 10.0: Loss = 16.2050, Grad Norm = 95.90760803222656, LR = 1.5348837209302328e-05
+  Epoch 10.0: Loss = 16.0475, Grad Norm = 60.12677001953125, LR = 1.488372093023256e-05
+  Epoch 10.0: Loss = 13.6393, Grad Norm = 72.884521484375, LR = 1.441860465116279e-05
+  Epoch 10.0: Loss = 13.0130, Grad Norm = 151.52371215820312, LR = 1.3953488372093025e-05
+  Epoch 10.0: Loss = 11.2113, Grad Norm = 120.73294830322266, LR = 1.3488372093023257e-05
+  Epoch 10.0: Loss = 10.1350, Grad Norm = 44.6120719909668, LR = 1.302325581395349e-05
+  Epoch 10.0: Loss = 9.5019, Grad Norm = 76.57118225097656, LR = 1.2558139534883723e-05
+  Epoch 10.0: Loss = 8.7038, Grad Norm = 50.745235443115234, LR = 1.2093023255813954e-05
+  Epoch 10.0: Loss = 8.2688, Grad Norm = 66.78910064697266, LR = 1.1627906976744187e-05
+  Epoch 10.0: Loss = 7.5999, Grad Norm = 40.083213806152344, LR = 1.116279069767442e-05
+  Epoch 10.0: Loss = 7.4353, Grad Norm = 76.24214935302734, LR = 1.0697674418604651e-05
+  Epoch 10.0: Loss = 6.9657, Grad Norm = 57.5111198425293, LR = 1.0232558139534884e-05
+  Epoch 10.0: Loss = 6.8376, Grad Norm = 37.64958190917969, LR = 9.767441860465117e-06
+  Epoch 10.0: Loss = 6.8688, Grad Norm = 34.620670318603516, LR = 9.30232558139535e-06
+  Epoch 10.0: Loss = 6.3246, Grad Norm = 56.90338897705078, LR = 8.837209302325582e-06
+  Epoch 10.0: Loss = 6.2444, Grad Norm = 24.11741828918457, LR = 8.372093023255815e-06
+  Epoch 10.0: Loss = 5.9569, Grad Norm = 22.267763137817383, LR = 7.906976744186048e-06
+  Epoch 10.0: Loss = 5.9597, Grad Norm = 25.6744327545166, LR = 7.44186046511628e-06
+  Epoch 10.0: Loss = 5.7326, Grad Norm = 60.36091995239258, LR = 6.976744186046513e-06
+  Epoch 10.0: Loss = 5.5485, Grad Norm = 25.499210357666016, LR = 6.511627906976745e-06
+  Epoch 10.0: Loss = 5.5623, Grad Norm = 32.632564544677734, LR = 6.046511627906977e-06
+  Epoch 10.0: Loss = 5.5210, Grad Norm = 16.934846878051758, LR = 5.58139534883721e-06
+  Epoch 10.0: Loss = 5.2359, Grad Norm = 32.224327087402344, LR = 5.116279069767442e-06
+  Epoch 10.0: Loss = 5.2653, Grad Norm = 25.112852096557617, LR = 4.651162790697675e-06
+  Epoch 10.0: Loss = 5.2526, Grad Norm = 23.210969924926758, LR = 4.186046511627907e-06
+  Epoch 10.0: Loss = 5.2203, Grad Norm = 38.30379104614258, LR = 3.72093023255814e-06
+  Epoch 10.0: Loss = 5.1848, Grad Norm = 30.15201759338379, LR = 3.2558139534883724e-06
+  Epoch 10.0: Loss = 5.1310, Grad Norm = 24.555477142333984, LR = 2.790697674418605e-06
+  Epoch 10.0: Loss = 5.0997, Grad Norm = 26.043787002563477, LR = 2.3255813953488376e-06
+  Epoch 10.0: Loss = 5.0970, Grad Norm = 228.8574676513672, LR = 1.86046511627907e-06
+  Epoch 10.0: Loss = 4.9761, Grad Norm = 31.97345542907715, LR = 1.3953488372093025e-06
+  Epoch 10.0: Loss = 4.8731, Grad Norm = 26.676591873168945, LR = 9.30232558139535e-07
+  Epoch 10.0: Loss = 4.9685, Grad Norm = 24.532310485839844, LR = 4.651162790697675e-07
+  Epoch 10.0: Loss = 4.9858, Grad Norm = 38.334712982177734, LR = 0.0
+
+Average Loss for This Run: 11.3470
+Total Training Time for This Run: 94.24 seconds
+--- End of Training ---
+
