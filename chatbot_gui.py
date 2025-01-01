@@ -18,6 +18,7 @@ import subprocess
 import sys
 import shutil
 
+# Systemressourcen-Manager
 def get_gpu_info_global():
     try:
         if not torch.cuda.is_available():
@@ -29,7 +30,6 @@ def get_gpu_info_global():
         return f"GPU: {used:.1f} MB von {total:.1f} MB"
     except Exception as e:
         return f"Fehler beim Abrufen GPU: {e}"
-
 
 
 # Systemressourcen-Manager
@@ -44,22 +44,6 @@ class SystemResourceManager:
         """Gibt die aktuelle RAM-Nutzung und den Gesamtspeicher zurück."""
         ram = psutil.virtual_memory()
         return ram.used / (1024**3), ram.total / (1024**3)
-    
-    # @staticmethod
-    # def get_gpu_info():
-    #     """Gibt die GPU-Speichernutzung und Gesamtspeicher zurück."""
-    #     try:
-    #         if not torch.cuda.is_available():
-    #             return "GPU: Nicht verfügbar"
-            
-    #         # Name der GPU
-    #         gpu_properties = torch.cuda.get_device_properties(0)
-    #         total_memory = gpu_properties.total_memory / (1024**3)  # Gesamtspeicher in GB
-    #         used_memory = torch.cuda.memory_allocated(0) / (1024**3)  # Genutzter Speicher in GB
-
-    #         return f"GPU: {used_memory:.1f} GB von {total_memory:.1f} GB"
-    #     except Exception as e:
-    #         return f"Fehler beim Abrufen der GPU-Daten: {e}"
         
     @staticmethod
     def get_gpu_info():
@@ -72,8 +56,6 @@ class SystemResourceManager:
             return "GPU: nvidia-smi nicht verfügbar"
 
         try:
-            # 2) Mit --query-gpu=memory.used,memory.total holen wir used und total in MB
-            #    und --format=csv,noheader,nounits macht es einfach zu parsen
             result = subprocess.check_output(
                 [
                     "nvidia-smi",
@@ -274,7 +256,6 @@ class ChatbotAPI:
         print("API wird gestoppt...")
         self.is_running = False
         # FastAPI bietet keine eingebaute Methode, um den Server zu stoppen.
-        # Sie können stattdessen zusätzliche Logik verwenden, um Prozesse zu beenden.
         self.server_thread = None
         print("API wurde gestoppt.")
 
@@ -318,7 +299,7 @@ class Trainer:
                 # Starte Subprozess unbuffered (-u), ohne stdout-Pipe => Output landet direkt im Terminal.
                 process = subprocess.Popen(
                     ["python", "-u", "train_model.py"],
-                    stdout=None,     # so wird alles direkt ins Terminal ausgegeben (inkl. TQDM)
+                    stdout=None,
                     stderr=None,
                     text=True
                 )
@@ -358,8 +339,6 @@ class Trainer:
         Gibt die bisher gesammelten Logs zurück (z.B. Fehlermeldungen).
         """
         return self.logs
-
-
 
 #---------------------------------------------
 
@@ -429,7 +408,6 @@ class ChatbotGUI:
         self.create_training_tab()
 
 
-
     def create_overview_tab(self):
         """Erstellt den Überblick-Tab mit API-Status (links) und Chatlog (rechts) im grid-Layout
         und sorgt für ein einheitliches Design wie in den anderen Tabs."""
@@ -455,9 +433,6 @@ class ChatbotGUI:
             .grid(row=0, column=0, columnspan=2, pady=10, sticky="w")
 
         # 1) API-Status
-        # ttk.Label(left_frame, text="", font=("Arial", 12))\
-        #     .grid(row=1, column=0, sticky="w", pady=(0, 5))
-        
         self.api_status_label = ttk.Label(left_frame, text="Gestoppt", font=("Arial", 12))
         self.api_status_label.grid(row=1, column=0, pady=(0, 5), sticky="w")
 
@@ -528,7 +503,6 @@ class ChatbotGUI:
         self.cpu_label_overview, self.ram_label_overview, self.gpu_label_overview = self.create_system_resource_labels(self.overview_tab)
 
 
-
     def save_api_changes(self):
         """Speichert die Änderungen an den API-Einstellungen."""
         try:
@@ -553,15 +527,11 @@ class ChatbotGUI:
         main_frame = ttk.Frame(self.chat_tab)
         main_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        # -- genau wie im Training-Tab -- 
         self.chat_tab.grid_rowconfigure(0, weight=1)
         self.chat_tab.grid_columnconfigure(0, weight=1)
 
         # Zwei Spalten im main_frame:
-        # - links: Parameter (ggf. scrollbar)
-        # - rechts: Chatverlauf (ggf. eigener scrollbar)
         main_frame.grid_rowconfigure(0, weight=1)
-        # Du kannst auch (1, weight=3) machen, damit die rechte Spalte breiter wird als die linke.
         main_frame.grid_columnconfigure(0, weight=4)  
         main_frame.grid_columnconfigure(1, weight=1)
 
@@ -570,12 +540,11 @@ class ChatbotGUI:
         left_frame = ttk.Frame(main_frame)
         left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         
-
         canvas = tk.Canvas(left_frame)
         scrollbar_left = ttk.Scrollbar(left_frame, orient="vertical", command=canvas.yview)
         scrollable_frame = ttk.Frame(canvas)
 
-        # Damit das Frame im Canvas scrollbar wird
+        # Frame im Canvas scrollbar
         scrollable_frame.bind(
             "<Configure>",
             lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
@@ -591,8 +560,7 @@ class ChatbotGUI:
         scrollable_frame.grid_columnconfigure(0, weight=0)
         scrollable_frame.grid_columnconfigure(1, weight=1)
 
-        # -- Parameter-Widgets im scrollable_frame (wie gehabt) --
-
+        # -- Parameter-Widgets im scrollable_frame
         row = 0
         ttk.Label(scrollable_frame, text="Modell für Chat auswählen:", font=("Arial", 12))\
             .grid(row=row, column=0, columnspan=2, pady=2, sticky="w")
@@ -692,17 +660,14 @@ class ChatbotGUI:
         self.chatbot_status_label_chat = ttk.Label(scrollable_frame, text="Chatbot: Aus", foreground="red")
         self.chatbot_status_label_chat.grid(row=row, column=0, columnspan=2, pady=5, sticky="w")
 
-
         row += 1
-
 
         # ------------------------------------------------------------
         # 2) Rechte Spalte (Chat-Verlauf)
         right_frame = ttk.Frame(main_frame)
         right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
-
-        # Rechte Spalte anpassen (Titel, Textfeld + Scrollbar, Eingabezeile, etc.)
+        # Rechte Spalte anpassen
         ttk.Label(right_frame, text="Chat-Verlauf", font=("Arial", 16))\
             .grid(row=0, column=0, sticky="w", pady=(0, 10))
 
@@ -718,7 +683,6 @@ class ChatbotGUI:
         )
         self.chat_history.grid(row=1, column=0, sticky="nsew", padx=(0,5), pady=5)
 
-        
         scrollbar_chat.config(command=self.chat_history.yview)
 
         # Eingabezeile + Send-Button
@@ -759,8 +723,6 @@ class ChatbotGUI:
                     value = widget.get().strip()
 
                     # Typkonvertierung anhand des Param-Namens
-                    # (Du kannst natürlich noch mehr Bedingungen hinzufügen,
-                    #  falls du weitere float- oder int-Parameter hast.)
                     if param in ["temperature", "top_p", "repetition_penalty", 
                                 "length_penalty", "log_score_threshold"]:
                         value = float(value)
@@ -779,7 +741,6 @@ class ChatbotGUI:
             messagebox.showinfo("Erfolg", "Chat-Parameter erfolgreich gespeichert.")
         except ValueError as e:
             messagebox.showerror("Fehler", f"Fehler beim Speichern der Chat-Parameter: {e}")
-
 
     # --------------------------------------------------------
 
@@ -800,9 +761,6 @@ class ChatbotGUI:
         # Linke Spalte: Modellauswahl und Parameter
         left_frame = ttk.Frame(main_frame)
         left_frame.grid(row=0, column=0, sticky="ns", padx=10, pady=10)
-
-
-
 
         ttk.Label(left_frame, text="Modell für Training auswählen:", font=("Arial", 12)).grid(row=0, column=0, columnspan=2, pady=5, sticky="w")
         self.training_model_var = tk.StringVar(value=self.model_manager.get_current_model())
@@ -841,7 +799,7 @@ class ChatbotGUI:
         for idx, source in enumerate(data_total):
             self.data_sources_listbox.insert(tk.END, source)
 
-        # --> Jetzt die bereits ausgewählten data_sources markieren:
+        # ausgewählten data_sources markieren:
         already_selected = self.config_manager.get_param("TRAINING", "data_sources", [])
         for idx, source in enumerate(data_total):
             if source in already_selected:
@@ -853,7 +811,6 @@ class ChatbotGUI:
             .grid(row=10, column=0, columnspan=2, pady=10, sticky="ew")
         ttk.Button(left_frame, text="Training Starten", command=self.start_training)\
             .grid(row=11, column=0, columnspan=2, pady=10, sticky="ew")
-        #ttk.Button(left_frame, text="Training Stoppen", command=self.stop_training).grid(row=12, column=0, columnspan=2, pady=5, sticky="ew")
 
         # Training-Status-Label (unten im left_frame)
         self.training_status_label = ttk.Label(left_frame, text="Training: Inaktiv", foreground="red")
@@ -869,10 +826,6 @@ class ChatbotGUI:
         # Chatbot-Status label
         self.chatbot_status_label_training = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red")
         self.chatbot_status_label_training.grid(row=14, column=0, columnspan=2, pady=5, sticky="w")
-
-
-
-
 
         # Rechte Spalte: Trainingslogs
         right_frame = ttk.Frame(main_frame)
@@ -893,13 +846,11 @@ class ChatbotGUI:
         self.cpu_label_training, self.ram_label_training, self.gpu_label_training = self.create_system_resource_labels(self.training_tab)
 
 
-
     def training_finished(self, status=None):
         """
         Wird vom Trainer aufgerufen, sobald das Training abgeschlossen ist 
         oder ein Fehler auftrat.
         """
-        # Optional Logs aus Datei lesen, oder ...
         if status == "done":
             self.training_status_label.config(text="Training: Abgeschlossen", foreground="blue")
         elif status == "error":
@@ -908,7 +859,7 @@ class ChatbotGUI:
             self.training_status_label.config(text="Training: Abgeschlossen", foreground="blue")
 
 
-       # Trainingseinstellungen
+    # Trainingseinstellungen
     def save_training_settings(self):
         """Speichert die geänderten Trainingsparameter in config.json."""
         try:
@@ -922,7 +873,6 @@ class ChatbotGUI:
             selected_sources = [self.data_sources_listbox.get(i) for i in selected_indices]
             self.config_manager.set_param("TRAINING", "data_sources", selected_sources)
             
-            # In save_chat_settings() oder am Ende von create_chat_tab():
             selected_train_model = self.training_model_var.get()
             self.config_manager.set_param("MODEL", "MODEL_NAME", selected_train_model)
 
@@ -969,12 +919,9 @@ class ChatbotGUI:
 
 
     # --------------------------------------------------------
+    # Beenden
     def quit_application(self):
-        # Entweder:
         self.root.quit()    # Standard-Tkinter-Methode, Haupt-Loop wird verlassen
-        # oder:
-        # self.root.destroy() # Schließt das Fenster direkt
-
 
     # --------------------------------------------------------
     # Chatbot-Steuerung
@@ -988,7 +935,7 @@ class ChatbotGUI:
             self.chatbot_status_label_chat.config(text="Chatbot: Aus", foreground="red")
             self.chatbot_status_label_training.config(text="Chatbot: Aus", foreground="red")
 
-            # Hier "entladen"
+            # entladen
             chatbot_main.config = None
             chatbot_main.faq_data = []
             chatbot_main.model = None
@@ -1030,8 +977,6 @@ class ChatbotGUI:
         chatbot_main.hf_pipeline = None
         chatbot_main.init_chatbot()
         messagebox.showinfo("Info", "Chatbot wurde neu geladen.")
-
-
 
     # --------------------------------------------------------
     # Modelwechsel
@@ -1108,11 +1053,9 @@ class ChatbotGUI:
         self.chat_input.delete(0, tk.END)
         self.append_to_chat("Du", user_input)
 
-        # Chatbot-Antwort abrufen (hier -> config != None, da Bot an)
+        # Chatbot-Antwort abrufen
         response = get_response(user_input)
         self.append_to_chat("Bot", response)
-
-
 
 
     def append_to_chat(self, sender, message):
@@ -1150,11 +1093,8 @@ class ChatbotGUI:
         self.training_logs_text.see("end")             # Automatisch ans Ende scrollen
         self.training_logs_text.config(state="disabled")  # Schreibschutz aktivieren
 
-        #if not self.trainer.is_training:  # Falls das Training nun durch ist
-            #self.training_status_label.config(text="Training: Abgeschlossen", foreground="blue")
         # Wiederhole die Aktualisierung alle 30 Sekunden
         self.root.after(30000, self.update_training_logs)
-
 
 
     def update_system_stats(self):
@@ -1178,6 +1118,7 @@ class ChatbotGUI:
 
         # Wiederhole die Aktualisierung alle 1 Sekunde
         self.root.after(1000, self.update_system_stats)
+
 
     # Chatlogs aktualisieren
     def update_chat_logs(self):
@@ -1221,4 +1162,3 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = ChatbotGUI(root)
     root.mainloop()
-

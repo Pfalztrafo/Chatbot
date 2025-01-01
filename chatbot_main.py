@@ -33,7 +33,6 @@ def load_config():
         with open("config.json", "r", encoding="utf-8") as f:
             config = json.load(f)
         # Validierung & Standardwerte
-        # (Unverändert, nur gekürzt hier)
         print("[DEBUG] Konfiguration erfolgreich geladen.")
     except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError) as e:
         print(f"[FEHLER] Fehler beim Laden der config.json: {e}")
@@ -148,7 +147,6 @@ def get_faq_reference_for_evaluation(user_input, threshold=80):
     best_score = 0
 
     for item in faq_data:
-        # Falls du denselben Fuzzy-Ansatz willst:
         question_score = fuzz.ratio(user_input.lower(), item["question"].lower()) / 100
         if question_score > best_score and question_score >= threshold/100:
             best_match = item["answer"]
@@ -160,7 +158,8 @@ def get_faq_reference_for_evaluation(user_input, threshold=80):
                 best_match = item["answer"]
                 best_score = synonym_score
 
-    return best_match  # Kann None sein, wenn nichts passt
+    return best_match
+
 # -----------------------------------------
 # Chat speichern
 def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, generated_text=None, user_ip="user", folder="chat_logs", username=None):
@@ -174,11 +173,11 @@ def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, g
     if scores is None:
         scores = {}
 
-    # Hole die relevanten Werte – wenn nichts da, nimm 0.0
+    # Hole die relevanten Werte 
     fuzzy_score = scores.get("fuzzy", 0.0)
     log_score = scores.get("ki", -float("inf"))  # Fallback auf 0.0, falls nicht vorhanden
 
-     # Fallback für log_score, falls None
+     # Fallback für log_score
     if log_score is None:
         log_score = -float("inf")  # Setze Standardwert für nicht vorhandene Log-Scores
 
@@ -296,22 +295,6 @@ def generate_ki_response(query):
 
 # -----------------------------------------
 # Kern: get_response
-# def get_response(user_input):
-#     # 1) FAQ
-#     response, fuzzy_score = get_faq_answer(user_input, threshold=config["CHAT"].get("fuzzy_threshold", 70))
-#     if response:
-#         save_chat_to_txt(user_input, response, None, {"fuzzy": fuzzy_score})
-#         return response
-
-#     # 2) Generative KI
-#     if config["CHAT"].get("use_ki_generative", True):
-#         generated_text, final_response, log_score, evaluation = generate_ki_response(user_input)
-#         save_chat_to_txt(user_input, final_response, evaluation, {"fuzzy": 0.0, "ki": log_score}, generated_text)
-#         return final_response
-
-#     # 3) Fallback
-#     save_chat_to_txt(user_input, FALLBACK_ANSWER)
-#     return FALLBACK_ANSWER
 
 def get_response(user_input, user_ip="user"):
     # 1) FAQ
@@ -344,26 +327,22 @@ def chat():
         print(f"Bot: {response}")
 
 # -----------------------------------------
-# NEU: init_chatbot() – hier alles laden
+# Initialisierung
 def init_chatbot():
     global config, faq_data, model, tokenizer, hf_pipeline
 
-    # (Optional) Abfrage entfernen:
-    # if config is not None and hf_pipeline is not None:
-    #     return
-
-    load_config()            # config immer laden
-    load_faq_data()         # FAQ immer laden
-    load_model_and_tokenizer()  # Modell & Tokenizer immer laden
+    load_config()            # config laden
+    load_faq_data()         # FAQ laden
+    load_model_and_tokenizer()  # Modell & Tokenizer laden
     print("[DEBUG] init_chatbot() ist abgeschlossen.")
 
 
 # -----------------------------------------
-# main() – wird NUR bei direktem Start ausgeführt
+# Hauptfunktion
 def main():
     init_chatbot()  # Alle nötigen Daten laden
     chat()          # Interaktiver Loop
 
 # -----------------------------------------
 if __name__ == "__main__":
-    main()  # Nur wenn man python chatbot_main.py direkt ausführt
+    main()  # Starte das Programm

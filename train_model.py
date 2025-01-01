@@ -11,6 +11,11 @@ import psutil  # Zum Abrufen der detaillierten Systeminformationen
 import subprocess
 import threading
 
+# WordNet-Daten einmalig herunterladen
+# nltk.download('wordnet')
+# nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
+
+# ---------------------------- TensorBoard ---------------------------------------------
 def start_tensorboard(logdir="./fine_tuned_model", port=6006):
     """
     Startet TensorBoard in einem separaten Thread.
@@ -22,11 +27,8 @@ def start_tensorboard(logdir="./fine_tuned_model", port=6006):
 
     threading.Thread(target=run_tensorboard, daemon=True).start()
 
-
-# WordNet-Daten einmalig herunterladen
-# nltk.download('wordnet')
-# nltk.download('omw-1.4')  # Optional für zusätzliche Sprachdaten
-
+# ---------------------------- Konfiguration ---------------------------------------------
+# Konfigurationsparameter laden
 def load_config():
     """Lädt Konfigurationsparameter aus der Datei config.json oder verwendet Standardwerte."""
     default_config = {
@@ -111,7 +113,7 @@ def log_training_details(training_args, total_epochs, device_spec, epoch_logs, t
         for epoch_log in epoch_logs:
             log_file.write(f"  Epoch {epoch_log['epoch_num']}: Loss = {epoch_log['loss']:.4f}, Grad Norm = {epoch_log['grad_norm']}, LR = {epoch_log['learning_rate']}\n")
 
-        # Durchschnittsverlust berechnen (nur wenn `epoch_logs` nicht leer ist)
+        # Durchschnittsverlust berechnen
         if epoch_logs:
             avg_loss = sum(log['loss'] for log in epoch_logs) / len(epoch_logs)
             log_file.write(f"\nAverage Loss for This Run: {avg_loss:.4f}\n")
@@ -295,10 +297,10 @@ def main():
         weight_decay=config["TRAINING"]["weight_decay"],
         #logging_dir="./training_logs",  # Logs für TensorBoard
         logging_steps=10,  # Log-Schritte
-        #log_level="info",  # Zeige mehr Details im Terminal                             NEU
-        load_best_model_at_end=True,  # Beste Modellparameter am Ende laden             NEU
-        #metric_for_best_model="eval_loss",  # Metrik zur Auswahl des besten Modells     NEU
-        #greater_is_better=False  # Kleinere Verluste sind besser                       NEU
+        #log_level="info",  # Zeige mehr Details im Terminal
+        load_best_model_at_end=True,  # Beste Modellparameter am Ende laden
+        #metric_for_best_model="eval_loss",  # Metrik zur Auswahl des besten Modells
+        #greater_is_better=False  # Kleinere Verluste sind besser
     )
 
     # Fortschritt aktualisieren
