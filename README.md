@@ -75,7 +75,7 @@ Dieses Projekt konzentriert sich auf die wissenschaftliche Analyse und Feinabsti
 
 Um alle benötigten Bibliotheken zu installieren:
 ```bash
-pip install fastapi uvicorn transformers sentence-transformers torch nltk psutil requests rouge-score fuzzywuzzy datasets pydantic
+pip install torch transformers datasets fastapi uvicorn nltk rouge-score fuzzywuzzy pydantic psutil requests sentence-transformers tensorboard accelerate
 ```
 
 ### Konfigurationsdatei:
