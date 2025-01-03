@@ -30,7 +30,7 @@
         }
     },
     "TRAINING": {
-        "epochs": 5,
+        "epochs": 3,
         "learning_rate": 2e-05,
         "batch_size": 4,
         "weight_decay": 0.01,
@@ -39,8 +39,7 @@
         "use_context": false,
         "include_german": false,
         "data_sources": [
-            "data/faq_general.json",
-            "data/faq_sales.json"
+            "data/faq_general.json"
         ],
         "data_total": [
             "data/faq_general.json",

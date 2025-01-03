@@ -41,6 +41,7 @@ def get_last_checkpoint(output_dir):
     return None
 
 
+
 # ---------------------------- Konfiguration ---------------------------------------------
 def load_config():
     """Lädt Konfigurationsparameter aus der Datei config.json oder verwendet Standardwerte."""
@@ -357,7 +358,7 @@ def main():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        #processing_class=tokenizer,  # Ab v5.0
+        processing_class=tokenizer,  # Ab v5.0
         callbacks=[
             EarlyStoppingCallback(early_stopping_patience=config["TRAINING"]["training_args"].get("early_stopping_patience", 3))
         ]

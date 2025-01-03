@@ -3,6 +3,6 @@
         "total_epochs": 0
     },
     "google/flan-t5-small": {
-        "total_epochs": 23
+        "total_epochs": 35
     }
 }
