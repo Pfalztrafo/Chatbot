@@ -58,7 +58,7 @@
     "CHAT": {
         "use_fuzzy_matching": false,
         "use_ki_generative": true,
-        "use_pipeline": true,
+        "use_pipeline": false,
         "internal_prompt": "answer in German:",
         "fuzzy_threshold": 60,
         "fuzzy_score_range": [
@@ -73,7 +73,7 @@
             0.0,
             1.0
         ],
-        "log_score_threshold": -1e+308,
+        "log_score_threshold": -1000000.0,
         "do_sample": false,
         "temperature": 0.7,
         "top_k": 50,

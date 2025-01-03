@@ -175,11 +175,12 @@ def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, g
 
     # Hole die relevanten Werte 
     fuzzy_score = scores.get("fuzzy", 0.0)
-    log_score = scores.get("ki", -float("inf"))  # Fallback auf 0.0, falls nicht vorhanden
+    log_score = scores.get("ki", -1000000)  # Fallback auf -1e6
 
      # Fallback für log_score
     if log_score is None:
-        log_score = -float("inf")  # Setze Standardwert für nicht vorhandene Log-Scores
+        log_score = -1000000  # Setzen Sie den Fallback-Wert auf eine endliche Zahl
+
 
     # Schreibe BLEU/ROUGE als Text
     eval_text = f"BLEU: {evaluation['bleu']:.2f}, ROUGE-L: {evaluation['rougeL']:.2f}"
@@ -228,7 +229,8 @@ def generate_ki_response(query):
                 generated_text = result["generated_text"]
                 log_score = None  # hf_pipeline liefert keinen Log-Score
                 if log_score is None:
-                    log_score = -float("inf")  # Standardwert setzen
+                    log_score = -1000000  # Setzen Sie den Fallback-Wert auf eine endliche Zahl
+
 
             except Exception as e:
                 print(f"[ERROR] Fehler bei der Generierung mit hf_pipeline: {e}")
@@ -277,8 +279,11 @@ def generate_ki_response(query):
         print(f"Log-Score: {log_score:.2f}, BLEU: {evaluation['bleu']:.2f}, ROUGE-L: {evaluation['rougeL']:.2f}")
 
         # 4) Fallback-Logik prüfen
-        if log_score is not None and log_score < config["CHAT"]["log_score_threshold"]:
+        log_score_threshold = config["CHAT"]["log_score_threshold"]
+        if log_score < log_score_threshold:
+            print(f"[DEBUG] Log-Score {log_score:.2f} liegt unter dem Schwellenwert {log_score_threshold:.2f}. Fallback aktiviert.")
             return generated_text, FALLBACK_ANSWER, log_score, evaluation
+
 
         bleu_min, _ = config["CHAT"]["bleu_score_range"]
         rouge_min, _ = config["CHAT"]["rougeL_score_range"]
