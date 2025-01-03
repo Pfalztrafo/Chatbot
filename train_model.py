@@ -26,17 +26,22 @@ def start_tensorboard(logdir="./fine_tuned_model", port=6007):
 # ---------------------------- Checkpoints ---------------------------------------------
 def get_last_checkpoint(output_dir):
     """
-    Findet den letzten Checkpoint im Ausgabe-Verzeichnis, der die Datei 'pytorch_model.bin' enthält.
-    :param output_dir: Verzeichnis, in dem Checkpoints gespeichert werden.
-    :return: Pfad zum letzten gültigen Checkpoint oder None, wenn keiner gefunden wurde.
+    Findet den letzten Checkpoint im Ausgabe-Verzeichnis, der eine gültige Modelldatei enthält.
     """
     checkpoints = glob.glob(os.path.join(output_dir, "checkpoint-*"))
-    valid_checkpoints = [ckpt for ckpt in checkpoints if os.path.exists(os.path.join(ckpt, "pytorch_model.bin"))]
+    valid_checkpoints = [
+        ckpt for ckpt in checkpoints
+        if os.path.exists(os.path.join(ckpt, "pytorch_model.bin")) or
+           os.path.exists(os.path.join(ckpt, "model.safetensors"))
+    ]
     if valid_checkpoints:
         # Sortiere die Checkpoints nach Nummer und wähle den neuesten
         checkpoints_sorted = sorted(valid_checkpoints, key=lambda x: int(x.split("-")[-1]))
         return checkpoints_sorted[-1]
     return None
+
+
+
 
 # ---------------------------- Konfiguration ---------------------------------------------
 def load_config():
@@ -81,13 +86,9 @@ def load_config():
         print(f"Warnung: {e}. Standardkonfiguration wird verwendet.")
         return default_config
 
-# Konfigurationsparameter laden
-config = load_config()
-MODEL_PATH = os.path.join(config["MODEL"]["MODEL_PATH"], config["MODEL"]["MODEL_NAME"].replace("/", "_"))
-MODEL_NAME = config["MODEL"]["MODEL_NAME"]
 
-# LLM google/flan-t5 laden
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+config = load_config()  # Global definiert
+tokenizer = None  # Platzhalter für den Tokenizer
 
 # ---------------------------- Loggen ---------------------------------------------
 # Pfad zur Log-Datei
@@ -269,38 +270,49 @@ def preprocess_function(examples):
 
 # ---------------------------- Hauptfunktion für das Training ---------------------------------------------
 def main():
-    """
-    Hauptfunktion für das Training des Modells.
-    Lädt die Daten, führt das Training durch und speichert das Modell.
-    """
     print("Starte das Training...")
+    output_dir = os.path.abspath(os.path.join(config["MODEL"]["MODEL_PATH"], config["MODEL"]["MODEL_NAME"].replace("/", "_")))
+    MODEL_NAME = config["MODEL"]["MODEL_NAME"]
 
-    # Speicherort für das Modell
-    output_dir = MODEL_PATH
+    global tokenizer  # Damit die Variable global verfügbar ist
+    last_checkpoint = get_last_checkpoint(output_dir)
 
-    # Fortschritt des Trainings laden und aktualisieren
+    try:
+        if last_checkpoint:
+            print(f"Inhalt des Checkpoints: {os.listdir(last_checkpoint)}")
+            print(f"Checkpoint gefunden: {last_checkpoint}")
+            model = AutoModelForSeq2SeqLM.from_pretrained(last_checkpoint, ignore_mismatched_sizes=True)
+            tokenizer = AutoTokenizer.from_pretrained(last_checkpoint)
+            resume_training = True
+        else:
+            print("Kein gültiger Checkpoint gefunden. Starte mit dem Basis-Modell.")
+            model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+            tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+            resume_training = False
+    except Exception as e:
+        print(f"Fehler beim Laden des Modells: {e}. Starte mit dem Basis-Modell.")
+        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+        resume_training = False
+
+    # Debugging für Modell-Keys
+    model_state_dict = model.state_dict()
+    required_keys = ['encoder.embed_tokens.weight', 'decoder.embed_tokens.weight']
+    missing_keys = set(required_keys) - set(model_state_dict.keys())
+    print(f"Fehlende Keys: {missing_keys}")
+    print(f"Geladene Parameter im Modell: {list(model_state_dict.keys())[:10]}")  # Zeige die ersten 10 Parameter
+
+
+
+
+
+    # Fortschritt des Trainings laden
     progress = load_progress(MODEL_NAME)
     total_epochs = progress.get("total_epochs", 0)
 
-    # Checkpoints prüfen und laden
-    last_checkpoint = get_last_checkpoint(output_dir)
-    resume_training = bool(last_checkpoint)
-
-    if resume_training:
-        print(f"Lade zuletzt gespeicherten Checkpoint: {last_checkpoint}")
-    else:
-        print("Starte mit dem Basis-Modell...")
-
-    # Modell immer aus dem Basis-Modell laden
-    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-
-    # Trainingsdaten laden
+    # Trainingsdaten laden und vorbereiten
     training_data = load_data()
-
-    # Negativbeispiele filtern
     training_data = filter_negatives(training_data, negative_sample_rate=config["TRAINING"].get("negative_sample_rate", 0.5))
-
-    # Dataset erstellen und preprocessen
     dataset = Dataset.from_dict({
         "input": [item["input"] for item in training_data],
         "output": [item["output"] for item in training_data],
@@ -308,7 +320,7 @@ def main():
     })
     tokenized_dataset = dataset.map(preprocess_function, batched=True)
 
-    # Daten aufteilen (80% Training, 20% Validierung) mit `train_test_split`
+    # Daten aufteilen (80% Training, 20% Validierung)
     split_datasets = tokenized_dataset.train_test_split(test_size=1 - config["TRAINING"]["train_ratio"])
     train_dataset = split_datasets["train"]
     eval_dataset = split_datasets["test"]
@@ -316,40 +328,37 @@ def main():
     # Trainingsargumente festlegen
     training_args = TrainingArguments(
         output_dir=output_dir,
-        eval_strategy=config["TRAINING"]["training_args"]["eval_strategy"],  # Ersetze evaluation_strategy durch eval_strategy
-        save_strategy=config["TRAINING"]["training_args"]["save_strategy"],  # Dynamisch geladen
-        save_total_limit=config["TRAINING"]["training_args"]["save_total_limit"],  # Dynamisch geladen
+        evaluation_strategy=config["TRAINING"]["training_args"]["eval_strategy"],
+        save_strategy=config["TRAINING"]["training_args"]["save_strategy"],
+        save_total_limit=config["TRAINING"]["training_args"]["save_total_limit"],
         learning_rate=config["TRAINING"]["learning_rate"],
         per_device_train_batch_size=config["TRAINING"]["batch_size"],
-        num_train_epochs=config["TRAINING"]["epochs"],  # Anzahl der Epochen
+        num_train_epochs=config["TRAINING"]["epochs"],
         weight_decay=config["TRAINING"]["weight_decay"],
-        logging_steps=config["TRAINING"]["training_args"]["logging_steps"],  # Dynamisch geladen
-        load_best_model_at_end=config["TRAINING"]["training_args"]["load_best_model_at_end"],  # Dynamisch geladen
-        metric_for_best_model="eval_loss",  # Definiert die Metrik für das beste Modell
-        greater_is_better=False  # Kleinere Verluste sind besser
+        #logging_dir="./fine_tuned_model/logs",
+        logging_steps=config["TRAINING"]["training_args"]["logging_steps"],
+        load_best_model_at_end=config["TRAINING"]["training_args"]["load_best_model_at_end"],
+        save_safetensors=True  # Aktiviert die Safetensors-Unterstützung
     )
 
-    # Fortschritt aktualisieren
-    total_epochs += training_args.num_train_epochs
-    save_progress(MODEL_NAME, {"total_epochs": total_epochs})
-
-    # Gerätespezifikationen abrufen
-    device_spec = get_device_spec()
 
     # Trainer einrichten
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
-        eval_dataset=eval_dataset,  # Validierungsdaten
-        tokenizer=tokenizer,  # Wichtig für Seq2Seq-Modelle
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=config["TRAINING"]["training_args"].get("early_stopping_patience", 3))]  # Early Stopping aktivieren
+        eval_dataset=eval_dataset,
+        processing_class=tokenizer,  # Ab v5.0
+        callbacks=[
+            EarlyStoppingCallback(early_stopping_patience=config["TRAINING"]["training_args"].get("early_stopping_patience", 3))
+        ]
     )
 
-    # Training starten (mit Checkpoint-Fortsetzung)
+
+    # Training starten
     start_time = datetime.now()
     if resume_training:
-        print("Setze Training vom letzten Checkpoint fort...")
+        print(f"Setze Training vom letzten Checkpoint ({last_checkpoint}) fort...")
         trainer.train(resume_from_checkpoint=last_checkpoint)
     else:
         print("Starte neues Training...")
@@ -359,35 +368,33 @@ def main():
     training_time = (datetime.now() - start_time).total_seconds()
 
     # Modell und Tokenizer speichern
-    model.save_pretrained(output_dir)
+    model.save_pretrained(output_dir, safe_serialization=False)
+
+    #model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
 
     # Fortschritt aktualisieren
-    save_progress(MODEL_NAME, {"total_epochs": total_epochs})
+    progress["total_epochs"] += training_args.num_train_epochs
+    save_progress(MODEL_NAME, progress)
 
     # Trainingsdetails loggen
     epoch_logs = []
     for log in trainer.state.log_history:
         if "loss" in log:
             epoch_logs.append({
-                "epoch_num": trainer.state.epoch,  # Bessere Erfassung der aktuellen Epoche
+                "epoch_num": trainer.state.epoch,
                 "loss": log["loss"],
                 "grad_norm": log.get("grad_norm", None),
                 "learning_rate": log.get("learning_rate", 0.0)
             })
 
-    log_training_details(
-        training_args,
-        total_epochs,
-        device_spec,
-        epoch_logs,
-        training_time,
-        None  # Phase ist aktuell nicht vorhanden
-    )
+    device_spec = get_device_spec()
+    log_training_details(training_args, total_epochs, device_spec, epoch_logs, training_time)
 
     print(f"Training abgeschlossen.")
     print(f"Das feingetunte Modell wurde unter {output_dir} gespeichert.")
     print(f"Total Training Time: {training_time:.2f} seconds\n")
+
 
 # ---------------------------- Skript starten ---------------------------------------------
 if __name__ == "__main__":

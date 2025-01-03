@@ -30,13 +30,14 @@
         }
     },
     "TRAINING": {
-        "epochs": 10,
+        "epochs": 35,
         "learning_rate": 2e-05,
         "batch_size": 1,
         "weight_decay": 0.01,
         "train_ratio": 0.8,
         "negative_sample_rate": 0.5,
         "data_sources": [
+            "data/faq_general.json",
             "data/faq_sales.json"
         ],
         "data_total": [
@@ -48,7 +49,7 @@
         "training_args": {
             "eval_strategy": "epoch",
             "save_strategy": "epoch",
-            "save_total_limit": 3,
+            "save_total_limit": 2,
             "logging_steps": 10,
             "load_best_model_at_end": true,
             "early_stopping_patience": 3
@@ -57,8 +58,8 @@
     "CHAT": {
         "use_fuzzy_matching": false,
         "use_ki_generative": true,
-        "use_pipeline": false,
-        "internal_prompt": "As a technical advisor for transformer purchases, respond in German with a clear and detailed answer to the following question:",
+        "use_pipeline": true,
+        "internal_prompt": "answer in German:",
         "fuzzy_threshold": 60,
         "fuzzy_score_range": [
             0.0,
