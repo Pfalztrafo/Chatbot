@@ -41,8 +41,6 @@ def get_last_checkpoint(output_dir):
     return None
 
 
-
-
 # ---------------------------- Konfiguration ---------------------------------------------
 def load_config():
     """Lädt Konfigurationsparameter aus der Datei config.json oder verwendet Standardwerte."""
@@ -177,56 +175,55 @@ def get_device_spec():
     return device_spec
 
 # ---------------------------- Trainingsdaten laden und erweitern ---------------------------------------------
-def load_data():
+def load_data(include_german=False):
     """
-    Dynamisches Laden von Trainingsdaten aus verschiedenen JSON-Dateien.
+    Lädt Trainingsdaten aus JSON-Dateien. Kann wahlweise alle Daten (inkl. GermanDPR/QuAD) laden.
+    :param include_german: Boolean, ob GermanDPR und GermanQuAD-Daten einbezogen werden sollen.
     """
     data = []
-    files_to_load = config["TRAINING"].get("data_sources", [])  # JSON-Dateien aus der Konfiguration
+    files_to_load = config["TRAINING"]["data_sources"] if not include_german else config["TRAINING"]["data_total"]
 
     for file_path in files_to_load:
         try:
             with open(file_path, "r", encoding="utf-8") as file:
                 entries = json.load(file)
                 for item in entries:
-                    # Felder dynamisch extrahieren und standardisieren
-                    question = item.get("question", "").strip()
-                    answer = item.get("answer", "").strip()
-                    context = item.get("context", "")  # Nur in GermanDPR und GermanQuAD
-                    category = item.get("category", "General")  # Standardkategorie
-                    synonyms = item.get("synonyms", [])  # Nur in den FAQs
-
-                    # Überspringe Einträge ohne Frage
-                    if not question:
-                        print(f"Überspringe Eintrag ohne Frage: {item}")
-                        continue
-
-                    # Überspringe Einträge ohne Antwort, außer wenn sie als Negative gekennzeichnet sind
-                    if not answer and category not in ["Negative", "Hard-Negative"]:
-                        print(f"Überspringe ungültigen Eintrag ohne Antwort: {item}")
-                        continue
-
-                    # Setze eine spezielle Antwort für negative Beispiele
-                    if not answer and category in ["Negative", "Hard-Negative"]:
-                        answer = "### NO_ANSWER ###"  # Spezieller Token
-
-                    # Daten normalisieren und erweitern
                     data.append({
-                        "input": question,
-                        "output": answer,
-                        "context": context,
-                        "category": category,
-                        "synonyms": synonyms
+                        "input": item.get("question", "").strip(),
+                        "output": item.get("answer", "").strip(),
+                        "category": item.get("category", "General"),
+                        "context": item.get("context", ""),  # Kontext wird nur für German genutzt
+                        "synonyms": item.get("synonyms", [])
                     })
         except FileNotFoundError:
-            print(f"[WARNUNG] Datei {file_path} nicht gefunden. Überspringe diese Datei.")
+            print(f"[WARNUNG] Datei nicht gefunden: {file_path}")
         except json.JSONDecodeError as e:
-            print(f"[FEHLER] Fehler beim Lesen von {file_path}: {e}. Überspringe diese Datei.")
-
-    if not data:
-        raise ValueError("Keine gültigen Trainingsdaten gefunden! Überprüfen Sie die JSON-Dateien.")
+            print(f"[FEHLER] Fehler beim Lesen von {file_path}: {e}")
     
+    if not data:
+        raise ValueError("Keine gültigen Trainingsdaten gefunden!")
+    
+    # Synonymerweiterung nur für FAQs
+    if not include_german:
+        data = expand_with_synonyms(data)
     return data
+
+
+def expand_with_synonyms(data):
+    """
+    Erweitert Trainingsdaten mit Synonymen, falls vorhanden.
+    """
+    expanded_data = []
+    for item in data:
+        expanded_data.append(item)  # Originalfrage
+        for synonym in item.get("synonyms", []):
+            expanded_data.append({
+                "input": synonym,
+                "output": item["output"],
+                "category": item["category"]
+            })
+    return expanded_data
+
 
 # ---------------------------- Negativbeispiele filtern ---------------------------------------------
 def filter_negatives(data, negative_sample_rate=0.5):
@@ -243,34 +240,43 @@ def filter_negatives(data, negative_sample_rate=0.5):
     return filtered_data
 
 # ---------------------------- Daten für das Modell vorbereiten ---------------------------------------------
-def preprocess_function(examples):
+def preprocess_function(examples, use_context):
+    """
+    Bereitet die Eingaben für das Modell vor. Kann optional Kontext und Kategorien einbeziehen.
+    :param use_context: Boolean, um kontextbasierte Verarbeitung zu aktivieren.
+    """
     inputs = []
     targets = []
+
     for category, question, context, answer in zip(
         examples["category"], 
         examples["input"], 
         examples.get("context", [""] * len(examples["input"])),  # Kontext optional
         examples["output"]
     ):
-        input_text = f"Kategorie: {category}\n"
-        if context:
-            input_text += f"Kontext: {context}\n"
-        input_text += f"Frage: {question}"
-        inputs.append(input_text)
-        
-        if answer == "### NO_ANSWER ###":
-            targets.append("Ich kann Ihnen dazu keine Antwort geben.")
+        if use_context and context:
+            # Kontextbasierte Eingaben
+            input_text = f"Kategorie: {category}\nKontext: {context}\nFrage: {question}"
         else:
-            targets.append(answer)
+            # Einfache Eingaben für FAQs
+            input_text = f"[{category}] {question}"
+
+        inputs.append(input_text)
+        targets.append(answer)
 
     model_inputs = tokenizer(inputs, max_length=350, padding="max_length", truncation=True)
     labels = tokenizer(targets, max_length=350, padding="max_length", truncation=True).input_ids
     model_inputs["labels"] = labels
     return model_inputs
 
+
 # ---------------------------- Hauptfunktion für das Training ---------------------------------------------
 def main():
     print("Starte das Training...")
+
+    # Boolean aus der Konfiguration, um den Modus zu bestimmen
+    include_german = config["TRAINING"].get("include_german", False)
+
     output_dir = os.path.abspath(os.path.join(config["MODEL"]["MODEL_PATH"], config["MODEL"]["MODEL_NAME"].replace("/", "_")))
     MODEL_NAME = config["MODEL"]["MODEL_NAME"]
 
@@ -303,22 +309,25 @@ def main():
     print(f"Geladene Parameter im Modell: {list(model_state_dict.keys())[:10]}")  # Zeige die ersten 10 Parameter
 
 
-
-
-
     # Fortschritt des Trainings laden
     progress = load_progress(MODEL_NAME)
     total_epochs = progress.get("total_epochs", 0)
 
-    # Trainingsdaten laden und vorbereiten
-    training_data = load_data()
-    training_data = filter_negatives(training_data, negative_sample_rate=config["TRAINING"].get("negative_sample_rate", 0.5))
+    # Trainingsdaten laden und optional mit Kontext verarbeiten
+    training_data = load_data(include_german=include_german)
+
+    # Dataset erstellen
     dataset = Dataset.from_dict({
         "input": [item["input"] for item in training_data],
         "output": [item["output"] for item in training_data],
-        "category": [item["category"] for item in training_data]
+        "category": [item["category"] for item in training_data],
+        "context": [item.get("context", "") for item in training_data]  # Kontext optional
     })
-    tokenized_dataset = dataset.map(preprocess_function, batched=True)
+
+    # Boolean für Kontextverarbeitung
+    use_context = include_german
+
+    tokenized_dataset = dataset.map(lambda examples: preprocess_function(examples, use_context=use_context), batched=True)
 
     # Daten aufteilen (80% Training, 20% Validierung)
     split_datasets = tokenized_dataset.train_test_split(test_size=1 - config["TRAINING"]["train_ratio"])
@@ -348,7 +357,7 @@ def main():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        processing_class=tokenizer,  # Ab v5.0
+        #processing_class=tokenizer,  # Ab v5.0
         callbacks=[
             EarlyStoppingCallback(early_stopping_patience=config["TRAINING"]["training_args"].get("early_stopping_patience", 3))
         ]

@@ -84,6 +84,10 @@ def load_model_and_tokenizer():
         print(f"[ERROR] Modellpfad nicht gefunden: {MODEL_PATH}")
         tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+    
+     # Überprüfen der Modellparameter
+    print(f"[DEBUG] Anzahl der Modellparameter: {sum(p.numel() for p in model.parameters())}")
+    
 
     if torch.cuda.is_available():
         device = 0
@@ -92,9 +96,12 @@ def load_model_and_tokenizer():
         device = None
         print("→ Keine GPU gefunden, verwende CPU.")
 
-    # Pipeline
-    hf_pipeline = pipeline("text2text-generation", model=model, tokenizer=tokenizer, device=device)
-    print("[DEBUG] Pipeline erstellt.")
+    # Pipeline erstellen
+    try:
+        hf_pipeline = pipeline("text2text-generation", model=model, tokenizer=tokenizer, device=device)
+        print("[DEBUG] Pipeline erfolgreich erstellt.")
+    except Exception as e:
+        print(f"[FEHLER] Fehler beim Erstellen der Pipeline: {e}")
 
 # -----------------------------------------
 # FAQ-Funktion
@@ -173,14 +180,14 @@ def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, g
     if scores is None:
         scores = {}
 
-    # Hole die relevanten Werte 
+    # Hole die relevanten Werte
     fuzzy_score = scores.get("fuzzy", 0.0)
     log_score = scores.get("ki", -1000000)  # Fallback auf -1e6
 
-     # Fallback für log_score
-    if log_score is None:
-        log_score = -1000000  # Setzen Sie den Fallback-Wert auf eine endliche Zahl
-
+    # Prüfen, ob die Pipeline aktiviert ist, und den Log-Score anpassen
+    use_pipeline = config["CHAT"].get("use_pipeline", False)
+    if use_pipeline:
+        log_score = 0.0  # Setze Log-Score auf 0, wenn die Pipeline aktiv ist
 
     # Schreibe BLEU/ROUGE als Text
     eval_text = f"BLEU: {evaluation['bleu']:.2f}, ROUGE-L: {evaluation['rougeL']:.2f}"
@@ -190,19 +197,13 @@ def save_chat_to_txt(user_message, bot_response, evaluation=None, scores=None, g
     with open(filename, "a", encoding="utf-8") as file:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         file.write(f"[{timestamp}] [IP: {user_ip}] {user_message}\n")
-        #file.write(f"[{timestamp}] [Server] [Bot ({score_text})]: {bot_response} [{eval_text}]\n")
         file.write(f"[{timestamp}] Bot: {generated_text} [{eval_text}, {score_text}]\n")
-        #if generated_text:
-            #file.write(f"[{timestamp}] [Generated Text]: {generated_text}\n")
 
-    # Debugging-Ausgabe im Terminal
-    if fuzzy_score > 0.0:
-        print(f"[DEBUG] FAQ-Matching: Fuzzy Score: {fuzzy_score:.2f}")
-    #if log_score is not None:
-        #print(f"[DEBUG] Log-Score: {log_score:.2f}")
-    if generated_text:
-        print(f"Bot: {generated_text}")
-    pass
+    # Debugging-Ausgabe im Terminal (identisch zum Textformat)
+    print(f"Du: {user_message}")
+    print(f"{score_text}, {eval_text}")
+    print(f"Bot: {generated_text}")
+
 
 # -----------------------------------------
 # Generative KI-Antwort
@@ -276,7 +277,7 @@ def generate_ki_response(query):
         evaluation = evaluate_response(best_faq_ref, generated_text)
 
         # Debugging: Ausgabe von Bewertungen und generierter Antwort
-        print(f"Log-Score: {log_score:.2f}, BLEU: {evaluation['bleu']:.2f}, ROUGE-L: {evaluation['rougeL']:.2f}")
+        #print(f"Log-Score: {log_score:.2f}, BLEU: {evaluation['bleu']:.2f}, ROUGE-L: {evaluation['rougeL']:.2f}")
 
         # 4) Fallback-Logik prüfen
         log_score_threshold = config["CHAT"]["log_score_threshold"]
