@@ -32,7 +32,7 @@
     "TRAINING": {
         "epochs": 1,
         "learning_rate": 2e-05,
-        "batch_size": 2,
+        "batch_size": 4,
         "weight_decay": 0.01,
         "train_ratio": 0.8,
         "negative_sample_rate": 0.5,
