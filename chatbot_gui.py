@@ -476,7 +476,7 @@ class ChatbotGUI:
         ).grid(row=7, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Status-Label für Chatbot
-        self.chatbot_status_label_overview = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red", font=("Arial", 10))
+        self.chatbot_status_label_overview = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red", font=("Arial", 12))
         self.chatbot_status_label_overview.grid(row=8, column=0, columnspan=2, pady=(0, 10), sticky="w")
 
         # 5) Beenden-Button
@@ -1086,9 +1086,9 @@ class ChatbotGUI:
         
         # Farbe nach Status wählen
         if status == "Gestoppt":
-            self.api_status_label.config(text=f"API-Status: {status}", foreground="red")
+            self.api_status_label.config(text=f"API-Status: {status}", foreground="red", font=("Arial", 12))
         else:  # Läuft
-            self.api_status_label.config(text=f"API-Status: {status}", foreground="green")
+            self.api_status_label.config(text=f"API-Status: {status}", foreground="green", font=("Arial", 12))
 
 
     def apply_chat_settings(self):
