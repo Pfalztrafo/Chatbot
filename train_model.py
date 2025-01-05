@@ -7,7 +7,6 @@ import os
 import platform
 import psutil  # Zum Abrufen der detaillierten Systeminformationen
 import glob  # Zum Durchsuchen von Dateien
-
 import subprocess
 import threading
 
@@ -22,24 +21,6 @@ def start_tensorboard(logdir="./fine_tuned_model", port=6007):
         subprocess.Popen(["tensorboard", "--logdir", logdir, "--port", str(port)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     threading.Thread(target=run_tensorboard, daemon=True).start()
-
-# ---------------------------- Checkpoints ---------------------------------------------
-def get_last_checkpoint(output_dir):
-    """
-    Findet den letzten Checkpoint im Ausgabe-Verzeichnis, der eine gültige Modelldatei enthält.
-    """
-    checkpoints = glob.glob(os.path.join(output_dir, "checkpoint-*"))
-    valid_checkpoints = [
-        ckpt for ckpt in checkpoints
-        if os.path.exists(os.path.join(ckpt, "pytorch_model.bin")) or
-           os.path.exists(os.path.join(ckpt, "model.safetensors"))
-    ]
-    if valid_checkpoints:
-        # Sortiere die Checkpoints nach Nummer und wähle den neuesten
-        checkpoints_sorted = sorted(valid_checkpoints, key=lambda x: int(x.split("-")[-1]))
-        return checkpoints_sorted[-1]
-    return None
-
 
 
 # ---------------------------- Konfiguration ---------------------------------------------
@@ -57,15 +38,7 @@ def load_config():
             "weight_decay": 0.01,
             "train_ratio": 0.8,
             "negative_sample_rate": 0.5,
-            "data_sources": [
-                "data/faq_general.json"
-            ],
-            "data_total": [
-                "data/faq_general.json",
-                "data/faq_sales.json",
-                "data/GermanDPR_train_filtered.json",
-                "data/GermanQuAD_train_filtered.json"
-            ],
+            "include_german": False,  # Standardwert für include_german
             "training_args": {
                 "eval_strategy": "epoch",
                 "save_strategy": "epoch",
@@ -80,7 +53,10 @@ def load_config():
     try:
         with open("config.json", "r", encoding="utf-8") as f:
             config = json.load(f)
-            return {**default_config, **config}  # Standardwerte ergänzen
+            # Standardwerte ergänzen und zurückgeben
+            final_config = {**default_config, **config}
+
+            return final_config
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Warnung: {e}. Standardkonfiguration wird verwendet.")
         return default_config
@@ -176,55 +152,98 @@ def get_device_spec():
     return device_spec
 
 # ---------------------------- Trainingsdaten laden und erweitern ---------------------------------------------
-def load_data(include_german=False):
-    """
-    Lädt Trainingsdaten aus JSON-Dateien. Kann wahlweise alle Daten (inkl. GermanDPR/QuAD) laden.
-    :param include_german: Boolean, ob GermanDPR und GermanQuAD-Daten einbezogen werden sollen.
-    """
-    data = []
-    files_to_load = config["TRAINING"]["data_sources"] if not include_german else config["TRAINING"]["data_total"]
 
-    for file_path in files_to_load:
-        try:
-            with open(file_path, "r", encoding="utf-8") as file:
-                entries = json.load(file)
-                for item in entries:
-                    data.append({
-                        "input": item.get("question", "").strip(),
-                        "output": item.get("answer", "").strip(),
-                        "category": item.get("category", "General"),
-                        "context": item.get("context", ""),  # Kontext wird nur für German genutzt
-                        "synonyms": item.get("synonyms", [])
-                    })
-        except FileNotFoundError:
-            print(f"[WARNUNG] Datei nicht gefunden: {file_path}")
-        except json.JSONDecodeError as e:
-            print(f"[FEHLER] Fehler beim Lesen von {file_path}: {e}")
-    
+def load_faq_data():
+    data = []
+    faq_files = ["data/faq_sales.json", "data/faq_general.json"]
+
+    for file_path in faq_files:
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    file_data = json.load(f)
+                    for item in file_data:
+                        data.append({
+                            "input": item["question"],
+                            "output": item["answer"],
+                            "category": item.get("category", "Allgemein")  # Kategorie berücksichtigen
+                        })
+            except json.JSONDecodeError as e:
+                print(f"[ERROR] Fehler beim Lesen von {file_path}: {e}")
+        else:
+            print(f"[WARNUNG] Datei {file_path} nicht gefunden. Überspringe diese Datei.")
+
     if not data:
-        raise ValueError("Keine gültigen Trainingsdaten gefunden!")
-    
-    # Synonymerweiterung nur für FAQs
-    if not include_german:
-        data = expand_with_synonyms(data)
+        raise ValueError("Keine FAQ-Daten gefunden! Überprüfen Sie die JSON-Dateien.")
     return data
 
 
+def load_german_data():
+    training_data = []
+    
+    # GermanQuAD
+    with open("data/GermanQuAD_train_filtered.json", "r", encoding="utf-8") as f:
+        quad_data = json.load(f)
+        for item in quad_data:
+            training_data.append({
+                "input": item["question"],    # Umbenennen von 'question' zu 'input'
+                "output": item["answer"],     # Umbenennen von 'answer' zu 'output'
+                "context": item["context"],
+                "category": "Training"  # Standardkategorie für GermanQuAD
+            })
+    
+    # GermanDPR
+    with open("data/GermanDPR_train_filtered.json", "r", encoding="utf-8") as f:
+        dpr_data = json.load(f)
+        for item in dpr_data:
+            training_data.append({
+                "input": item["question"],    # Umbenennen von 'question' zu 'input'
+                "output": item["answer"],     # Umbenennen von 'answer' zu 'output'
+                "context": item["context"],
+                "category": item.get("type", "Unknown")  # Nutze den Typ von DPR (Positive, Negative, etc.)
+            })
+
+    return training_data
+
+
+
+
+# Daten für das Modell vorbereiten
+def preprocess_faq_data(examples):
+    inputs = [f"[{category}] {question}" for category, question in zip(examples["category"], examples["input"])]
+    targets = examples["output"]
+    model_inputs = tokenizer(inputs, max_length=128, padding="max_length", truncation=True)
+    labels = tokenizer(targets, max_length=128, padding="max_length", truncation=True).input_ids
+    model_inputs["labels"] = labels
+    return model_inputs
+
+def preprocess_german_data(examples):
+    # Kombiniere Kontext und Eingabe (Frage) immer
+    inputs = [f"{context} {input_text}" for context, input_text in zip(examples["context"], examples["input"])]
+    targets = examples["output"]
+    # Tokenisierung der Eingaben
+    model_inputs = tokenizer(inputs, max_length=512, padding="max_length", truncation=True)
+    # Tokenisierung der Labels (Antworten)
+    labels = tokenizer(targets, max_length=128, padding="max_length", truncation=True).input_ids
+    # Setze die Labels
+    model_inputs["labels"] = labels
+    return model_inputs
+
+
+
+# ---------------------------- Synonymerweiterung ---------------------------------------------
 def expand_with_synonyms(data):
-    """
-    Erweitert Trainingsdaten mit Synonymen, falls vorhanden.
-    """
     expanded_data = []
     for item in data:
         expanded_data.append(item)  # Originalfrage
-        for synonym in item.get("synonyms", []):
-            expanded_data.append({
-                "input": synonym,
-                "output": item["output"],
-                "category": item["category"]
-            })
+        if "synonyms" in item:
+            for synonym in item["synonyms"]:
+                expanded_data.append({
+                    "question": synonym,
+                    "answer": item["answer"],
+                    "category": item["category"]
+                })
     return expanded_data
-
 
 # ---------------------------- Negativbeispiele filtern ---------------------------------------------
 def filter_negatives(data, negative_sample_rate=0.5):
@@ -240,36 +259,6 @@ def filter_negatives(data, negative_sample_rate=0.5):
             filtered_data.append(item)  # Positive und Training bleiben unverändert
     return filtered_data
 
-# ---------------------------- Daten für das Modell vorbereiten ---------------------------------------------
-def preprocess_function(examples, use_context):
-    """
-    Bereitet die Eingaben für das Modell vor. Kann optional Kontext und Kategorien einbeziehen.
-    :param use_context: Boolean, um kontextbasierte Verarbeitung zu aktivieren.
-    """
-    inputs = []
-    targets = []
-
-    for category, question, context, answer in zip(
-        examples["category"], 
-        examples["input"], 
-        examples.get("context", [""] * len(examples["input"])),  # Kontext optional
-        examples["output"]
-    ):
-        if use_context and context:
-            # Kontextbasierte Eingaben
-            input_text = f"Kategorie: {category}\nKontext: {context}\nFrage: {question}"
-        else:
-            # Einfache Eingaben für FAQs
-            input_text = f"[{category}] {question}"
-
-        inputs.append(input_text)
-        targets.append(answer)
-
-    model_inputs = tokenizer(inputs, max_length=350, padding="max_length", truncation=True)
-    labels = tokenizer(targets, max_length=350, padding="max_length", truncation=True).input_ids
-    model_inputs["labels"] = labels
-    return model_inputs
-
 
 # ---------------------------- Hauptfunktion für das Training ---------------------------------------------
 def main():
@@ -278,57 +267,63 @@ def main():
     # Boolean aus der Konfiguration, um den Modus zu bestimmen
     include_german = config["TRAINING"].get("include_german", False)
 
-    output_dir = os.path.abspath(os.path.join(config["MODEL"]["MODEL_PATH"], config["MODEL"]["MODEL_NAME"].replace("/", "_")))
+    # Modell- und Ausgabeverzeichnis festlegen
+    output_dir = os.path.abspath(config["MODEL"]["dynamic_model_paths"].get(config["MODEL"]["MODEL_NAME"], config["MODEL"]["MODEL_PATH"]))
     MODEL_NAME = config["MODEL"]["MODEL_NAME"]
 
-    global tokenizer  # Damit die Variable global verfügbar ist
-    last_checkpoint = get_last_checkpoint(output_dir)
+    # Initialisiere den Tokenizer
+    global tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
-    try:
-        if last_checkpoint:
-            print(f"Inhalt des Checkpoints: {os.listdir(last_checkpoint)}")
-            print(f"Checkpoint gefunden: {last_checkpoint}")
-            model = AutoModelForSeq2SeqLM.from_pretrained(last_checkpoint, ignore_mismatched_sizes=True)
-            tokenizer = AutoTokenizer.from_pretrained(last_checkpoint)
-            resume_training = True
-        else:
-            print("Kein gültiger Checkpoint gefunden. Starte mit dem Basis-Modell.")
-            model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-            tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-            resume_training = False
-    except Exception as e:
-        print(f"Fehler beim Laden des Modells: {e}. Starte mit dem Basis-Modell.")
+    # Checkpoints prüfen und laden
+    checkpoint_dir = os.path.join(output_dir, "checkpoint-*")
+    checkpoints = sorted(glob.glob(checkpoint_dir))  # Alle Checkpoints suchen und sortieren
+    checkpoint_path = checkpoints[-1] if checkpoints else None  # Letzten Checkpoint verwenden
+
+    if checkpoint_path:
+        print(f"Setze Training vom letzten Checkpoint ({checkpoint_path}) fort...")
+        model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint_path)
+        resume_training = True  # Fortsetzung des Trainings
+    else:
+        print("Starte mit dem Basis-Modell...")
         model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-        resume_training = False
-
-    # Debugging für Modell-Keys
-    model_state_dict = model.state_dict()
-    required_keys = ['encoder.embed_tokens.weight', 'decoder.embed_tokens.weight']
-    missing_keys = set(required_keys) - set(model_state_dict.keys())
-    print(f"Fehlende Keys: {missing_keys}")
-    print(f"Geladene Parameter im Modell: {list(model_state_dict.keys())[:10]}")  # Zeige die ersten 10 Parameter
+        resume_training = False  # Neues Training
 
 
-    # Fortschritt des Trainings laden
-    progress = load_progress(MODEL_NAME)
-    total_epochs = progress.get("total_epochs", 0)
+    # Trainingsdaten laden
+    # German-Daten laden
+    if include_german:
+        print("Lade German-Daten (GermanDPR und GermanQuAD)...")
+        training_data = load_german_data()
+        
+        # Dataset erstellen
+        dataset = Dataset.from_dict({
+            "input": [item["input"] for item in training_data],
+            "output": [item["output"] for item in training_data],
+            "context": [item["context"] for item in training_data],
+            "category": [item.get("category", "Allgemein") for item in training_data]
+        })
+        tokenized_dataset = dataset.map(preprocess_german_data, batched=True)
+        
+        # Filter Negative Beispiele
+        negative_sample_rate = config["TRAINING"].get("negative_sample_rate", 0.5)
+        training_data = filter_negatives(training_data, negative_sample_rate)
 
-    # Trainingsdaten laden und optional mit Kontext verarbeiten
-    training_data = load_data(include_german=include_german)
+    # FAQ-Daten laden
+    else:
+        print("Lade FAQ-Daten (faq_sales und faq_general)...")
+        training_data = load_faq_data()
+        training_data = expand_with_synonyms(training_data)  # Synonyme in die Trainingsdaten erweitern
+        
+        # Dataset erstellen
+        dataset = Dataset.from_dict({
+            "input": [item["input"] for item in training_data],
+            "output": [item["output"] for item in training_data],
+            "category": [item["category"] for item in training_data]
+        })
+        tokenized_dataset = dataset.map(preprocess_faq_data, batched=True)
 
-    # Dataset erstellen
-    dataset = Dataset.from_dict({
-        "input": [item["input"] for item in training_data],
-        "output": [item["output"] for item in training_data],
-        "category": [item["category"] for item in training_data],
-        "context": [item.get("context", "") for item in training_data]  # Kontext optional
-    })
 
-    # Boolean für Kontextverarbeitung
-    use_context = include_german
-
-    tokenized_dataset = dataset.map(lambda examples: preprocess_function(examples, use_context=use_context), batched=True)
 
     # Daten aufteilen (80% Training, 20% Validierung)
     split_datasets = tokenized_dataset.train_test_split(test_size=1 - config["TRAINING"]["train_ratio"])
@@ -348,9 +343,12 @@ def main():
         #logging_dir="./fine_tuned_model/logs",
         logging_steps=config["TRAINING"]["training_args"]["logging_steps"],
         load_best_model_at_end=config["TRAINING"]["training_args"]["load_best_model_at_end"],
-        save_safetensors=True  # Aktiviert die Safetensors-Unterstützung
+        #save_safetensors=True  # Aktiviert die Safetensors-Unterstützung
     )
 
+    # Fortschritt des Trainings laden
+    progress = load_progress(MODEL_NAME)
+    total_epochs = progress.get("total_epochs", 0)
 
     # Trainer einrichten
     trainer = Trainer(
@@ -358,30 +356,30 @@ def main():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        processing_class=tokenizer,  # Ab v5.0
+        tokenizer=tokenizer,
         callbacks=[
             EarlyStoppingCallback(early_stopping_patience=config["TRAINING"]["training_args"].get("early_stopping_patience", 3))
         ]
     )
 
-
-    # Training starten
+    # Startzeit für die Gesamttrainingszeit
     start_time = datetime.now()
+
+    # Training starten (mit Checkpoint-Fortsetzung)
     if resume_training:
-        print(f"Setze Training vom letzten Checkpoint ({last_checkpoint}) fort...")
-        trainer.train(resume_from_checkpoint=last_checkpoint)
+        print(f"Setze Training vom letzten Checkpoint ({checkpoint_path}) fort...")
+        trainer.train(resume_from_checkpoint=checkpoint_path)
     else:
         print("Starte neues Training...")
         trainer.train()
 
+    # Modell und Tokenizer speichern
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+
+    #------------------------------------------------------------------------
     # Gesamttrainingszeit berechnen
     training_time = (datetime.now() - start_time).total_seconds()
-
-    # Modell und Tokenizer speichern
-    model.save_pretrained(output_dir, safe_serialization=False)
-
-    #model.save_pretrained(output_dir)
-    tokenizer.save_pretrained(output_dir)
 
     # Fortschritt aktualisieren
     progress["total_epochs"] += training_args.num_train_epochs
@@ -404,7 +402,6 @@ def main():
     print(f"Training abgeschlossen.")
     print(f"Das feingetunte Modell wurde unter {output_dir} gespeichert.")
     print(f"Total Training Time: {training_time:.2f} seconds\n")
-
 
 # ---------------------------- Skript starten ---------------------------------------------
 if __name__ == "__main__":

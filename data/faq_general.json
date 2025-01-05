@@ -3,7 +3,7 @@
         "question": "Hi",
         "answer": "Willkommen! Wie kann ich Ihnen helfen?",
         "category": "Begrüßung",
-        "synonyms": ["Hallo", "Guten Tag", "Hey", "Grüß dich", "Servus, Guten Morgen", "Guten Abend", "Guten Tag", "Hallo, wie geht's?, Grüß Gott"]
+        "synonyms": ["Hallo", "Guten Tag", "Hey", "Grüß dich", "Servus, Guten Morgen", "Guten Abend", "Hallo, wie geht's?, Grüß Gott"]
     },
     {
         "question": "Wie geht es dir?",

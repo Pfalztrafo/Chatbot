@@ -347,7 +347,7 @@ class ChatbotGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Chatbot Management Dashboard")
-        self.root.geometry("1000x700")
+        self.root.geometry("1000x800")
 
         # Der Chatbot soll zu Beginn "Gestoppt" sein
         self.chatbot_status_var = tk.StringVar(value="Gestoppt")
@@ -775,57 +775,73 @@ class ChatbotGUI:
             ("Batchgröße:", "batch_size", 4),
             ("Weight Decay:", "weight_decay", 5),
             ("Trainingsverhältnis:", "train_ratio", 6),
-            ("Negative Sample Rate:", "negative_sample_rate", 7)
+            ("Negative Sample Rate:", "negative_sample_rate", 7),
+            ("Save Total Limit:", "save_total_limit", 8),
+            ("Early Stopping Patience:", "early_stopping_patience", 9)
         ]
 
         self.entries = {}
         for label, param, row in parameters:
             ttk.Label(left_frame, text=label, font=("Arial", 12)).grid(row=row, column=0, pady=5, sticky="w")
             entry = ttk.Entry(left_frame)
-            entry.insert(0, self.config_manager.get_param("TRAINING", param))
+
+            # Werte aus der Konfigurationsdatei laden
+            if param in ["save_total_limit", "early_stopping_patience"]:
+                value = self.config_manager.get_param("TRAINING", "training_args", {}).get(param, "")
+            else:
+                value = self.config_manager.get_param("TRAINING", param, "")
+
+            entry.insert("end", str(value))  # Werte einfügen
             entry.grid(row=row, column=1, pady=5, sticky="ew")
             self.entries[param] = entry
 
-        # Mehrfachauswahl für JSON-Dateien
-        ttk.Label(left_frame, text="Datenquellen auswählen:", font=("Arial", 12))\
-            .grid(row=8, column=0, columnspan=2, pady=5, sticky="w")
+
+        # Checkbox für "Include German Data"
+        ttk.Label(left_frame, text="Include German Data:", font=("Arial", 12)).grid(row=11, column=0, pady=5, sticky="w")
+        self.include_german_var = tk.BooleanVar(value=self.config_manager.get_param("TRAINING", "include_german", True))
+        include_german_checkbox = ttk.Checkbutton(left_frame, variable=self.include_german_var)
+        include_german_checkbox.grid(row=11, column=1, pady=5, sticky="w")
+
+
+        # # Mehrfachauswahl für JSON-Dateien
+        # ttk.Label(left_frame, text="Datenquellen auswählen:", font=("Arial", 12))\
+        #     .grid(row=12, column=0, columnspan=2, pady=5, sticky="w")
         
-        # Listbox für data_total:
-        self.data_sources_listbox = tk.Listbox(left_frame, selectmode="multiple", height=5)
-        self.data_sources_listbox.grid(row=9, column=0, columnspan=2, pady=5, sticky="ew")
+        # # Listbox für data_total:
+        # self.data_sources_listbox = tk.Listbox(left_frame, selectmode="multiple", height=5)
+        # self.data_sources_listbox.grid(row=13, column=0, columnspan=2, pady=5, sticky="ew")
 
-        # Lade alle möglichen Quellen (data_total) in die Liste
-        data_total = self.config_manager.get_param("TRAINING", "data_total", [])
-        for idx, source in enumerate(data_total):
-            self.data_sources_listbox.insert(tk.END, source)
+        # # Lade alle möglichen Quellen (data_total) in die Liste
+        # data_total = self.config_manager.get_param("TRAINING", "data_total", [])
+        # for idx, source in enumerate(data_total):
+        #     self.data_sources_listbox.insert(tk.END, source)
 
-        # ausgewählten data_sources markieren:
-        already_selected = self.config_manager.get_param("TRAINING", "data_sources", [])
-        for idx, source in enumerate(data_total):
-            if source in already_selected:
-                self.data_sources_listbox.selection_set(idx)
-                # optional auch self.data_sources_listbox.activate(idx)
+        # # ausgewählten data_sources markieren:
+        # already_selected = self.config_manager.get_param("TRAINING", "data_sources", [])
+        # for idx, source in enumerate(data_total):
+        #     if source in already_selected:
+        #         self.data_sources_listbox.selection_set(idx)
 
         # Buttons für Einstellungen und Training
         ttk.Button(left_frame, text="Einstellungen Übernehmen", command=self.save_training_settings)\
-            .grid(row=10, column=0, columnspan=2, pady=10, sticky="ew")
+            .grid(row=14, column=0, columnspan=2, pady=10, sticky="ew")
         ttk.Button(left_frame, text="Training Starten", command=self.start_training)\
-            .grid(row=11, column=0, columnspan=2, pady=10, sticky="ew")
+            .grid(row=15, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Training-Status-Label (unten im left_frame)
         self.training_status_label = ttk.Label(left_frame, text="Training: Inaktiv", foreground="red")
-        self.training_status_label.grid(row=12, column=0, columnspan=2, pady=5, sticky="w")
+        self.training_status_label.grid(row=16, column=0, columnspan=2, pady=5, sticky="w")
 
         # Chatbot An/Aus-Button
         ttk.Button(
             left_frame, 
             text="Chatbot An/Aus", 
             command=self.toggle_chatbot
-        ).grid(row=13, column=0, columnspan=2, pady=10, sticky="ew")
+        ).grid(row=17, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Chatbot-Status label
         self.chatbot_status_label_training = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red")
-        self.chatbot_status_label_training.grid(row=14, column=0, columnspan=2, pady=5, sticky="w")
+        self.chatbot_status_label_training.grid(row=18, column=0, columnspan=2, pady=5, sticky="w")
 
         # Rechte Spalte: Trainingslogs
         right_frame = ttk.Frame(main_frame)
@@ -869,12 +885,18 @@ class ChatbotGUI:
                 self.config_manager.set_param("TRAINING", param, value)
 
             # Datenquellen aktualisieren
-            selected_indices = self.data_sources_listbox.curselection()
-            selected_sources = [self.data_sources_listbox.get(i) for i in selected_indices]
-            self.config_manager.set_param("TRAINING", "data_sources", selected_sources)
+            #selected_indices = self.data_sources_listbox.curselection()
+            #selected_sources = [self.data_sources_listbox.get(i) for i in selected_indices]
+            #self.config_manager.set_param("TRAINING", "data_sources", selected_sources)
             
             selected_train_model = self.training_model_var.get()
             self.config_manager.set_param("MODEL", "MODEL_NAME", selected_train_model)
+            #self.config_manager.set_param("TRAINING", "use_context", self.use_context_var.get())
+            self.config_manager.set_param("TRAINING", "include_german", self.include_german_var.get())
+
+             # Zeige Meldung, dass die Einstellungen gespeichert wurden
+            messagebox.showinfo("Einstellungen gespeichert", "Die Trainingsparameter wurden erfolgreich gespeichert.")
+
 
 
             print("Trainingsparameter erfolgreich gespeichert.")

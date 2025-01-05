@@ -15,7 +15,7 @@
     },
     "MODEL": {
         "MODEL_PATH": "./fine_tuned_model",
-        "MODEL_NAME": "google/flan-t5-small",
+        "MODEL_NAME": "google/flan-t5-base",
         "available_models": [
             "google/flan-t5-small",
             "google/flan-t5-base",
@@ -30,23 +30,13 @@
         }
     },
     "TRAINING": {
-        "epochs": 3,
+        "epochs": 1,
         "learning_rate": 2e-05,
-        "batch_size": 4,
+        "batch_size": 2,
         "weight_decay": 0.01,
         "train_ratio": 0.8,
         "negative_sample_rate": 0.5,
-        "use_context": false,
         "include_german": false,
-        "data_sources": [
-            "data/faq_general.json"
-        ],
-        "data_total": [
-            "data/faq_general.json",
-            "data/faq_sales.json",
-            "data/GermanDPR_train_filtered.json",
-            "data/GermanQuAD_train_filtered.json"
-        ],
         "training_args": {
             "eval_strategy": "epoch",
             "save_strategy": "epoch",
@@ -54,13 +44,15 @@
             "logging_steps": 10,
             "load_best_model_at_end": true,
             "early_stopping_patience": 3
-        }
+        },
+        "save_total_limit": 2,
+        "early_stopping_patience": 3
     },
     "CHAT": {
         "use_fuzzy_matching": false,
         "use_ki_generative": true,
         "use_pipeline": false,
-        "internal_prompt": "Answer the following question in German:",
+        "internal_prompt": "",
         "fuzzy_threshold": 60,
         "fuzzy_score_range": [
             0.0,
