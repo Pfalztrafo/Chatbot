@@ -1,8 +1,8 @@
 {
     "google/flan-t5-base": {
-        "total_epochs": 2
+        "total_epochs": 5
     },
     "google/flan-t5-small": {
-        "total_epochs": 198
+        "total_epochs": 209
     }
 }

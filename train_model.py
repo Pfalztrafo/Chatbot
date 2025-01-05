@@ -333,16 +333,16 @@ def main():
     # Trainingsargumente festlegen
     training_args = TrainingArguments(
         output_dir=output_dir,
+        num_train_epochs=config["TRAINING"]["epochs"],
+        learning_rate=config["TRAINING"]["learning_rate"],
+        per_device_train_batch_size=config["TRAINING"]["batch_size"],
+        weight_decay=config["TRAINING"]["weight_decay"],
         evaluation_strategy=config["TRAINING"]["training_args"]["eval_strategy"],
         save_strategy=config["TRAINING"]["training_args"]["save_strategy"],
         save_total_limit=config["TRAINING"]["training_args"]["save_total_limit"],
-        learning_rate=config["TRAINING"]["learning_rate"],
-        per_device_train_batch_size=config["TRAINING"]["batch_size"],
-        num_train_epochs=config["TRAINING"]["epochs"],
-        weight_decay=config["TRAINING"]["weight_decay"],
-        #logging_dir="./fine_tuned_model/logs",
         logging_steps=config["TRAINING"]["training_args"]["logging_steps"],
-        load_best_model_at_end=config["TRAINING"]["training_args"]["load_best_model_at_end"],
+        load_best_model_at_end=config["TRAINING"]["training_args"]["load_best_model_at_end"]
+        #logging_dir="./fine_tuned_model/logs",
         #save_safetensors=True  # Aktiviert die Safetensors-Unterstützung
     )
 

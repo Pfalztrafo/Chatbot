@@ -347,7 +347,7 @@ class ChatbotGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Chatbot Management Dashboard")
-        self.root.geometry("1000x800")
+        self.root.geometry("1000x900")
 
         # Der Chatbot soll zu Beginn "Gestoppt" sein
         self.chatbot_status_var = tk.StringVar(value="Gestoppt")
@@ -429,11 +429,11 @@ class ChatbotGUI:
         left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
         # Überschrift
-        ttk.Label(left_frame, text="API- und Chatbot-Steuerung", font=("Arial", 16, "bold"))\
+        ttk.Label(left_frame, text="API- und Chatbot-Steuerung", font=("Arial", 12))\
             .grid(row=0, column=0, columnspan=2, pady=10, sticky="w")
 
         # 1) API-Status
-        self.api_status_label = ttk.Label(left_frame, text="Gestoppt", font=("Arial", 12))
+        self.api_status_label = ttk.Label(left_frame, text="Gestoppt", font=("Arial", 10))
         self.api_status_label.grid(row=1, column=0, pady=(0, 5), sticky="w")
 
         # 2) Button: API Starten / Stoppen
@@ -444,21 +444,21 @@ class ChatbotGUI:
         ).grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
 
         # 3) IP, Port & Domains
-        ttk.Label(left_frame, text="IP-Adresse:", font=("Arial", 12))\
+        ttk.Label(left_frame, text="IP-Adresse:", font=("Arial", 10))\
             .grid(row=3, column=0, sticky="w", pady=(0, 5))
-        self.ip_entry = ttk.Entry(left_frame, font=("Arial", 12), width=18)
+        self.ip_entry = ttk.Entry(left_frame, font=("Arial", 10), width=18)
         self.ip_entry.insert(0, self.config_manager.get_param("API", "ip", "0.0.0.0"))
         self.ip_entry.grid(row=3, column=1, pady=(0, 5), sticky="w")
 
-        ttk.Label(left_frame, text="Port:", font=("Arial", 12))\
+        ttk.Label(left_frame, text="Port:", font=("Arial", 10))\
             .grid(row=4, column=0, sticky="w", pady=(0, 5))
-        self.port_entry = ttk.Entry(left_frame, font=("Arial", 12), width=18)
+        self.port_entry = ttk.Entry(left_frame, font=("Arial", 10), width=18)
         self.port_entry.insert(0, self.config_manager.get_param("API", "port", 8000))
         self.port_entry.grid(row=4, column=1, pady=(0, 5), sticky="w")
 
-        ttk.Label(left_frame, text="Domains:", font=("Arial", 12))\
+        ttk.Label(left_frame, text="Domains:", font=("Arial", 10))\
             .grid(row=5, column=0, sticky="w", pady=(0, 5))
-        self.origins_entry = ttk.Entry(left_frame, font=("Arial", 12), width=18)
+        self.origins_entry = ttk.Entry(left_frame, font=("Arial", 10), width=18)
         self.origins_entry.insert(0, ", ".join(self.config_manager.get_param("API", "allow_origins", ["*"])))
         self.origins_entry.grid(row=5, column=1, pady=(0, 5), sticky="w")
 
@@ -476,7 +476,7 @@ class ChatbotGUI:
         ).grid(row=7, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Status-Label für Chatbot
-        self.chatbot_status_label_overview = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red", font=("Arial", 12))
+        self.chatbot_status_label_overview = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red", font=("Arial", 10))
         self.chatbot_status_label_overview.grid(row=8, column=0, columnspan=2, pady=(0, 10), sticky="w")
 
         # 5) Beenden-Button
@@ -491,7 +491,7 @@ class ChatbotGUI:
         right_frame = ttk.Frame(main_frame)
         right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
-        ttk.Label(right_frame, text="Chat Logs", font=("Arial", 16, "bold"))\
+        ttk.Label(right_frame, text="Chat Logs", font=("Arial", 12))\
             .grid(row=0, column=0, pady=10, sticky="w")
 
         self.chat_logs_text = tk.Text(right_frame, wrap="word", state="disabled", font=("Arial", 10))
@@ -603,7 +603,7 @@ class ChatbotGUI:
 
         for label_text, param, param_type in parameters:
             # Label
-            lbl = ttk.Label(scrollable_frame, text=label_text, font=("Arial", 12))
+            lbl = ttk.Label(scrollable_frame, text=label_text, font=("Arial", 10))
             lbl.grid(row=row, column=0, pady=5, sticky="w")
 
             if param_type == "bool":
@@ -657,7 +657,7 @@ class ChatbotGUI:
 
         row += 1
 
-        self.chatbot_status_label_chat = ttk.Label(scrollable_frame, text="Chatbot: Aus", foreground="red")
+        self.chatbot_status_label_chat = ttk.Label(scrollable_frame, text="Chatbot: Aus", foreground="red", font=("Arial", 12))
         self.chatbot_status_label_chat.grid(row=row, column=0, columnspan=2, pady=5, sticky="w")
 
         row += 1
@@ -668,7 +668,7 @@ class ChatbotGUI:
         right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
         # Rechte Spalte anpassen
-        ttk.Label(right_frame, text="Chat-Verlauf", font=("Arial", 16))\
+        ttk.Label(right_frame, text="Chat-Verlauf", font=("Arial", 12))\
             .grid(row=0, column=0, sticky="w", pady=(0, 10))
 
         # Scrollbar für den Chat-Verlauf
@@ -689,7 +689,7 @@ class ChatbotGUI:
         input_frame = ttk.Frame(right_frame)
         input_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=5)
 
-        self.chat_input = ttk.Entry(input_frame, font=("Arial", 12))
+        self.chat_input = ttk.Entry(input_frame, font=("Arial", 10))
         self.chat_input.pack(side="left", fill="x", expand=True, padx=5)
         self.chat_input.bind("<Return>", self.handle_chat_input)
 
@@ -745,7 +745,7 @@ class ChatbotGUI:
     # --------------------------------------------------------
 
     def create_training_tab(self):
-        """Erstellt den Trainings-Tab mit Modelauswahl links und Logs rechts."""
+        """Erstellt den Trainings-Tab mit Modellauswahl links und Logs rechts."""
 
         # Hauptcontainer für Parameter und Logs
         main_frame = ttk.Frame(self.training_tab)
@@ -762,92 +762,101 @@ class ChatbotGUI:
         left_frame = ttk.Frame(main_frame)
         left_frame.grid(row=0, column=0, sticky="ns", padx=10, pady=10)
 
+        # Modellauswahl
         ttk.Label(left_frame, text="Modell für Training auswählen:", font=("Arial", 12)).grid(row=0, column=0, columnspan=2, pady=5, sticky="w")
         self.training_model_var = tk.StringVar(value=self.model_manager.get_current_model())
         self.training_model_dropdown = ttk.Combobox(left_frame, textvariable=self.training_model_var, state="readonly")
         self.training_model_dropdown['values'] = self.model_manager.get_available_models()
         self.training_model_dropdown.grid(row=1, column=0, columnspan=2, pady=5, sticky="ew")
 
-        # Parameterfelder
+        # Trainingsparameter
         parameters = [
-            ("Epochen:", "epochs", 2),
-            ("Lernrate:", "learning_rate", 3),
-            ("Batchgröße:", "batch_size", 4),
-            ("Weight Decay:", "weight_decay", 5),
-            ("Trainingsverhältnis:", "train_ratio", 6),
-            ("Negative Sample Rate:", "negative_sample_rate", 7),
-            ("Save Total Limit:", "save_total_limit", 8),
-            ("Early Stopping Patience:", "early_stopping_patience", 9)
+            ("Epochen:", "epochs", "int"),
+            ("Lernrate:", "learning_rate", "float"),
+            ("Batchgröße:", "batch_size", "int"),
+            ("Weight Decay:", "weight_decay", "float"),
+            ("Trainingsverhältnis:", "train_ratio", "float"),
+            ("Negative Sample Rate:", "negative_sample_rate", "float"),
         ]
 
-        self.entries = {}
-        for label, param, row in parameters:
-            ttk.Label(left_frame, text=label, font=("Arial", 12)).grid(row=row, column=0, pady=5, sticky="w")
-            entry = ttk.Entry(left_frame)
+        self.training_entries = {}
 
-            # Werte aus der Konfigurationsdatei laden
-            if param in ["save_total_limit", "early_stopping_patience"]:
-                value = self.config_manager.get_param("TRAINING", "training_args", {}).get(param, "")
+        for idx, (label, param, param_type) in enumerate(parameters, start=2):
+            ttk.Label(left_frame, text=label, font=("Arial", 10)).grid(row=idx, column=0, pady=5, sticky="w")
+            entry = ttk.Entry(left_frame, font=("Arial", 10))
+            default_value = self.config_manager.get_param("TRAINING", param, "")
+            entry.insert(0, str(default_value))
+            entry.grid(row=idx, column=1, pady=5, sticky="ew")
+            self.training_entries[param] = (entry, param_type)
+
+        # Trainingsargumente (training_args)
+        ttk.Label(left_frame, text="Trainingsargumente:", font=("Arial", 12)).grid(row=8, column=0, columnspan=2, pady=10, sticky="w")
+
+        training_args_params = [
+            ("Eval Strategy:", "eval_strategy", "str", ["epoch", "steps", "no"]),
+            ("Save Strategy:", "save_strategy", "str", ["epoch", "steps", "no"]),
+            ("Load Best Model at End:", "load_best_model_at_end", "bool", None),
+            ("Save Total Limit:", "save_total_limit", "int", None),
+            ("Logging Steps:", "logging_steps", "int", None),
+            ("Early Stopping Patience:", "early_stopping_patience", "int", None),
+        ]
+
+        self.training_args_entries = {}
+
+        for idx, (label, param, param_type, options) in enumerate(training_args_params, start=9):
+            ttk.Label(left_frame, text=label, font=("Arial", 10)).grid(row=idx, column=0, pady=5, sticky="w")
+            
+            if param_type == "bool":
+                var = tk.BooleanVar(value=self.config_manager.get_param("TRAINING", "training_args", {}).get(param, False))
+                cb = ttk.Checkbutton(left_frame, variable=var)
+                cb.grid(row=idx, column=1, pady=5, sticky="w")
+                self.training_args_entries[param] = var
+
+            elif param_type == "str" and options:
+                var = tk.StringVar(value=self.config_manager.get_param("TRAINING", "training_args", {}).get(param, options[0]))
+                dropdown = ttk.Combobox(left_frame, textvariable=var, state="readonly", values=options)
+                dropdown.grid(row=idx, column=1, pady=5, sticky="ew")
+                self.training_args_entries[param] = var
+
             else:
-                value = self.config_manager.get_param("TRAINING", param, "")
-
-            entry.insert("end", str(value))  # Werte einfügen
-            entry.grid(row=row, column=1, pady=5, sticky="ew")
-            self.entries[param] = entry
-
+                entry = ttk.Entry(left_frame, font=("Arial", 10))
+                default_value = self.config_manager.get_param("TRAINING", "training_args", {}).get(param, "")
+                entry.insert(0, str(default_value))
+                entry.grid(row=idx, column=1, pady=5, sticky="ew")
+                self.training_args_entries[param] = (entry, param_type)
 
         # Checkbox für "Include German Data"
-        ttk.Label(left_frame, text="Include German Data:", font=("Arial", 12)).grid(row=11, column=0, pady=5, sticky="w")
-        self.include_german_var = tk.BooleanVar(value=self.config_manager.get_param("TRAINING", "include_german", True))
+        ttk.Label(left_frame, text="Include German Data:", font=("Arial", 10)).grid(row=15, column=0, pady=5, sticky="w")
+        self.include_german_var = tk.BooleanVar(value=self.config_manager.get_param("TRAINING", "include_german", False))
         include_german_checkbox = ttk.Checkbutton(left_frame, variable=self.include_german_var)
-        include_german_checkbox.grid(row=11, column=1, pady=5, sticky="w")
-
-
-        # # Mehrfachauswahl für JSON-Dateien
-        # ttk.Label(left_frame, text="Datenquellen auswählen:", font=("Arial", 12))\
-        #     .grid(row=12, column=0, columnspan=2, pady=5, sticky="w")
-        
-        # # Listbox für data_total:
-        # self.data_sources_listbox = tk.Listbox(left_frame, selectmode="multiple", height=5)
-        # self.data_sources_listbox.grid(row=13, column=0, columnspan=2, pady=5, sticky="ew")
-
-        # # Lade alle möglichen Quellen (data_total) in die Liste
-        # data_total = self.config_manager.get_param("TRAINING", "data_total", [])
-        # for idx, source in enumerate(data_total):
-        #     self.data_sources_listbox.insert(tk.END, source)
-
-        # # ausgewählten data_sources markieren:
-        # already_selected = self.config_manager.get_param("TRAINING", "data_sources", [])
-        # for idx, source in enumerate(data_total):
-        #     if source in already_selected:
-        #         self.data_sources_listbox.selection_set(idx)
+        include_german_checkbox.grid(row=15, column=1, pady=5, sticky="w")
 
         # Buttons für Einstellungen und Training
         ttk.Button(left_frame, text="Einstellungen Übernehmen", command=self.save_training_settings)\
-            .grid(row=14, column=0, columnspan=2, pady=10, sticky="ew")
+            .grid(row=16, column=0, columnspan=2, pady=10, sticky="ew")
         ttk.Button(left_frame, text="Training Starten", command=self.start_training)\
-            .grid(row=15, column=0, columnspan=2, pady=10, sticky="ew")
+            .grid(row=17, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Training-Status-Label (unten im left_frame)
-        self.training_status_label = ttk.Label(left_frame, text="Training: Inaktiv", foreground="red")
-        self.training_status_label.grid(row=16, column=0, columnspan=2, pady=5, sticky="w")
+        self.training_status_label = ttk.Label(left_frame, text="Training: Inaktiv", foreground="red", font=("Arial", 12))
+        self.training_status_label.grid(row=18, column=0, columnspan=2, pady=5, sticky="w")
 
         # Chatbot An/Aus-Button
         ttk.Button(
             left_frame, 
             text="Chatbot An/Aus", 
             command=self.toggle_chatbot
-        ).grid(row=17, column=0, columnspan=2, pady=10, sticky="ew")
+        ).grid(row=19, column=0, columnspan=2, pady=10, sticky="ew")
 
         # Chatbot-Status label
-        self.chatbot_status_label_training = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red")
-        self.chatbot_status_label_training.grid(row=18, column=0, columnspan=2, pady=5, sticky="w")
+        self.chatbot_status_label_training = ttk.Label(left_frame, text="Chatbot: Aus", foreground="red", font=("Arial", 12))
+        self.chatbot_status_label_training.grid(row=20, column=0, columnspan=2, pady=5, sticky="w")
 
         # Rechte Spalte: Trainingslogs
         right_frame = ttk.Frame(main_frame)
         right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
-        ttk.Label(right_frame, text="Trainingslogs", font=("Arial", 16)).grid(row=0, column=0, pady=10, sticky="w")
+        ttk.Label(right_frame, text="Trainingslogs", font=("Arial", 12)).grid(row=0, column=0, pady=10, sticky="w")
         self.training_logs_text = tk.Text(right_frame, wrap="word", state="disabled", font=("Arial", 10))
         self.training_logs_text.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
 
@@ -858,8 +867,9 @@ class ChatbotGUI:
         # Starte die Log-Aktualisierung
         self.update_training_logs()
 
-        # Horizontale Darstellung der Systemressourcen
+        # Systemressourcen-Anzeige
         self.cpu_label_training, self.ram_label_training, self.gpu_label_training = self.create_system_resource_labels(self.training_tab)
+
 
 
     def training_finished(self, status=None):
@@ -879,29 +889,53 @@ class ChatbotGUI:
     def save_training_settings(self):
         """Speichert die geänderten Trainingsparameter in config.json."""
         try:
-            # Standardparameter speichern
-            for param, entry in self.entries.items():
-                value = float(entry.get()) if "e" in entry.get().lower() or "." in entry.get() else int(entry.get())
+            # Speichern der Standard-TRAINING-Parameter
+            for param, (entry, param_type) in self.training_entries.items():
+                raw_value = entry.get().strip()
+                if param_type == "int":
+                    value = int(raw_value)
+                elif param_type == "float":
+                    value = float(raw_value)
+                else:
+                    value = raw_value  # Default: string
                 self.config_manager.set_param("TRAINING", param, value)
 
-            # Datenquellen aktualisieren
-            #selected_indices = self.data_sources_listbox.curselection()
-            #selected_sources = [self.data_sources_listbox.get(i) for i in selected_indices]
-            #self.config_manager.set_param("TRAINING", "data_sources", selected_sources)
-            
-            selected_train_model = self.training_model_var.get()
-            self.config_manager.set_param("MODEL", "MODEL_NAME", selected_train_model)
-            #self.config_manager.set_param("TRAINING", "use_context", self.use_context_var.get())
+            # Speichern der Trainingsargumente (training_args)
+            training_args = {}
+            for param, widget in self.training_args_entries.items():
+                if isinstance(widget, tk.BooleanVar):
+                    value = widget.get()
+                elif isinstance(widget, tk.StringVar):
+                    value = widget.get()
+                else:
+                    entry, param_type = widget
+                    raw_value = entry.get().strip()
+                    if param_type == "int":
+                        value = int(raw_value)
+                    elif param_type == "float":
+                        value = float(raw_value)
+                    else:
+                        value = raw_value  # Default: string
+                training_args[param] = value
+            self.config_manager.set_param("TRAINING", "training_args", training_args)
+
+            # Speichern des "Include German Data" Parameters
             self.config_manager.set_param("TRAINING", "include_german", self.include_german_var.get())
 
-             # Zeige Meldung, dass die Einstellungen gespeichert wurden
+            # Speichern der Modellwahl für das Training
+            selected_train_model = self.training_model_var.get()
+            self.config_manager.set_param("MODEL", "MODEL_NAME", selected_train_model)
+
+            # Erfolgsmeldung
             messagebox.showinfo("Einstellungen gespeichert", "Die Trainingsparameter wurden erfolgreich gespeichert.")
-
-
-
             print("Trainingsparameter erfolgreich gespeichert.")
+
         except ValueError as e:
             print(f"Fehler beim Speichern der Trainingsparameter: {e}")
+            messagebox.showerror("Fehler", f"Fehler beim Speichern der Trainingsparameter: {e}")
+        except Exception as e:
+            print(f"Unerwarteter Fehler beim Speichern der Trainingsparameter: {e}")
+            messagebox.showerror("Fehler", f"Unerwarteter Fehler beim Speichern der Trainingsparameter: {e}")
 
 
     # --------------------------------------------------------

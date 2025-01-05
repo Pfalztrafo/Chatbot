@@ -6146,3 +6146,125 @@ Average Loss for This Run: 30.5567
 Total Training Time for This Run: 3.71 seconds
 --- End of Training ---
 
+--- Training Run ---
+Start Time: 2025-01-05 21:04:47
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 2
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 1.0: Loss = 30.5567, Grad Norm = 172.31582641601562, LR = 8.23529411764706e-06
+
+Average Loss for This Run: 30.5567
+Total Training Time for This Run: 3.44 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2025-01-05 21:05:56
+Total Epochs in This Run: 2
+Cumulative Total Epochs: 3
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 2.0: Loss = 30.5567, Grad Norm = 172.31582641601562, LR = 8.23529411764706e-06
+  Epoch 2.0: Loss = 25.5402, Grad Norm = 142.7336883544922, LR = 8.23529411764706e-06
+  Epoch 2.0: Loss = 25.8361, Grad Norm = 177.19882202148438, LR = 2.3529411764705885e-06
+
+Average Loss for This Run: 27.3110
+Total Training Time for This Run: 33.84 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2025-01-05 21:53:50
+Total Epochs in This Run: 1
+Cumulative Total Epochs: 198
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 3.0: Loss = 38.9889, Grad Norm = 216.07798767089844, LR = 0.0
+  Epoch 3.0: Loss = 37.3325, Grad Norm = 182.07559204101562, LR = 0.0
+  Epoch 3.0: Loss = 36.6937, Grad Norm = 204.9692840576172, LR = 0.0
+  Epoch 3.0: Loss = 33.4915, Grad Norm = 125.45101928710938, LR = 1.191919191919192e-05
+  Epoch 3.0: Loss = 29.4835, Grad Norm = 129.01707458496094, LR = 9.8989898989899e-06
+  Epoch 3.0: Loss = 28.6449, Grad Norm = 87.07245635986328, LR = 7.87878787878788e-06
+  Epoch 3.0: Loss = 23.5844, Grad Norm = 56.66590118408203, LR = 5.858585858585859e-06
+  Epoch 3.0: Loss = 25.7650, Grad Norm = 189.16395568847656, LR = 3.8383838383838385e-06
+  Epoch 3.0: Loss = 23.8317, Grad Norm = 132.7886962890625, LR = 1.8181818181818183e-06
+
+Average Loss for This Run: 30.8685
+Total Training Time for This Run: 1.22 seconds
+--- End of Training ---
+
+--- Training Run ---
+Start Time: 2025-01-05 21:54:52
+Total Epochs in This Run: 10
+Cumulative Total Epochs: 199
+Learning Rate: 2e-05
+Batch Size per Device: 4
+Weight Decay: 0.01
+Device Specifications:
+  CPU: Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+  RAM: 15.71 GB
+  GPU: NVIDIA GeForce RTX 3050 6GB Laptop GPU (6.44 GB)
+  Platform: Windows Windows-11-10.0.22631-SP0
+
+Epoch Details:
+  Epoch 10.0: Loss = 38.9889, Grad Norm = 216.07798767089844, LR = 0.0
+  Epoch 10.0: Loss = 37.3325, Grad Norm = 182.07559204101562, LR = 0.0
+  Epoch 10.0: Loss = 36.6937, Grad Norm = 204.9692840576172, LR = 0.0
+  Epoch 10.0: Loss = 33.4915, Grad Norm = 125.45101928710938, LR = 1.191919191919192e-05
+  Epoch 10.0: Loss = 29.4835, Grad Norm = 129.01707458496094, LR = 9.8989898989899e-06
+  Epoch 10.0: Loss = 28.6449, Grad Norm = 87.07245635986328, LR = 7.87878787878788e-06
+  Epoch 10.0: Loss = 23.5844, Grad Norm = 56.66590118408203, LR = 5.858585858585859e-06
+  Epoch 10.0: Loss = 25.7650, Grad Norm = 189.16395568847656, LR = 3.8383838383838385e-06
+  Epoch 10.0: Loss = 23.8317, Grad Norm = 132.7886962890625, LR = 1.8181818181818183e-06
+  Epoch 10.0: Loss = 25.1344, Grad Norm = 78.09599304199219, LR = 1.3939393939393942e-05
+  Epoch 10.0: Loss = 23.6036, Grad Norm = 67.12355041503906, LR = 1.3333333333333333e-05
+  Epoch 10.0: Loss = 21.6094, Grad Norm = 63.19520568847656, LR = 1.2727272727272728e-05
+  Epoch 10.0: Loss = 20.6776, Grad Norm = 63.5058479309082, LR = 1.2121212121212122e-05
+  Epoch 10.0: Loss = 19.3249, Grad Norm = 47.82065963745117, LR = 1.1515151515151517e-05
+  Epoch 10.0: Loss = 17.4298, Grad Norm = 97.67333984375, LR = 1.0909090909090909e-05
+  Epoch 10.0: Loss = 16.9097, Grad Norm = 97.77388763427734, LR = 1.0303030303030304e-05
+  Epoch 10.0: Loss = 16.2384, Grad Norm = 63.773075103759766, LR = 9.696969696969698e-06
+  Epoch 10.0: Loss = 16.0627, Grad Norm = 73.44699096679688, LR = 9.090909090909091e-06
+  Epoch 10.0: Loss = 15.3700, Grad Norm = 82.76306915283203, LR = 8.484848484848486e-06
+  Epoch 10.0: Loss = 12.9347, Grad Norm = 61.274330139160156, LR = 7.87878787878788e-06
+  Epoch 10.0: Loss = 13.1198, Grad Norm = 69.31637573242188, LR = 7.272727272727273e-06
+  Epoch 10.0: Loss = 12.7013, Grad Norm = 96.22230529785156, LR = 6.666666666666667e-06
+  Epoch 10.0: Loss = 12.7970, Grad Norm = 91.83737182617188, LR = 6.060606060606061e-06
+  Epoch 10.0: Loss = 11.4711, Grad Norm = 80.40535736083984, LR = 5.4545454545454545e-06
+  Epoch 10.0: Loss = 10.7941, Grad Norm = 47.3529167175293, LR = 4.848484848484849e-06
+  Epoch 10.0: Loss = 11.9409, Grad Norm = 58.249542236328125, LR = 4.242424242424243e-06
+  Epoch 10.0: Loss = 10.7073, Grad Norm = 93.64659118652344, LR = 3.6363636363636366e-06
+  Epoch 10.0: Loss = 9.4952, Grad Norm = 24.51973533630371, LR = 3.0303030303030305e-06
+  Epoch 10.0: Loss = 10.5979, Grad Norm = 59.056068420410156, LR = 2.4242424242424244e-06
+  Epoch 10.0: Loss = 10.1535, Grad Norm = 58.584774017333984, LR = 1.8181818181818183e-06
+  Epoch 10.0: Loss = 10.3589, Grad Norm = 76.07435607910156, LR = 1.2121212121212122e-06
+  Epoch 10.0: Loss = 9.1426, Grad Norm = 51.37405776977539, LR = 6.060606060606061e-07
+  Epoch 10.0: Loss = 9.9585, Grad Norm = 51.4670295715332, LR = 0.0
+
+Average Loss for This Run: 18.9803
+Total Training Time for This Run: 48.17 seconds
+--- End of Training ---
+
