@@ -9,6 +9,14 @@ import psutil  # Zum Abrufen der detaillierten Systeminformationen
 import glob  # Zum Durchsuchen von Dateien
 import subprocess
 import threading
+import warnings
+
+warnings.filterwarnings(
+    "ignore",
+    message="Was asked to gather along dimension 0, but all input tensors were scalars",
+    category=UserWarning,
+    module="torch.nn.parallel._functions"
+)
 
 # ---------------------------- TensorBoard ---------------------------------------------
 def start_tensorboard(logdir="./fine_tuned_model", port=6007):
@@ -154,8 +162,7 @@ def get_device_spec():
 # ---------------------------- Trainingsdaten laden und erweitern ---------------------------------------------
 
 def load_faq_data():
-    sales_data = []
-    general_data = []
+    data = []
     faq_files = ["data/faq_sales.json", "data/faq_general.json"]
 
     for file_path in faq_files:
@@ -163,37 +170,20 @@ def load_faq_data():
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     file_data = json.load(f)
-                    if "faq_sales" in file_path:
-                        # Speichere Verkaufsdaten separat
-                        for item in file_data:
-                            sales_data.append({
-                                "input": item["question"],
-                                "output": item["answer"],
-                                "category": item.get("category", "Allgemein")
-                            })
-                    else:
-                        # Speichere allgemeine Daten separat
-                        for item in file_data:
-                            general_data.append({
-                                "input": item["question"],
-                                "output": item["answer"],
-                                "category": item.get("category", "Allgemein")
-                            })
+                    for item in file_data:
+                        data.append({
+                            "input": item["question"],
+                            "output": item["answer"],
+                            "category": item.get("category", "Allgemein")  # Kategorie berücksichtigen
+                        })
             except json.JSONDecodeError as e:
                 print(f"[ERROR] Fehler beim Lesen von {file_path}: {e}")
         else:
             print(f"[WARNUNG] Datei {file_path} nicht gefunden. Überspringe diese Datei.")
 
-    # Falls keine Daten gefunden wurden, Exception werfen
-    if not sales_data and not general_data:
+    if not data:
         raise ValueError("Keine FAQ-Daten gefunden! Überprüfen Sie die JSON-Dateien.")
-
-    # Gewichtung: Verkaufs-FAQs mehrfach hinzufügen
-    # Beispiel: 3-faches Oversampling der Verkaufsdaten
-    weighted_data = sales_data * 3 + general_data
-
-    return weighted_data
-
+    return data
 
 
 def load_german_data():
