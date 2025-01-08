@@ -1,29 +1,5 @@
 [
     {
-        "question": "Hi",
-        "answer": "Willkommen! Wie kann ich Ihnen helfen?",
-        "category": "Begrüßung",
-        "synonyms": ["Hallo", "Guten Tag", "Hey", "Grüß dich", "Servus, Guten Morgen", "Guten Abend", "Hallo, wie geht's?, Grüß Gott"]
-    },
-    {
-        "question": "Wie geht es dir?",
-        "answer": "Mir geht's gut, danke! Wie kann ich Ihnen helfen?",
-        "category": "Begrüßung",
-        "synonyms": ["Wie geht's?", "Alles klar?", "Wie läuft's?", "Wie geht es Ihnen?"]
-    },
-    {
-        "question": "Tschüss",
-        "answer": "Auf Wiedersehen! Bis bald.",
-        "category": "Abschied",
-        "synonyms": ["Auf Wiedersehen", "Bis bald", "Ciao", "Mach's gut", "Servus"]
-    },
-    {
-        "question": "Danke",
-        "answer": "Gern geschehen! Ich stehe Ihnen gerne weiter zur Verfügung.",
-        "category": "Dank",
-        "synonyms": ["Vielen Dank", "Dankeschön", "Danke dir", "Ich danke Ihnen", "Danke schön", "Danke für die Hilfe"]
-    },
-    {
         "question": "Wer bist du?",
         "answer": "Ich bin der digitale Assistent von Pfalztrafo und beantworte Ihre Fragen zu Transformatoren.",
         "category": "Systeminformation",
@@ -46,12 +22,6 @@
         "answer": "Wenn ich nicht weiterhelfen kann, wenden Sie sich bitte an unser Support-Team.",
         "category": "Kontaktwunsch",
         "synonyms": ["Mit einem Mitarbeiter sprechen?", "Einen Menschen sprechen", "Kann ich jemanden anrufen?", "Mit jemandem sprechen"]
-    },
-    {
-        "question": "Bis später",
-        "answer": "Bis bald! Ich freue mich auf die nächste Unterhaltung.",
-        "category": "Abschied",
-        "synonyms": ["Bis bald", "Man sieht sich", "Bis dann", "Bis zum nächsten Mal"]
     },
     {
         "question": "Ich brauche Hilfe",
@@ -84,42 +54,6 @@
         "category": "Kontakt"
     },
     {
-        "question": "Kann ich die Sprache ändern?",
-        "answer": "Derzeit ist der Chatbot nur auf Deutsch verfügbar.",
-        "synonyms": ["Sprache ändern", "Ist der Chatbot mehrsprachig?", "Andere Sprachen verfügbar?", "Kann ich Englisch einstellen?", "In welcher Sprache ist der Chatbot verfügbar?"],
-        "category": "Einstellungen"
-    },
-    {
-        "question": "Ich habe ein dringendes Problem",
-        "answer": "Bitte kontaktieren Sie unser Support-Team über die Kontaktseite für schnelle Hilfe.",
-        "synonyms": ["Notfall", "Dringend", "Es funktioniert nicht", "Ich brauche sofort Hilfe", "Schnelle Unterstützung"],
-        "category": "Support"
-    },
-    {
-        "question": "Bist du ein Mensch?",
-        "answer": "Ich bin ein digitaler Assistent ohne Gefühle, aber ich beantworte Ihre Fragen.",
-        "synonyms": ["Hast du Gefühle?", "Wie alt bist du?", "Was ist dein Lieblingsessen?", "Kannst du lieben?", "Wie bist du programmiert?", "Hast du eine Familie?", "Was machst du in deiner Freizeit?", "Hast du eine Meinung?"],
-        "category": "Allgemein"
-    },
-    {
-        "question": "Kannst du Matheaufgaben berechnen?",
-        "answer": "Ich bin auf Transformatoren spezialisiert, für Matheaufgaben verwenden Sie am besten einen Taschenrechner.",
-        "synonyms": ["Was ist 2+2?", "1+1?", "Wie viel ist 15 mal 12?", "Kannst du mir eine Gleichung lösen?", "Rechne 100 geteilt durch 25.", "Was ergibt 9 hoch 2?", "Matheaufgabe", "Mathematik", "Kannst du rechnen?", "Hilf mir bei einer Gleichung", "Wie rechne ich Prozent aus?"],
-        "category": "Allgemein"
-    },
-    {
-        "question": "Schreibe mir ein Gedicht",
-        "answer": "Ich bin kein Dichter, aber hier ist ein Versuch: 'Ein Transformator, voller Spannung, so rein. Helfen kann er, groß und klein!",
-        "synonyms": ["Schreib mir ein Gedicht", "Mach ein Haiku", "Kannst du programmieren?", "Schreibe Python-Code", "Hilf mir beim Programmieren", "Erstell mir ein Rezept", "Zeig mir einen Zaubertrick"],
-        "category": "Unterhaltung"
-    },
-    {
-        "question": "Was würdest du tun, wenn die Welt untergeht?",
-        "answer": "Wahrscheinlich weiterarbeiten! Aber lassen Sie uns lieber über Transformatoren sprechen.",
-        "synonyms": ["Was passiert beim Weltuntergang?", "Wie überlebe ich eine Zombie-Apokalypse?", "Was ist der Sinn des Lebens?", "Kannst du die Zeit zurückdrehen?", "Was würdest du tun, wenn du ein Mensch wärst?", "Was ist deine größte Angst?"],
-        "category": "Allgemein"
-    },
-    {
         "question": "Wer hat dich programmiert?",
         "answer": "Ich wurde von einem Team bei Pfalztrafo entwickelt, um Ihnen bei Fragen zu Transformatoren zu helfen.",
         "category": "Systeminformation",
@@ -129,54 +63,6 @@
             "Wer hat dich erstellt?",
             "Von wem wurdest du programmiert?",
             "Wer steckt hinter dir?"
-        ]
-    },
-    {
-        "question": "Wie funktioniert der Chatbot?",
-        "answer": "Ich analysiere Ihre Fragen und gebe Antworten basierend auf den verfügbaren Informationen zu Transformatoren und verwandten Themen.",
-        "category": "Systeminformation",
-        "synonyms": [
-            "Wie arbeitest du?",
-            "Was kannst du tun?",
-            "Wie beantworte ich Fragen?",
-            "Wie beantwortest du Fragen?",
-            "Wie funktioniert das System?"
-        ]
-    },
-    {
-        "question": "Kann ich den Chatbot auch für andere Themen nutzen?",
-        "answer": "Aktuell beantworte ich hauptsächlich Fragen zu Transformatoren und unseren Dienstleistungen. Andere Themen kann ich leider nicht bearbeiten.",
-        "category": "Systeminformation",
-        "synonyms": [
-            "Kann ich dich auch für andere Themen fragen?",
-            "Kann ich dich für etwas anderes nutzen?",
-            "Sprichst du auch über andere Themen?",
-            "Behandelst du auch andere Themen?",
-            "Kann ich dich zu anderen Themen befragen?"
-        ]
-    },
-    {
-        "question": "Wie genau bin ich?",
-        "answer": "Ich bin darauf programmiert, präzise Antworten zu liefern, aber bei sehr spezifischen Fragen kann es hilfreich sein, unseren Support zu kontaktieren.",
-        "category": "Systeminformation",
-        "synonyms": [
-            "Wie zuverlässig bist du?",
-            "Wie genau kannst du antworten?",
-            "Wie präzise sind deine Antworten?",
-            "Kannst du immer richtig antworten?",
-            "Bist du immer genau?"
-        ]
-    },
-    {
-        "question": "Was passiert, wenn ich eine Frage stelle, die du nicht beantworten kannst?",
-        "answer": "Wenn ich Ihre Frage nicht beantworten kann, leite ich Sie gerne an unser Support-Team weiter.",
-        "category": "Systeminformation",
-        "synonyms": [
-            "Was machst du, wenn du etwas nicht weißt?",
-            "Was passiert, wenn du die Antwort nicht hast?",
-            "Was tust du bei offenen Fragen?",
-            "Was passiert, wenn du etwas nicht beantworten kannst?",
-            "Wie geht es weiter, wenn du nicht weiterweißt?"
         ]
     }
 ]
