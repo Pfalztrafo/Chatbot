@@ -1,68 +1,92 @@
 [
     {
+        "question": "Hallo",
+        "answer": "Willkommen! Wie kann ich Ihnen helfen?",
+        "category": "Begrüßung",
+        "synonyms": ["Guten Morgen", "Guten Tag", "Hey", "Grüß dich", "Servus", "Guten Abend", "Hi", "Hallo, wie geht's?"]
+    },
+    {
+        "question": "Wie geht es dir?",
+        "answer": "Danke, mir geht es gut. Wie kann ich Ihnen weiterhelfen?",
+        "category": "Begrüßung",
+        "synonyms": ["Wie geht's?", "Alles klar?", "Wie läuft's?", "Wie geht es Ihnen?"]
+    },
+    {
+        "question": "Tschüss",
+        "answer": "Auf Wiedersehen! Bis zum nächsten Mal.",
+        "category": "Abschied",
+        "synonyms": ["Auf Wiedersehen", "Bis bald", "Ciao", "Mach's gut", "Servus"]
+    },
+    {
+        "question": "Danke",
+        "answer": "Gern geschehen! Bei weiteren Fragen stehe ich Ihnen zur Verfügung.",
+        "category": "Dank",
+        "synonyms": ["Vielen Dank", "Dankeschön", "Danke dir", "Ich danke Ihnen", "Danke schön", "Danke für die Hilfe"]
+    },
+    {
         "question": "Wer bist du?",
-        "answer": "Ich bin der digitale Assistent von Pfalztrafo und beantworte Ihre Fragen zu Transformatoren.",
+        "answer": "Ich bin der digitale Assistent von Pfalztrafo und beantworte Fragen rund um Transformatoren.",
         "category": "Systeminformation",
-        "synonyms": ["Was bist du?", "Bist du ein Mensch?", "Wer sind Sie?", "Was machst du?"]
+        "synonyms": ["Was bist du?", "Bist du ein Mensch?", "Wer bist du?", "Was machst du?"]
     },
     {
         "question": "Was kannst du?",
-        "answer": "Ich beantworte Fragen zu Transformatoren und unseren Dienstleistungen.",
+        "answer": "Ich beantworte Fragen zu Transformatoren, unseren Dienstleistungen und allgemeinen Themen.",
         "category": "Systeminformation",
         "synonyms": ["Wobei kannst du helfen?", "Was ist deine Aufgabe?", "Kannst du mir helfen?", "Was sind deine Fähigkeiten?"]
     },
     {
         "question": "Wie funktionierst du?",
-        "answer": "Ich analysiere Ihre Fragen und antworte mit den verfügbaren Informationen.",
+        "answer": "Ich analysiere Ihre Fragen und liefere Antworten basierend auf den verfügbaren Informationen.",
         "category": "Systeminformation",
         "synonyms": ["Wie funktioniert das System?", "Wie arbeitest du?", "Wie machst du das?", "Wie funktioniert es?"]
     },
     {
         "question": "Kann ich mit einem Menschen sprechen?",
-        "answer": "Wenn ich nicht weiterhelfen kann, wenden Sie sich bitte an unser Support-Team.",
+        "answer": "Wenn ich Ihre Frage nicht beantworten kann, wenden Sie sich bitte an unser Team. Sie erreichen uns unter 06236 56509940.",
         "category": "Kontaktwunsch",
         "synonyms": ["Mit einem Mitarbeiter sprechen?", "Einen Menschen sprechen", "Kann ich jemanden anrufen?", "Mit jemandem sprechen"]
     },
     {
+        "question": "Bis später",
+        "answer": "Bis später! Ich freue mich auf Ihre nächste Anfrage.",
+        "category": "Abschied",
+        "synonyms": ["Bis bald", "Man sieht sich", "Bis dann", "Bis zum nächsten Mal"]
+    },
+    {
         "question": "Ich brauche Hilfe",
-        "answer": "Lassen Sie mich wissen, wie ich Ihnen helfen kann.",
+        "answer": "Bitte sagen Sie mir, wobei ich helfen kann.",
         "category": "Zusätzliche Informationen",
         "synonyms": ["Hilfe bitte", "Kannst du mir helfen?", "Ich brauche Unterstützung", "Hilfe"]
     },
     {
         "question": "Wie kann ich Feedback geben?",
-        "answer": "Sie können Feedback über unser Kontaktformular oder per E-Mail senden.",
-        "synonyms": ["Wie kann ich eine Rückmeldung geben?", "Feedback senden", "Kann ich Vorschläge einreichen?", "Wo kann ich Feedback hinterlassen?", "Rückmeldung geben"],
-        "category": "Kontakt"
+        "answer": "Bitte nutzen Sie unser Kontaktformular oder senden Sie uns eine E-Mail.",
+        "category": "Kontakt",
+        "synonyms": ["Wie kann ich eine Rückmeldung geben?", "Feedback senden", "Kann ich Vorschläge einreichen?", "Wo kann ich Feedback hinterlassen?", "Rückmeldung geben"]
     },
     {
         "question": "Wie erreiche ich den technischen Support?",
-        "answer": "Unser technischer Support ist unter 06236 56509940 erreichbar.",
-        "synonyms": ["Wie kontaktiere ich den Support?", "Technischer Service", "Support kontaktieren", "Wie erreiche ich Hilfe?", "Probleme melden"],
-        "category": "Support"
+        "answer": "Informationen zum technischen Support finden Sie auf unserer Webseite im Bereich 'Kontakt'. Dort sind alle wichtigen Kontaktdaten für Sie hinterlegt.",
+        "category": "Support",
+        "synonyms": ["Wie kontaktiere ich den Support?", "Technischer Service", "Support kontaktieren", "Wie erreiche ich Hilfe?", "Probleme melden"]
     },
     {
         "question": "Wie werden meine Daten geschützt?",
-        "answer": "Weitere Informationen finden Sie in unserer Datenschutzrichtlinie auf der Webseite.",
-        "synonyms": ["Datensicherheit", "Werden meine Daten geschützt?", "Wie sicher sind meine Informationen?", "Datenschutzinformationen", "Datenrichtlinien"],
-        "category": "Datenschutz"
+        "answer": "Details zum Datenschutz finden Sie in unserer Datenschutzrichtlinie auf der Webseite.",
+        "category": "Datenschutz",
+        "synonyms": ["Datensicherheit", "Werden meine Daten geschützt?", "Wie sicher sind meine Informationen?", "Datenschutzinformationen", "Datenrichtlinien"]
     },
     {
         "question": "Wann sind Sie erreichbar?",
-        "answer": "Unser Team ist von Montag bis Freitag, 8:00 bis 16:00 Uhr, erreichbar.",
-        "synonyms": ["Öffnungszeiten", "Wann ist der Support verfügbar?", "Betriebszeiten", "Wann kann ich anrufen?", "Erreichbarkeitszeiten"],
-        "category": "Kontakt"
+        "answer": "Unser Team ist von Montag bis Freitag, 8:00 bis 16:00 Uhr, erreichbar. Außerhalb dieser Zeiten können Sie uns eine Nachricht hinterlassen, und wir melden uns schnellstmöglich bei Ihnen.",
+        "category": "Kontakt",
+        "synonyms": ["Öffnungszeiten", "Wann ist der Support verfügbar?", "Betriebszeiten", "Wann kann ich anrufen?", "Erreichbarkeitszeiten"]
     },
     {
         "question": "Wer hat dich programmiert?",
-        "answer": "Ich wurde von einem Team bei Pfalztrafo entwickelt, um Ihnen bei Fragen zu Transformatoren zu helfen.",
+        "answer": "Ich wurde von einem Team bei Pfalztrafo entwickelt, um Ihre Fragen zu beantworten.",
         "category": "Systeminformation",
-        "synonyms": [
-            "Wer ist dein Entwickler?",
-            "Wer hat den Chatbot programmiert?",
-            "Wer hat dich erstellt?",
-            "Von wem wurdest du programmiert?",
-            "Wer steckt hinter dir?"
-        ]
+        "synonyms": ["Wer ist dein Entwickler?", "Wer hat den Chatbot programmiert?", "Wer hat dich erstellt?", "Von wem wurdest du programmiert?", "Wer steckt hinter dir?"]
     }
 ]
